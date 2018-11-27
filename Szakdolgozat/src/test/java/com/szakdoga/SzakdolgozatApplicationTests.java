@@ -1,4 +1,4 @@
-package com.rft;
+package com.szakdoga;
 import java.util.List;
 
 import org.junit.Test;

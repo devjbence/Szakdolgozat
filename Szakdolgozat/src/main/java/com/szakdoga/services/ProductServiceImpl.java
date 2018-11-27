@@ -199,5 +199,33 @@ public class ProductServiceImpl implements ProductService {
 			removeImage(imageId);
 		}
 	}
+
+	@Override
+	public List<Integer> getAllProductImageIds(Integer productId) {
+		Product product = productRepository.findById(productId);
+		if(product == null)
+			throw new ProductDoesNotExistsException("The product does not exists !");
+		
+		List<Integer> imageIds =  product.getImages()
+				.stream()
+				.mapToInt(im->im.getId())
+				.boxed().collect(Collectors.toList());
+		return imageIds;
+	}
+
+	@Override
+	public byte[] getProductImage(Integer imageId) {
+		
+		ProductImage productImage = productImageRepository.findById(imageId);
+		if (productImage == null)
+			throw new ImageDoesNotExistsException("The image does not exists!");
+		
+		byte[] image = productImage.getProductImage();
+		
+		if(image == null)
+			throw new ImageDoesNotExistsException("The image does not exists!");
+		
+		return image;
+	}
 	
 }
