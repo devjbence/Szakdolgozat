@@ -32,7 +32,8 @@ public class SellerController {
 
 	// https://stackoverflow.com/questions/21329426/spring-mvc-multipart-request-with-json
 	@RequestMapping(value = "/uploadProfileImage", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Object> uploadFile(@RequestPart("username") String username,
+	public ResponseEntity<Object> uploadFile(
+			@RequestPart("username") String username,
 			@RequestPart("image") MultipartFile imageFile) throws IOException {
 		sellerService.saveImage(username, imageFile);
 		return new ResponseEntity<>("File is uploaded successfully", HttpStatus.ACCEPTED);

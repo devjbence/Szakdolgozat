@@ -1,24 +1,34 @@
 package com.szakdoga.services;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.ProductCategory;
+import com.szakdoga.entities.ProductImage;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.exceptions.IdIsMissingException;
+import com.szakdoga.exceptions.ImageDoesNotExistsException;
+import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
 import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.repos.ProductCategoryRepository;
+import com.szakdoga.repos.ProductImageRepository;
 import com.szakdoga.repos.SellerRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.repos.UserRepository;
+import com.szakdoga.utils.Utils;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -32,6 +42,8 @@ public class ProductServiceImpl implements ProductService {
 	private ProductRepository productRepository;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ProductImageRepository productImageRepository;
 
 	@Override
 	public void addProduct(ProductDTO productDTO) {
@@ -59,6 +71,8 @@ public class ProductServiceImpl implements ProductService {
 			ProductCategory category = categoryIterator.next();
 			categoryIterator.remove();
 		}
+		
+		removeAllImages(productId);
 
 		Seller seller = product.getSeller();
 		seller.removeProduct(product);
@@ -85,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void removeAllProducts(String username) {
-		
+
 		User user = userRepository.findByUsername(username);
 		if (user == null)
 			throw new UserDoesNotExistsException("The given user by the username: " + username + " does not exists!");
@@ -128,4 +142,62 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 	}
+
+	@Override
+	public void addImage(Integer productId, MultipartFile imageFile) {
+		Product product = productRepository.findById(productId);
+		if (product == null)
+			throw new ProductDoesNotExistsException("The product does not exists !");
+
+		User user = product.getSeller().getUser();
+		userService.checkIfActivated(user);
+
+		// max file méret < 64kb
+		if (imageFile.getSize() > Utils.MAX_IMAGEFILE_SIZE)
+			throw new ImageSizeIsTooBigException(
+					"The imagesize is more than: " + Utils.MAX_IMAGEFILE_SIZE / 1000 + " KB");
+
+		ProductImage image = new ProductImage();
+		image.setProduct(product);
+		
+		try {
+			image.setProductImage(imageFile.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+
+		product.addImage(image);
+		productRepository.save(product);
+	}
+
+	@Override
+	public void removeImage(Integer imageId) {
+		ProductImage productImage = productImageRepository.findById(imageId);
+		if (productImage == null)
+			throw new ImageDoesNotExistsException("The image does not exists!");
+		
+		Product product = productImage.getProduct();
+		product.removeImage(productImage);
+		
+		productRepository.save(product);
+		productImageRepository.delete(imageId);
+	}
+
+	@Override
+	public void removeAllImages(Integer productId) {
+		Product product = productRepository.findById(productId);
+		if(product == null)
+			throw new ProductDoesNotExistsException("The product does not exists !");
+		
+		List<Integer> imageIds =  product.getImages()
+				.stream()
+				.mapToInt(im->im.getId())
+				.boxed().collect(Collectors.toList());
+ 
+		for(int imageId : imageIds)
+		{
+			removeImage(imageId);
+		}
+	}
+	
 }

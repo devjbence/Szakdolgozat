@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Product extends EntityBase {
@@ -27,7 +28,25 @@ public class Product extends EntityBase {
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<ProductImage> images;
 
+	
+	public void addImage(ProductImage image)
+	{
+		if(images == null)
+			images = new HashSet<ProductImage>();
+		images.add(image);
+	}
+	
+	public void removeImage(ProductImage image)
+	{
+		if(images == null)
+			return;
+		images.remove(image);
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -79,4 +98,14 @@ public class Product extends EntityBase {
 		categories.remove(category);
 		category.getJobs().remove(this);
 	}
+
+	public Set<ProductImage> getImages() {
+		return images;
+	}
+
+	public void setImages(Set<ProductImage> images) {
+		this.images = images;
+	}
+	
+	
 }
