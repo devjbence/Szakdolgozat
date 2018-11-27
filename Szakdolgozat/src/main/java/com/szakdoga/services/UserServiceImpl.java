@@ -1,8 +1,11 @@
 package com.szakdoga.services;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,11 @@ import com.szakdoga.entities.UserActivation;
 import com.szakdoga.entities.DTOs.UserDTO;
 import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.EmailAddressAlreadyRegisteredException;
+import com.szakdoga.exceptions.MissingUserInformationException;
 import com.szakdoga.exceptions.NewPasswordIsMissingException;
 import com.szakdoga.exceptions.OldPasswordDoesNotMatchException;
 import com.szakdoga.exceptions.OldPasswordIsMissingException;
+import com.szakdoga.exceptions.RoleDoesNotExistsException;
 import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.exceptions.UserIsNotActivatedException;
 import com.szakdoga.exceptions.UserameAlreadyRegisteredException;
@@ -98,15 +103,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void register(String username, String email, String password) {
-		checkIfAlreadyInDb(username, email);
+	public void register(UserDTO userDTO) {
+		
+		if( userDTO.getUsername() == null || userDTO.getEmail()  == null || 
+			userDTO.getPassword() == null || userDTO.getRole() == null)
+			throw new MissingUserInformationException("Userinformation is missing");
+		
+		if( userDTO.getUsername().isEmpty() || userDTO.getEmail().isEmpty() || 
+				userDTO.getPassword().isEmpty() || userDTO.getRole().isEmpty())
+				throw new MissingUserInformationException("Userinformation is missing");
+			
+		checkIfAlreadyInDb(userDTO.getUsername(), userDTO.getEmail());
 
+		List<String> validRoles = roleRepository.findAll().stream().map( r-> r.getName() ).collect(Collectors.toList());
+		
+		if( !validRoles.contains(userDTO.getRole()) )
+			throw new RoleDoesNotExistsException("The role does not exists !");
+		
 		User user = new User();
-		Role role = roleRepository.findByName("ROLE_USER");
+		Role role = roleRepository.findByName(userDTO.getRole());
 
-		user.setEmail(email);
-		user.setPassword(bCryptPasswordEncoder.encode(password));
-		user.setUsername(username);
+		user.setEmail(userDTO.getEmail());
+		user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+		user.setUsername(userDTO.getUsername());
 
 		user.addRole(role);
 
@@ -120,26 +139,8 @@ public class UserServiceImpl implements UserService {
 		buyerRepository.save(buyer);
 		userActivationRepository.save(userActivation);
 
-		emailSender.sendSimpleMessage(email, "Registration",
-				getRegistrationText(username, userActivation.getActivationString()));
-	}
-	
-	@Override
-	public void createAdmin(String username,String email,String password)
-	{
-		checkIfAlreadyInDb(username, email);
-
-		User admin = new User();
-		Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-
-		admin.setEmail(email);
-		admin.setPassword(bCryptPasswordEncoder.encode(password));
-		admin.setUsername(username);
-		admin.setActivated(true);
-		
-		admin.addRole(adminRole);
-
-		userRepository.save(admin);
+		emailSender.sendSimpleMessage(userDTO.getEmail(), "Registration",
+				getRegistrationText(userDTO.getUsername(), userActivation.getActivationString()));
 	}
 
 	public void activateUser(String activationCode) {

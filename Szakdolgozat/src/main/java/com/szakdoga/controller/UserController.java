@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,24 +49,10 @@ public class UserController {
 	}
 	
 	
-	/***
-	 * https://stackoverflow.com/questions/24551915/how-to-get-form-data-as-a-map-in-spring-mvc-controller
-	 * !Make sure the Content-type is application/x-www-form-urlencoded!
-	 * @param user
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/register", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public ResponseEntity<String> register(@RequestBody MultiValueMap<String, String> user) throws Exception {
-
-		String username = user.getFirst("username") == null ? "" : user.getFirst("username");
-		String email = user.getFirst("email") == null ? "" : user.getFirst("email");
-		String password = user.getFirst("password") == null ? "" : user.getFirst("password");
-
-		if (username.isEmpty() || email.isEmpty() || password.isEmpty())
-			throw new MissingUserInformationException("Userinformation is missing");
+	@PostMapping(value = "/register")
+	public ResponseEntity<String> register(@RequestBody UserDTO userDTO) throws Exception {
 		
-		userService.register(username, email, password);
+		userService.register(userDTO);
 
 		return new ResponseEntity<>("Registered", HttpStatus.CREATED);
 	}
