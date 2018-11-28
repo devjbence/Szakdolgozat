@@ -1,6 +1,7 @@
 package com.szakdoga.entities;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,7 +14,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PreRemove;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,6 +29,9 @@ public class Buyer extends EntityBase {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<ProductComment> comments;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -109,4 +112,14 @@ public class Buyer extends EntityBase {
 	{
 		return user.getUsername();
 	}
+
+	public List<ProductComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<ProductComment> comments) {
+		this.comments = comments;
+	}
+	
+	
 }

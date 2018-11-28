@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.szakdoga.entities.Seller;
+import com.szakdoga.entities.DTOs.ProductCommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 
 public interface ProductService {
@@ -19,4 +20,8 @@ public interface ProductService {
 	void removeAllImages(Integer productId);
 	List<Integer> getAllProductImageIds(Integer productId);
 	byte[] getProductImage(Integer imageId);
+	void createComment(ProductCommentDTO commentDTO); 
+	void updateComment(ProductCommentDTO commentDTO); 
+	void deleteComment(Integer productCommentId);
+	List<ProductCommentDTO> getComments(Integer productId);
 }

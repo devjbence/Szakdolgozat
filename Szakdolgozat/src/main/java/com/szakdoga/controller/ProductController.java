@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.szakdoga.entities.DTOs.ProductCommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.services.ProductService;
 
@@ -88,4 +89,30 @@ public class ProductController {
 
 		return productService.getProductImage(imageId);
 	}
+	
+	@GetMapping("getComments/{productId}")
+	public void createComment(@PathVariable("productId") Integer productId)
+	{
+		System.out.println(productId);
+	}
+	
+	@PostMapping("/createComment")
+	public void createComment(@RequestBody ProductCommentDTO commentDTO)
+	{
+		System.out.println(commentDTO);
+	}
+	
+	@PutMapping("/updateComment")
+	public void updateComment(@RequestBody ProductCommentDTO commentDTO)
+	{
+		System.out.println(commentDTO);
+	}
+	
+	//TODO:  page, take n 
+	@DeleteMapping("/deleteComment/{productCommentId}")
+	public void deleteComment(@PathVariable("productCommentId") Integer productCommentId)
+	{
+		
+	}
+	
 }

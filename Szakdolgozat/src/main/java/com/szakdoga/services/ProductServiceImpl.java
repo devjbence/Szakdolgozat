@@ -1,6 +1,7 @@
 package com.szakdoga.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -14,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.ProductCategory;
+import com.szakdoga.entities.ProductComment;
 import com.szakdoga.entities.ProductImage;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.User;
+import com.szakdoga.entities.DTOs.ProductCommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.exceptions.IdIsMissingException;
 import com.szakdoga.exceptions.ImageDoesNotExistsException;
@@ -24,6 +27,7 @@ import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
 import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.repos.ProductCategoryRepository;
+import com.szakdoga.repos.ProductCommentRepository;
 import com.szakdoga.repos.ProductImageRepository;
 import com.szakdoga.repos.SellerRepository;
 import com.szakdoga.repos.ProductRepository;
@@ -44,6 +48,8 @@ public class ProductServiceImpl implements ProductService {
 	private UserService userService;
 	@Autowired
 	private ProductImageRepository productImageRepository;
+	@Autowired
+	private ProductCommentRepository productCommentRepository;
 
 	@Override
 	public void addProduct(ProductDTO productDTO) {
@@ -51,6 +57,13 @@ public class ProductServiceImpl implements ProductService {
 		Product product = new Product();
 		product.setSeller(seller);
 		mapProductDTOtoProduct(productDTO, product);
+		
+		/*
+		 * TODO: a product attributja kapja meg, hogy fixáras vagy licites, 
+		 * csak egyik lehet true, másik legyen false
+		 * Ha a dto-ban mindkettő true /false akkor exception
+		 * */
+		
 		seller.addProduct(product);
 		sellerRepository.save(seller);
 	}
@@ -227,5 +240,70 @@ public class ProductServiceImpl implements ProductService {
 		
 		return image;
 	}
+
+	@Override
+	public void createComment(ProductCommentDTO commentDTO) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateComment(ProductCommentDTO commentDTO) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteComment(Integer productCommentId) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void mapCommentToCommentDTO(ProductComment comment,ProductCommentDTO commentDTO)
+	{
+		commentDTO.setMessage(comment.getMessage());
+		commentDTO.setProductCommentId(comment.getId());
+		commentDTO.setProductId(comment.getProduct().getId());
+		commentDTO.setUsername(comment.getBuyer().getUser().getUsername());
+	}
+
+	@Override
+	public List<ProductCommentDTO> getComments(Integer productId) {
+		Product product = productRepository.findById(productId);
+		if(product == null)
+			throw new ProductDoesNotExistsException("The product does not exists !");
+		List<ProductComment> comments = product.getComments();
+		List<ProductCommentDTO> commentDTOs = new ArrayList<ProductCommentDTO>();
+		
+		for(ProductComment comment : comments)
+		{
+			ProductCommentDTO commentDTO = new ProductCommentDTO();
+			mapCommentToCommentDTO(comment,commentDTO);
+			commentDTOs.add(commentDTO);
+		}
+		
+		return commentDTOs;
+	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

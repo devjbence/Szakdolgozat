@@ -1,6 +1,7 @@
 package com.szakdoga.entities;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,16 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Product extends EntityBase {
+	
+	//isActive - if the product is not yet been sold
+	//isBidding
+	//isFixedPrice
+	//biddingList
+	//commentList
+	//endDate - if bidding then end date 
+	//buyer - Buyer entity
+	//price null if bidding number if fixed
+	
 	String name;
 	@Lob
 	@Column(name = "description", length = 2048)
@@ -28,6 +39,9 @@ public class Product extends EntityBase {
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<ProductComment> comments;
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<ProductImage> images;
@@ -77,6 +91,15 @@ public class Product extends EntityBase {
 
 	public void setSeller(Seller seller) {
 		this.seller = seller;
+	}
+	
+
+	public List<ProductComment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<ProductComment> comments) {
+		this.comments = comments;
 	}
 
 	// https://stackoverflow.com/a/48421327
