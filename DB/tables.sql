@@ -93,7 +93,7 @@ CREATE TABLE `seller_product_category` (
   FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `buyer_job_category` (
+CREATE TABLE `buyer_product_category` (
 	`buyer_id` int(11) NOT NULL,
 	`category_id` int(11) NOT NULL,
    CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -123,18 +123,75 @@ CREATE TABLE `product_product_category` (
   FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+create table `product_image`
+(
+	`id` int(11) not null auto_increment,
+	`product_id` int(11) not null,
+    `product_image` BLOB DEFAULT NULL,
+	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`),
+    KEY `product_id` (`product_id`),
+    FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+);
+
+create table `product_comment`
+(
+	`id` int(11) not null auto_increment,
+	`product_id` int(11) not null,
+    `buyer_id` int(11) not null,
+    `message` varchar(200) DEFAULT NULL,
+	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`),
+    KEY `product_id` (`product_id`),
+	KEY `buyer_id` (`buyer_id`),
+    FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+	FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
+);
+
 
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
 
+insert into product_category(id,product_name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
+insert into product_category(id,product_name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
+insert into product_category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
+
 select * from role;
 select * from user;
 select * from user_role;
+select * from product_image;
+select * from product;
+select * from product_category;
+select * from product_product_category;
+select * from product_comment;
 
-
-
-
+drop table product_comment;
+drop table product_product_category;
+drop table seller_product_category;
+drop table buyer_product_category;
+drop table product_category;
+drop table product_image;
+drop table product;
+drop table buyer;
+drop table seller;
+drop table user_role;
+drop table role;
+drop table user_activation;
 drop table user;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
