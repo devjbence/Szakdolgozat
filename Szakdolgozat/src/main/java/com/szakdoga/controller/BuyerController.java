@@ -26,12 +26,6 @@ public class BuyerController {
 	@Autowired
 	private BuyerService buyerService;
 	
-	@GetMapping("/test")
-	public String authTest()
-	{
-		return "You logged in successfully";
-	}
-	
 	@RequestMapping(value = "/update",method = RequestMethod.PUT)
 	public ResponseEntity<String> update(@RequestBody BuyerDTO buyerDTO) throws Exception { //https://stackoverflow.com/a/18525961
 		buyerService.updateProfile(buyerDTO);

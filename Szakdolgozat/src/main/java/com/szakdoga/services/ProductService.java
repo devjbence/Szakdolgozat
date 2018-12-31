@@ -23,5 +23,7 @@ public interface ProductService {
 	void createComment(ProductCommentDTO commentDTO); 
 	void updateComment(ProductCommentDTO commentDTO); 
 	void deleteComment(Integer productCommentId);
-	List<ProductCommentDTO> getComments(Integer productId);
+	 List<ProductCommentDTO> getCommentsByProductId(Integer productId, Integer page,Integer size);
+	void deleteAllComments(String username);
+	ProductCommentDTO getComment(Integer commentId);
 }

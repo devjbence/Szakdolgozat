@@ -130,5 +130,8 @@ public class Product extends EntityBase {
 		this.images = images;
 	}
 	
-	
+	public void removeComment(ProductComment comment)
+	{
+		comments.remove(comment);
+	}
 }

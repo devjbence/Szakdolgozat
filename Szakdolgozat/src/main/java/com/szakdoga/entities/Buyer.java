@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Buyer extends EntityBase {
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "buyer_job_category", joinColumns = @JoinColumn(name = "buyer_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+	@JoinTable(name = "buyer_product_category", joinColumns = @JoinColumn(name = "buyer_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
 	private Set<ProductCategory> categories;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -121,5 +121,8 @@ public class Buyer extends EntityBase {
 		this.comments = comments;
 	}
 	
-	
+	public void removeComment(ProductComment comment)
+	{
+		comments.remove(comment);
+	}
 }

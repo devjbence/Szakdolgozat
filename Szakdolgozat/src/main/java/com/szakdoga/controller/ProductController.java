@@ -90,29 +90,39 @@ public class ProductController {
 		return productService.getProductImage(imageId);
 	}
 	
-	@GetMapping("getComments/{productId}")
-	public void createComment(@PathVariable("productId") Integer productId)
+	@GetMapping("getComment/{commentId}")
+	public ProductCommentDTO getComment(@PathVariable("commentId") Integer commentId)
 	{
-		System.out.println(productId);
+		return productService.getComment(commentId);
+	}
+	
+	@GetMapping("getComments/productId/{productId}/page/{page}/size/{size}")
+	public List<ProductCommentDTO> getComments(@PathVariable("productId") Integer productId,@PathVariable("page") Integer page,@PathVariable("size") Integer size)
+	{
+		return productService.getCommentsByProductId(productId, page, size);
 	}
 	
 	@PostMapping("/createComment")
 	public void createComment(@RequestBody ProductCommentDTO commentDTO)
 	{
-		System.out.println(commentDTO);
+		productService.createComment(commentDTO);
 	}
 	
 	@PutMapping("/updateComment")
 	public void updateComment(@RequestBody ProductCommentDTO commentDTO)
 	{
-		System.out.println(commentDTO);
+		productService.updateComment(commentDTO);
 	}
 	
-	//TODO:  page, take n 
 	@DeleteMapping("/deleteComment/{productCommentId}")
 	public void deleteComment(@PathVariable("productCommentId") Integer productCommentId)
 	{
-		
+		productService.deleteComment(productCommentId);
 	}
 	
+	@DeleteMapping("/deleteAllComments/{username}")
+	public void deleteComment(@PathVariable("username") String username)
+	{
+		productService.deleteAllComments(username);
+	}
 }
