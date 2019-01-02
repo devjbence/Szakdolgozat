@@ -43,10 +43,10 @@ public class ProductController {
 		productService.removeProduct(productId);
 	}
 	
-	@DeleteMapping("/user/{username}")
-	public void deleteAll(@PathVariable("username") String username)
+	@DeleteMapping()
+	public void deleteAll()
 	{
-		productService.removeAllProducts(username);
+		productService.removeAllProducts();
 	}
 	
 	@PutMapping("/{productId}")

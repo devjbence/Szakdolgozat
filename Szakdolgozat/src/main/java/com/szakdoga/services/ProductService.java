@@ -14,7 +14,7 @@ public interface ProductService {
 	void removeProduct(Integer productId);
 	void updateProduct(int productId,ProductDTO productDTO);
 	void removeAllProducts(Seller seller) ;
-	void removeAllProducts(String username) ;
+	void removeAllProducts() ;
 	void addImage(Integer productId,MultipartFile imageFile);
 	void removeImage(Integer imageId);
 	void removeAllImages(Integer productId);

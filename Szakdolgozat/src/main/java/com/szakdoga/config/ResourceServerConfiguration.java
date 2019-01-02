@@ -47,7 +47,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		//.tokenStore(tokenStore());
 	}
 	
-	// elejére raktam cors().and()-et kell a corshoz (obviously)
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.cors().and()
@@ -77,6 +76,11 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.DELETE,"/users/**")
 		.hasRole("ADMIN")
+		//user
+		.antMatchers(HttpMethod.GET,"/user/**")
+		.authenticated()
+		.antMatchers(HttpMethod.POST,"/user/changePassword")
+		.authenticated()
 		//buyers
 		.antMatchers(HttpMethod.POST,"/buyers")
 		.hasRole("ADMIN")
@@ -90,7 +94,14 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.DELETE,"/buyers/**")
 		.hasRole("ADMIN")
-		//seller
+		//buyer
+		.antMatchers(HttpMethod.POST,"/buyer/**")
+		.authenticated()
+		.antMatchers(HttpMethod.PUT,"/buyer/**")
+		.authenticated()
+		.antMatchers(HttpMethod.DELETE,"/buyer/**")
+		.authenticated()
+		//sellers
 		.antMatchers(HttpMethod.POST,"/sellers")
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.POST,"/sellers/**")
@@ -103,7 +114,14 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.DELETE,"/sellers/**")
 		.hasRole("ADMIN")
-		//product
+		//seller
+		.antMatchers(HttpMethod.POST,"/seller/**")
+		.authenticated()
+		.antMatchers(HttpMethod.PUT,"/seller/**")
+		.authenticated()
+		.antMatchers(HttpMethod.DELETE,"/seller/**")
+		.authenticated()
+		//products
 		.antMatchers(HttpMethod.POST,"/products")
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.POST,"/products/**")
@@ -116,6 +134,13 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.hasRole("ADMIN")
 		.antMatchers(HttpMethod.DELETE,"/products/**")
 		.hasRole("ADMIN")
+		//product
+		.antMatchers(HttpMethod.POST,"/product/**")
+		.authenticated()
+		.antMatchers(HttpMethod.PUT,"/product/**")
+		.authenticated()
+		.antMatchers(HttpMethod.DELETE,"/product/**")
+		.authenticated()
 		//role
 		.antMatchers(HttpMethod.GET,"/roles")
 		.hasRole("ADMIN")

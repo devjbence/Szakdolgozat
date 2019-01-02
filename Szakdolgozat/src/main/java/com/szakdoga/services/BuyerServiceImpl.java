@@ -1,6 +1,9 @@
 package com.szakdoga.services;
 
 import java.io.IOException;
+import java.security.Principal;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.BuyerDTO;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
+import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.BuyerRepository;
@@ -28,11 +32,24 @@ public class BuyerServiceImpl implements BuyerService {
 	private BuyerRepository buyerRepository;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private HttpServletRequest request;
 
+	private String getCurrentUsername()
+	{
+	    Principal principal = request.getUserPrincipal();
+
+	    return principal.getName();
+	}
+	
 	@Override
 	public void updateProfile(BuyerDTO buyerDTO) {
 
 		User user = userService.checkUserValues(buyerDTO.getUsername());
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
 		Buyer buyerFromDb = buyerRepository.findByUser(user);
 
 		mapNonNullFields(buyerDTO, buyerFromDb);
@@ -74,6 +91,9 @@ public class BuyerServiceImpl implements BuyerService {
 
 		if (user == null)
 			throw new UserDoesNotExistsException("The given user by the username: " + username + " does not exists!");
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		userService.checkIfActivated(user);
 

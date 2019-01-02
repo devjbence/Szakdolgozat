@@ -15,4 +15,7 @@ public interface ProductCommentRepository extends JpaRepository<ProductComment, 
 	
 	@Query("select c from ProductComment c join c.buyer bu join bu.user us where us.username = :username")
 	List<ProductComment> getCommentsByUsername(String username);
+	
+	@Query("select c from ProductComment c join c.product pro where pro.id = :productId")
+	List<ProductComment> getCommentsByProductId(Integer productId);
 }

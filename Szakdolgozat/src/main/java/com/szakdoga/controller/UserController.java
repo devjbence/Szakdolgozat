@@ -2,7 +2,9 @@ package com.szakdoga.controller;
 
 
 import java.net.URI;
+import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +33,9 @@ import com.szakdoga.services.UserService;
 @RequestMapping("/user")
 public class UserController {
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	@Autowired
-	UserRepository userRepo;
+	private UserRepository userRepo;
 
 	@GetMapping("/usernameByUserId/{id}")
 	public ResponseEntity<String> getUserIdByUsername(@PathVariable("id") Integer id)
@@ -88,7 +90,6 @@ public class UserController {
 		
 		return new ResponseEntity<>("Password changed", HttpStatus.CREATED);
 	}
-	
 	
 	@DeleteMapping("/{username}")
 	public void deleteOne(@PathVariable("username") String username)

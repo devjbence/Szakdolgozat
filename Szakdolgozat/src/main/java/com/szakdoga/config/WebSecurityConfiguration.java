@@ -52,7 +52,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new SpelAwareProxyProjectionFactory();
 	}
 	
-	//CORS miatt kell, hogy tudjak regizni pl
 	@Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
@@ -67,7 +66,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         };
     }
 	
-	//CORS miatt kell, hogy tudjak regizni pl, a 2 metódus közül melyik kell nemtudom, de elvielg ugyan az
 	@Bean
 	public FilterRegistrationBean corsFilt() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

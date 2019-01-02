@@ -1,6 +1,7 @@
 package com.szakdoga.services;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.exceptions.IdIsMissingException;
 import com.szakdoga.exceptions.ImageDoesNotExistsException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
+import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.ProductCommentDoesNotExistsException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
 import com.szakdoga.exceptions.ProductToUserDoesNotExistsException;
@@ -53,10 +57,20 @@ public class ProductServiceImpl implements ProductService {
 	private ProductImageRepository productImageRepository;
 	@Autowired
 	private ProductCommentRepository productCommentRepository;
+	@Autowired
+	private HttpServletRequest request;
+
+	private String getCurrentUsername()
+	{
+	    Principal principal = request.getUserPrincipal();
+
+	    return principal.getName();
+	}
 
 	@Override
 	public void addProduct(ProductDTO productDTO) {
-		Seller seller = getSeller(productDTO.getUsername());
+		Seller seller = getSeller(getCurrentUsername());
+		
 		Product product = new Product();
 		product.setSeller(seller);
 		mapProductDTOtoProduct(productDTO, product);
@@ -79,6 +93,11 @@ public class ProductServiceImpl implements ProductService {
 		Product product = productRepository.findById(productId);
 		if (product == null)
 			throw new ProductDoesNotExistsException("Product does not exists!");
+		
+		deleteAllCommentsByProductId(productId);
+		
+		removeAllImages(productId);
+		
 		Set<ProductCategory> categories = product.getCategories();
 
 		// https://stackoverflow.com/a/18448699
@@ -100,6 +119,9 @@ public class ProductServiceImpl implements ProductService {
 	public void updateProduct(int productId, ProductDTO productDTO) {
 		Product product = productRepository.findById(productId);
 		Seller seller = product.getSeller();
+		
+		if(!seller.getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		mapProductDTOtoProduct(productDTO, product);
 		sellerRepository.save(seller);
@@ -114,11 +136,9 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void removeAllProducts(String username) {
+	public void removeAllProducts() {
 
-		User user = userRepository.findByUsername(username);
-		if (user == null)
-			throw new UserDoesNotExistsException("The given user by the username: " + username + " does not exists!");
+		User user = userRepository.findByUsername(getCurrentUsername());
 
 		Seller seller = sellerRepository.findByUser(user);
 
@@ -166,6 +186,10 @@ public class ProductServiceImpl implements ProductService {
 			throw new ProductDoesNotExistsException("The product does not exists !");
 
 		User user = product.getSeller().getUser();
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
 		userService.checkIfActivated(user);
 
 		// max file méret < 64kb
@@ -193,6 +217,10 @@ public class ProductServiceImpl implements ProductService {
 			throw new ImageDoesNotExistsException("The image does not exists!");
 
 		Product product = productImage.getProduct();
+		
+		if(!product.getSeller().getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
 		product.removeImage(productImage);
 
 		productRepository.save(product);
@@ -204,6 +232,9 @@ public class ProductServiceImpl implements ProductService {
 		Product product = productRepository.findById(productId);
 		if (product == null)
 			throw new ProductDoesNotExistsException("The product does not exists !");
+		
+		if(!product.getSeller().getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		List<Integer> imageIds = product.getImages().stream().mapToInt(im -> im.getId()).boxed()
 				.collect(Collectors.toList());
@@ -249,11 +280,7 @@ public class ProductServiceImpl implements ProductService {
 		if (product == null)
 			throw new ProductDoesNotExistsException("The product does not exists !");
 
-		User user = userRepository.findByUsername(commentDTO.getUsername());
-
-		if (user == null)
-			throw new UserDoesNotExistsException(
-					"The given user by the username: " + commentDTO.getUsername() + " does not exists!");
+		User user = userRepository.findByUsername(getCurrentUsername());
 
 		if (product.getSeller().getUser().getId() != user.getId())
 			throw new ProductToUserDoesNotExistsException("The given product by the given user does not exists");
@@ -276,6 +303,9 @@ public class ProductServiceImpl implements ProductService {
 
 		if (comment == null)
 			throw new ProductCommentDoesNotExistsException("The comment does not exists !");
+		
+		if(!comment.getBuyer().getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		comment.setMessage(commentDTO.getMessage());
 
@@ -291,6 +321,9 @@ public class ProductServiceImpl implements ProductService {
 
 		if (comment == null)
 			throw new ProductCommentDoesNotExistsException("The comment does not exists !");
+		
+		if(!comment.getBuyer().getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		comment.getProduct().removeComment(comment);
 		comment.getBuyer().removeComment(comment);
@@ -298,6 +331,35 @@ public class ProductServiceImpl implements ProductService {
 		productCommentRepository.save(comment);
 
 		productCommentRepository.delete(comment);
+	}
+	
+	@Override
+	public void deleteAllComments(String username) {
+		
+		if(!username.equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
+		List<Integer> commentIds = productCommentRepository.getCommentsByUsername(username).stream()
+				.mapToInt(c -> c.getId()).boxed().collect(Collectors.toList());
+
+		for (int commentId : commentIds)
+			deleteComment(commentId);
+	}
+	
+	public void deleteAllCommentsByProductId(Integer productId) {
+		
+		Product product = productRepository.findById(productId);
+		if (product == null)
+			throw new ProductDoesNotExistsException("The product does not exists !");
+		
+		if(!product.getSeller().getUser().getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
+		List<Integer> commentIds = productCommentRepository.getCommentsByProductId(productId).stream()
+				.mapToInt(c -> c.getId()).boxed().collect(Collectors.toList());
+
+		for (int commentId : commentIds)
+			deleteComment(commentId);
 	}
 
 	private void mapCommentToCommentDTO(ProductComment comment, ProductCommentDTO commentDTO) {
@@ -345,15 +407,6 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		return pagedDtos;
-	}
-	
-	@Override
-	public void deleteAllComments(String username) {
-		List<Integer> commentIds = productCommentRepository.getCommentsByUsername(username).stream()
-				.mapToInt(c -> c.getId()).boxed().collect(Collectors.toList());
-
-		for (int commentId : commentIds)
-			deleteComment(commentId);
 	}
 
 	@Override

@@ -1,7 +1,10 @@
 package com.szakdoga.services;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Iterator;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,7 @@ import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.SellerDTO;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
+import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.SellerRepository;
@@ -31,11 +35,24 @@ public class SellerServiceImpl implements SellerService {
 	private UserService userService;
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private HttpServletRequest request;
 
+	private String getCurrentUsername()
+	{
+	    Principal principal = request.getUserPrincipal();
+
+	    return principal.getName();
+	}
+	
 	@Override
 	public void updateProfile(SellerDTO sellerDTO) {
 
 		User user = userService.checkUserValues(sellerDTO.getUsername());
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
 		Seller sellerFromDb = sellerRepository.findByUser(user);
 
 		mapNonNullFields(sellerDTO, sellerFromDb);
@@ -78,6 +95,9 @@ public class SellerServiceImpl implements SellerService {
 
 		if (user == null)
 			throw new UserDoesNotExistsException("The given user by the username: " + username + " does not exists!");
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		userService.checkIfActivated(user);
 
@@ -114,6 +134,9 @@ public class SellerServiceImpl implements SellerService {
 		User user = userRepository.findByUsername(username);
 		if (user == null)
 			throw new UserDoesNotExistsException("The given user by the username: " + username + " does not exists!");
+		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
 
 		Seller seller = sellerRepository.findByUser(user);
 

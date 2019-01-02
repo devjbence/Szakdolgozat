@@ -1,9 +1,12 @@
 package com.szakdoga.services;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -23,6 +26,7 @@ import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.EmailAddressAlreadyRegisteredException;
 import com.szakdoga.exceptions.MissingUserInformationException;
 import com.szakdoga.exceptions.NewPasswordIsMissingException;
+import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.OldPasswordDoesNotMatchException;
 import com.szakdoga.exceptions.OldPasswordIsMissingException;
 import com.szakdoga.exceptions.RoleDoesNotExistsException;
@@ -62,13 +66,15 @@ public class UserServiceImpl implements UserService {
 	AccessTokenRepository accTokenRepository;
 	@Autowired
 	RefreshTokenRepository refTokenRepository;
+	@Autowired
+	private HttpServletRequest request;
 
 	@Value("${server.port}")
 	private String port;
 
 	@Value("${server.contextPath}")
 	private String serverContext;
-
+	
 	@Override
 	public void removeUser(String username) {
 		deleteUsersToken(username);
@@ -250,6 +256,9 @@ public class UserServiceImpl implements UserService {
 		if(user==null)
 			throw new UsernameIsMissingException("Username is missing!");
 		
+		if(!user.getUsername().equals(getCurrentUsername()))
+			throw new NotOwnUsernameException("The given username is not your own!");
+		
 		checkIfActivated(user);
 		
 		if(userDTO.getNewPassword() ==null)
@@ -271,5 +280,12 @@ public class UserServiceImpl implements UserService {
 		}
 		else
 			throw new OldPasswordDoesNotMatchException("The given password does not match with the old one!");
+	}
+	
+	private String getCurrentUsername()
+	{
+	    Principal principal = request.getUserPrincipal();
+
+	    return principal.getName();
 	}
 }
