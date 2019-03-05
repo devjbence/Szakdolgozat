@@ -2,14 +2,25 @@ package com.szakdoga.entities.DTOs;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class SellerDTO{
+	private int id;
 	private String username;
 	private String firstName;
 	private String lastName;
 	private String aboutMe;
+	@JsonIgnore
 	private byte[] profileImage;
 	List<Integer> categories;
 
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getUsername() {
 		return username;
 	}

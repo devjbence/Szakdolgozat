@@ -2,10 +2,10 @@ package com.szakdoga.services;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.SellerDTO;
 
-public interface SellerService {
-	void updateProfile(SellerDTO offererDTO);
-	void saveImage(String username, MultipartFile imageFile);
-	 byte[] getProfileImage(String username);
+public interface SellerService extends BaseService<Seller,SellerDTO>{
+	void saveImage(Seller entity, MultipartFile imageFile);
+	byte[] getProfileImage(int id);
 }
