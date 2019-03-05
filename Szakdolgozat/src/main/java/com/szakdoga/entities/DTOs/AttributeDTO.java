@@ -3,10 +3,17 @@ package com.szakdoga.entities.DTOs;
 import com.szakdoga.enums.AttributeType;
 
 public class AttributeDTO {
+	private int id;
 	private String name;
 	private AttributeType type;
 	private String value;
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}

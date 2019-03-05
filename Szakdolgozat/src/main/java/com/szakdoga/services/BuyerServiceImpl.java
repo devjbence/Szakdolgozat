@@ -91,6 +91,7 @@ public class BuyerServiceImpl implements BuyerService {
 
 	@Override
 	public void mapEntityToDto(Buyer entity, BuyerDTO dto) {
+		dto.setId(entity.getId());
 		dto.setAboutMe(entity.getAboutMe());
 		dto.setCategories(entity.getCategories().stream().mapToInt(b->b.getId()).boxed().collect(Collectors.toList()));
 		dto.setFirstName(entity.getFirstName());

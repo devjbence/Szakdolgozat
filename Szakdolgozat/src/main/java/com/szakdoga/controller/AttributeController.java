@@ -39,8 +39,6 @@ public class AttributeController {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return null;
 		}
-		
-		
 
 		return dto;
 	}

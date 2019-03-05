@@ -1,5 +1,7 @@
 package com.szakdoga.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +34,17 @@ public class BuyerController {
 	@PutMapping("/{id}")
 	public void update(
 			@PathVariable("id") int id,
-			@RequestBody BuyerDTO buyerDTO,
+			@RequestBody BuyerDTO dto,
 			HttpServletResponse response)
 	{
-		BuyerDTO dto = buyerService.get(id);
-
-		if (dto == null) {		
+		if (buyerService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return;
 		}
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		buyerService.update(id,buyerDTO);		
+		buyerService.update(id,dto);		
 	}
 	
 	@PostMapping(path="/profileImage",consumes = "multipart/form-data")
@@ -63,6 +63,36 @@ public class BuyerController {
 	public byte[] getImage(@PathVariable("id") int id) {
 
 		return buyerService.getProfileImage(id);
+	}
+	
+	@GetMapping("/{id}")
+	public BuyerDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
+		BuyerDTO dto = buyerService.get(id);
+
+		if (dto == null) {		
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+			return null;
+		}
+
+		return dto;
+	}
+	
+	@GetMapping("/all")
+	public List<BuyerDTO> getAll() {
+		return buyerService.getAll();
+	}
+	
+	@GetMapping("/size")
+	public int size() {
+		return buyerService.size();
+	}
+	
+	@GetMapping("/all/page/{page}/size/{size}")
+	public List<BuyerDTO> getAll(
+			@PathVariable("page") Integer page,
+			@PathVariable("size") Integer size)
+	{
+		return buyerService.getAll(page,size);
 	}
 }
 

@@ -65,6 +65,7 @@ public class AttributeServiceImpl implements AttributeService {
 
 	@Override
 	public void mapEntityToDto(Attribute entity, AttributeDTO dto) {
+		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 		dto.setType(entity.getType());
 		dto.setValue(entity.getValue());
