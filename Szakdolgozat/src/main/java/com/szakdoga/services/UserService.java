@@ -1,5 +1,6 @@
 package com.szakdoga.services;
 
+import java.security.Principal;
 import java.util.List;
 
 import com.szakdoga.entities.User;
@@ -16,4 +17,6 @@ public interface UserService {
 	void removeUser(String username);
 	void removeAllUsers();
 	void changePassword(UserDTO userDTO);
+	String getCurrentUsername();
+	User getCurrentUser();
 }

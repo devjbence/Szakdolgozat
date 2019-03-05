@@ -282,10 +282,16 @@ public class UserServiceImpl implements UserService {
 			throw new OldPasswordDoesNotMatchException("The given password does not match with the old one!");
 	}
 	
-	private String getCurrentUsername()
+	@Override
+	public String getCurrentUsername()
 	{
 	    Principal principal = request.getUserPrincipal();
 
 	    return principal.getName();
+	}
+
+	@Override
+	public User getCurrentUser() {
+		return userRepository.findByUsername(getCurrentUsername());
 	}
 }

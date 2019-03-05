@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.AttributeDTO;
+import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.services.AttributeService;
 
 @RestController
@@ -37,6 +39,8 @@ public class AttributeController {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return null;
 		}
+		
+		
 
 		return dto;
 	}
