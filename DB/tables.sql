@@ -150,6 +150,17 @@ create table `product_comment`
 	FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
 );
 
+create table `attribute`
+(
+	`id` int(11) not null auto_increment,
+    `name` varchar(200) DEFAULT NULL,
+    `type` int(4) default null,
+    `value` varchar(200) DEFAULT NULL,
+	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`)
+);
+
 
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
@@ -166,6 +177,7 @@ select * from product;
 select * from product_category;
 select * from product_product_category;
 select * from product_comment;
+select * from attribute;
 
 drop table product_comment;
 drop table product_product_category;
@@ -180,6 +192,7 @@ drop table user_role;
 drop table role;
 drop table user_activation;
 drop table user;
+drop table attribute;
 
 
 
