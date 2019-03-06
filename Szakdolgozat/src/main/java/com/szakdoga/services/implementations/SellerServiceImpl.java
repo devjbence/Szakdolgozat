@@ -69,7 +69,7 @@ public class SellerServiceImpl implements SellerService {
 			categoryIterator.remove();
 		}
 
-		productService.removeAllProducts(seller);
+		//productService.removeAllProducts(seller);
 	}
 
 	@Override

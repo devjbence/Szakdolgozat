@@ -1,34 +1,28 @@
 package com.szakdoga.services.implementations;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.ProductImage;
 import com.szakdoga.entities.Seller;
-import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.ProductDTO;
-import com.szakdoga.exceptions.IdIsMissingException;
 import com.szakdoga.exceptions.ImageDoesNotExistsException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
-import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
+import com.szakdoga.repos.CommentRepository;
 import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.ProductImageRepository;
 import com.szakdoga.repos.SellerRepository;
 import com.szakdoga.repos.ProductRepository;
-import com.szakdoga.repos.UserRepository;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.Utils;
@@ -38,8 +32,6 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductCategoryRepository categoryRepository;
 	@Autowired
-	private UserRepository userRepository;
-	@Autowired
 	private SellerRepository sellerRepository;
 	@Autowired
 	private ProductRepository productRepository;
@@ -48,123 +40,23 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductImageRepository productImageRepository;
 	@Autowired
-	private HttpServletRequest request;
+	private CommentRepository commentRepository;
 
-	private String getCurrentUsername()
-	{
-	    Principal principal = request.getUserPrincipal();
-
-	    return principal.getName();
-	}
-
-	@Override
-	public void addProduct(ProductDTO productDTO) {
-		Seller seller = getSeller(getCurrentUsername());
-		
-		Product product = new Product();
-		product.setSeller(seller);
-		mapProductDTOtoProduct(productDTO, product);
-
-		/*
-		 * TODO: a product attributja kapja meg, hogy fixáras vagy licites, csak egyik
-		 * lehet true, másik legyen false Ha a dto-ban mindkettő true /false akkor
-		 * exception
-		 */
-
-		seller.addProduct(product);
-		sellerRepository.save(seller);
-	}
-
-	@Override
-	public void removeProduct(Integer productId) {
-		if (productId == null)
-			throw new IdIsMissingException("Job ID is missing for delete!");
-
-		Product product = productRepository.findById(productId);
-		if (product == null)
-			throw new ProductDoesNotExistsException("Product does not exists!");
-		
-		//TODO: delete all comments
-		
-		removeAllImages(productId);
-		
-		Set<ProductCategory> categories = product.getCategories();
-
-		// https://stackoverflow.com/a/18448699
-		Iterator<ProductCategory> categoryIterator = categories.iterator();
-		while (categoryIterator.hasNext()) {
-			ProductCategory category = categoryIterator.next();
-			categoryIterator.remove();
-		}
-
-		removeAllImages(productId);
-
-		Seller seller = product.getSeller();
-		seller.removeProduct(product);
-
-		productRepository.delete(product);
-	}
-
-	@Override
-	public void updateProduct(int productId, ProductDTO productDTO) {
-		Product product = productRepository.findById(productId);
-		Seller seller = product.getSeller();
-		
-		if(!seller.getUser().getUsername().equals(getCurrentUsername()))
-			throw new NotOwnUsernameException("The given username is not your own!");
-
-		mapProductDTOtoProduct(productDTO, product);
-		sellerRepository.save(seller);
-	}
-
-	@Override
-	public void removeAllProducts(Seller seller) {
-		for (int productId : productRepository.findAll().stream().filter(j -> j.getSeller().equals(seller))
-				.mapToInt(j -> j.getId()).toArray()) {
-			removeProduct(productId);
-		}
-	}
-
-	@Override
-	public void removeAllProducts() {
-
-		User user = userRepository.findByUsername(getCurrentUsername());
-
-		Seller seller = sellerRepository.findByUser(user);
-
-		removeAllProducts(seller);
-	}
-
-	private Seller getSeller(String username) {
-		User user = userService.checkUserValues(username);
-		Seller seller = sellerRepository.findByUser(user);
-		return seller;
-	}
-
-	private void mapProductDTOtoProduct(ProductDTO productDTO, Product product) {
-
-		if (productDTO.getName() != null)
-			product.setName(productDTO.getName());
-		if (productDTO.getDescription() != null)
-			product.setDescription(productDTO.getDescription());
-
-		mapCategoriesToProduct(productDTO.getCategories(), product);
-	}
-
-	private void mapCategoriesToProduct(List<Integer> categories, Product product) {
-		if (categories == null || categories.isEmpty())
+	private void updateCategories(ProductDTO dto, Product entity) {
+		if (dto.getCategories() == null)
 			return;
-		for (int categoryId : categories) {
+
+		for (int categoryId : dto.getCategories()) {
 			if (categoryId < 0) {
 				ProductCategory category = categoryRepository.findById(categoryId * (-1));
-				if (category != null)
-					product.removeCategories(category);
+				entity.removeCategory(category);
 			} else {
 				ProductCategory category = categoryRepository.findById(categoryId);
 				if (category != null) {
-					product.addCategories(category);
+					if (!entity.getCategories().contains(category)) {
+						entity.addCategory(category);
+					}
 				}
-
 			}
 		}
 	}
@@ -172,15 +64,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void addImage(Integer productId, MultipartFile imageFile) {
 		Product product = productRepository.findById(productId);
-		if (product == null)
-			throw new ProductDoesNotExistsException("The product does not exists !");
-
-		User user = product.getSeller().getUser();
-		
-		if(!user.getUsername().equals(getCurrentUsername()))
-			throw new NotOwnUsernameException("The given username is not your own!");
-		
-		userService.checkIfActivated(user);
 
 		// max file méret < 64kb
 		if (imageFile.getSize() > Utils.MAX_IMAGEFILE_SIZE)
@@ -203,13 +86,8 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void removeImage(Integer imageId) {
 		ProductImage productImage = productImageRepository.findById(imageId);
-		if (productImage == null)
-			throw new ImageDoesNotExistsException("The image does not exists!");
 
 		Product product = productImage.getProduct();
-		
-		if(!product.getSeller().getUser().getUsername().equals(getCurrentUsername()))
-			throw new NotOwnUsernameException("The given username is not your own!");
 		
 		product.removeImage(productImage);
 
@@ -220,11 +98,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void removeAllImages(Integer productId) {
 		Product product = productRepository.findById(productId);
-		if (product == null)
-			throw new ProductDoesNotExistsException("The product does not exists !");
-		
-		if(!product.getSeller().getUser().getUsername().equals(getCurrentUsername()))
-			throw new NotOwnUsernameException("The given username is not your own!");
 
 		List<Integer> imageIds = product.getImages().stream().mapToInt(im -> im.getId()).boxed()
 				.collect(Collectors.toList());
@@ -259,4 +132,161 @@ public class ProductServiceImpl implements ProductService {
 
 		return image;
 	}
+
+	@Override
+	public void mapDtoToEntity(ProductDTO dto, Product entity) {
+		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
+		entity.setImages(dto.getImages().stream().map(c->productImageRepository.findById(c)).collect(Collectors.toSet()));
+		entity.setName(dto.getName());
+		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
+	}
+
+	@Override
+	public void mapEntityToDto(Product entity, ProductDTO dto) {
+		dto.setCategories(entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setComments(entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setImages(entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setSellerId(entity.getSeller().getId());
+		dto.setDescription(entity.getDescription());
+		dto.setProductId(entity.getId());
+		dto.setName(entity.getName());
+	}
+
+	@Override
+	public void mapDtoToEntityNonNullsOnly(ProductDTO dto, Product entity) {
+		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
+		entity.setImages(dto.getImages().stream().map(c->productImageRepository.findById(c)).collect(Collectors.toSet()));
+		entity.setName(dto.getName());
+		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
+	}
+
+	@Override
+	public void add(ProductDTO dto) {
+		Product entity = new Product();
+		Seller seller = userService.getCurrentUser().getSeller();
+
+		mapDtoToEntity(dto, entity);
+
+		entity.setSeller(seller);
+
+		productRepository.save(entity);
+		
+		seller.addProduct(entity);
+		
+		sellerRepository.save(seller);
+	}
+
+	@Override
+	public ProductDTO get(Integer id) {
+		Product entity = productRepository.findById(id);
+
+		if (entity == null)
+			return null;
+
+		ProductDTO dto = new ProductDTO();
+
+		mapEntityToDto(entity, dto);
+
+		return dto;
+	}
+
+	@Override
+	public void update(int id, ProductDTO dto) {
+		Product entity = productRepository.findById(id);
+
+		mapDtoToEntityNonNullsOnly(dto, entity);
+		updateCategories(dto,entity);
+
+		productRepository.save(entity);
+	}
+
+	@Override
+	public void delete(Integer id) {
+		removeAllImages(id);
+		
+		Product product = productRepository.findById(id);
+		Set<ProductCategory> categories = product.getCategories();
+
+		Iterator<ProductCategory> categoryIterator = categories.iterator();
+		while (categoryIterator.hasNext()) {
+			categoryIterator.remove();
+		}
+
+		Seller seller = product.getSeller();
+		seller.removeProduct(product);
+
+		productRepository.delete(product);
+	}
+
+	@Override
+	public List<ProductDTO> getAll() {
+		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
+
+		for (Product entity : productRepository.findAll()) {
+			ProductDTO dto = new ProductDTO();
+
+			mapEntityToDto(entity, dto);
+
+			dtos.add(dto);
+		}
+
+		return dtos;
+	}
+
+	@Override
+	public List<ProductDTO> getAll(int page, int size) {
+		if (page < 0 || size < 0)
+			return new ArrayList<ProductDTO>();
+
+		List<ProductDTO> dtos = getAll();
+		List<ProductDTO> pagedDtos = new ArrayList<ProductDTO>();
+
+		int count = dtos.size();
+		int firstElement = page * size;
+		int endElement = size + page * size;
+
+		if (firstElement > count)
+			return new ArrayList<ProductDTO>();
+
+		for (int i = firstElement; i < endElement; i++) {
+			if (i > count - 1)
+				break;
+			pagedDtos.add(dtos.get(i));
+		}
+
+		return pagedDtos;
+	}
+
+	@Override
+	public int size() {
+		return Math.toIntExact(productRepository.count());
+	}
+
+	@Override
+	public void ValidateDto(ProductDTO dto) {
+		// TODO Auto-generated method stub
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,6 +3,8 @@ package com.szakdoga.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,39 +22,75 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.services.interfaces.ProductService;
+import com.szakdoga.services.interfaces.UserService;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 	
 	@Autowired
-	ProductService productService;
+	private ProductService productService;
+	@Autowired
+	private UserService userService;
 	
-	@PostMapping 
-	public void create(@RequestBody ProductDTO productDTO)
+	@PostMapping("/") 
+	public void create(@RequestBody ProductDTO dto, HttpServletResponse response)
 	{
-		productService.addProduct(productDTO);
+		userService.checkIfActivated(userService.getCurrentUser());
+		
+		productService.ValidateDto(dto);
+		
+		productService.add(dto);
 	}
 	
-	@DeleteMapping("/{productId}")
-	public void deleteOne(@PathVariable("productId") int productId)
-	{
-		productService.removeProduct(productId);
+	@GetMapping("/{id}")
+	public ProductDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
+		ProductDTO dto = productService.get(id);
+
+		if (dto == null) {		
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+			return null;
+		}
+
+		return dto;
 	}
 	
-	@DeleteMapping()
-	public void deleteAll()
-	{
-		productService.removeAllProducts();
+	@GetMapping("/all")
+	public List<ProductDTO> getAll() {
+		return productService.getAll();
 	}
 	
-	@PutMapping("/{productId}")
-	public void update(@PathVariable("productId") int productId,@RequestBody ProductDTO productDTO)
-	{
-		productService.updateProduct(productId,productDTO);
+	@GetMapping("/size")
+	public int size() {
+		return productService.size();
+	}
+
+	@PutMapping("/{id}")
+	public void update(
+			@RequestBody ProductDTO dto,
+			@PathVariable("id") Integer id, 
+			HttpServletResponse response)
+	{		
+		if (productService.get(id) == null) {		
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+			return;
+		}
+		
+		userService.checkIfActivated(userService.getCurrentUser());
+		
+		productService.update(id,dto);
+	}
+	
+	@DeleteMapping("/{id}")
+	public void delete(@PathVariable("id") Integer id, HttpServletResponse response) {
+
+		if (productService.get(id) == null) {		
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+		}
+		
+		productService.delete(id);
 	}
 	
 	@RequestMapping(value = "/addProductImage", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

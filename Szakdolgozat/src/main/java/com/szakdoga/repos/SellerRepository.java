@@ -8,4 +8,5 @@ import com.szakdoga.entities.User;
 public interface SellerRepository extends JpaRepository<Seller, Integer> {
 
 	Seller findByUser(User user);
+	Seller findById(Integer id);
 }

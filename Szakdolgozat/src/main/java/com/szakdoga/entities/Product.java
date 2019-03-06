@@ -103,7 +103,7 @@ public class Product extends EntityBase {
 	}
 
 	// https://stackoverflow.com/a/48421327
-	public void addCategories(ProductCategory category) {
+	public void addCategory(ProductCategory category) {
 		if(category == null)
 			return;
 		if (categories == null)
@@ -115,7 +115,7 @@ public class Product extends EntityBase {
 	}
 
 	// https://stackoverflow.com/a/48421327
-	public void removeCategories(ProductCategory category) {
+	public void removeCategory(ProductCategory category) {
 		if (categories == null)
 			return;
 		categories.remove(category);
