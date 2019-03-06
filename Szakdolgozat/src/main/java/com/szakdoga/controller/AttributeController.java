@@ -27,7 +27,10 @@ public class AttributeController {
 	private AttributeService attributeService;
 
 	@PostMapping("/")
-	public void create(@RequestBody AttributeDTO dto) {
+	public void create(@RequestBody AttributeDTO dto, HttpServletResponse response) {
+		
+		response.setStatus(HttpServletResponse.SC_CREATED); 
+		
 		attributeService.add(dto);
 	}
 

@@ -42,6 +42,8 @@ public class ProductController {
 		
 		productService.ValidateDto(dto);
 		
+		response.setStatus(HttpServletResponse.SC_CREATED); 
+		
 		productService.add(dto);
 	}
 	

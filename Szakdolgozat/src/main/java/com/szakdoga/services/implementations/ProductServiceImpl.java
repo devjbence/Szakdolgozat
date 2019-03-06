@@ -135,8 +135,6 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void mapDtoToEntity(ProductDTO dto, Product entity) {
-		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
-		entity.setImages(dto.getImages().stream().map(c->productImageRepository.findById(c)).collect(Collectors.toSet()));
 		entity.setName(dto.getName());
 		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
 	}
