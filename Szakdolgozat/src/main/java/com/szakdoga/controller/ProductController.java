@@ -35,7 +35,7 @@ public class ProductController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping("/") 
+	@PostMapping 
 	public void create(@RequestBody ProductDTO dto, HttpServletResponse response)
 	{
 		userService.checkIfActivated(userService.getCurrentUser());
@@ -104,29 +104,11 @@ public class ProductController {
 		return new ResponseEntity<>("File is uploaded successfully", HttpStatus.ACCEPTED);
 	}
 	
-	@DeleteMapping("/deleteProductImage/{imageId}")
-	public void deleteProductImage(@PathVariable("imageId") Integer imageId)
-	{
-		productService.removeImage(imageId);
-	}
-	
-	@DeleteMapping("/deleteAllProductImages/{productId}")
-	public void deleteAllProductImages(@PathVariable("productId") Integer productId)
-	{
-		productService.removeAllImages(productId);
-	}
-	
-	@GetMapping("getAllProductImageIds/{productId}")
-	public List<Integer> getAllProductImageIds(@PathVariable("productId") Integer productId)
-	{
-		List<Integer> ids =productService.getAllProductImageIds(productId);
-		return ids;
-	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/getProductImage/{imageId}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] getImage(@PathVariable("imageId") Integer imageId) {
 
-		return productService.getProductImage(imageId);
+		return productService.getImage(imageId);
 	}
 }

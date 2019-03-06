@@ -77,6 +77,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		.antMatchers(HttpMethod.DELETE,"/users/**")
 		.hasRole("ADMIN")
 		//user
+		.antMatchers(HttpMethod.GET,"/user/registered/activation/**")
+		.permitAll()
 		.antMatchers(HttpMethod.GET,"/user/**")
 		.authenticated()
 		.antMatchers(HttpMethod.POST,"/user/changePassword")

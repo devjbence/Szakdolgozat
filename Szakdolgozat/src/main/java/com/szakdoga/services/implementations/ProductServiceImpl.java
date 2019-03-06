@@ -12,15 +12,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.ProductCategory;
-import com.szakdoga.entities.ProductImage;
+import com.szakdoga.entities.Image;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ProductDTO;
-import com.szakdoga.exceptions.ImageDoesNotExistsException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
-import com.szakdoga.exceptions.ProductDoesNotExistsException;
+import com.szakdoga.exceptions.SellerDoesNotExistsException;
 import com.szakdoga.repos.CommentRepository;
+import com.szakdoga.repos.ImageRepository;
 import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.ProductImageRepository;
 import com.szakdoga.repos.SellerRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.ProductService;
@@ -38,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private ProductImageRepository productImageRepository;
+	private ImageRepository imageRepository;
 	@Autowired
 	private CommentRepository commentRepository;
 
@@ -70,65 +69,27 @@ public class ProductServiceImpl implements ProductService {
 			throw new ImageSizeIsTooBigException(
 					"The imagesize is more than: " + Utils.MAX_IMAGEFILE_SIZE / 1000 + " KB");
 
-		ProductImage image = new ProductImage();
-		image.setProduct(product);
+		Image image = new Image();		
 
 		try {
-			image.setProductImage(imageFile.getBytes());
+			image.setFile(imageFile.getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
+		
+		imageRepository.save(image);
 
 		product.addImage(image);
-		productRepository.save(product);
-	}
-
-	@Override
-	public void removeImage(Integer imageId) {
-		ProductImage productImage = productImageRepository.findById(imageId);
-
-		Product product = productImage.getProduct();
 		
-		product.removeImage(productImage);
-
 		productRepository.save(product);
-		productImageRepository.delete(imageId);
 	}
-
+	
 	@Override
-	public void removeAllImages(Integer productId) {
-		Product product = productRepository.findById(productId);
+	public byte[] getImage(Integer imageId) {
 
-		List<Integer> imageIds = product.getImages().stream().mapToInt(im -> im.getId()).boxed()
-				.collect(Collectors.toList());
+		Image Image = imageRepository.findById(imageId);
 
-		for (int imageId : imageIds) {
-			removeImage(imageId);
-		}
-	}
-
-	@Override
-	public List<Integer> getAllProductImageIds(Integer productId) {
-		Product product = productRepository.findById(productId);
-		if (product == null)
-			throw new ProductDoesNotExistsException("The product does not exists !");
-
-		List<Integer> imageIds = product.getImages().stream().mapToInt(im -> im.getId()).boxed()
-				.collect(Collectors.toList());
-		return imageIds;
-	}
-
-	@Override
-	public byte[] getProductImage(Integer imageId) {
-
-		ProductImage productImage = productImageRepository.findById(imageId);
-		if (productImage == null)
-			throw new ImageDoesNotExistsException("The image does not exists!");
-
-		byte[] image = productImage.getProductImage();
-
-		if (image == null)
-			throw new ImageDoesNotExistsException("The image does not exists!");
+		byte[] image = Image.getFile();
 
 		return image;
 	}
@@ -153,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void mapDtoToEntityNonNullsOnly(ProductDTO dto, Product entity) {
 		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
-		entity.setImages(dto.getImages().stream().map(c->productImageRepository.findById(c)).collect(Collectors.toSet()));
+		entity.setImages(dto.getImages().stream().map(c->imageRepository.findById(c)).collect(Collectors.toSet()));
 		entity.setName(dto.getName());
 		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
 	}
@@ -200,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void delete(Integer id) {
-		removeAllImages(id);
+		//removeAllImages(id);
 		
 		Product product = productRepository.findById(id);
 		Set<ProductCategory> categories = product.getCategories();
@@ -262,7 +223,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void ValidateDto(ProductDTO dto) {
-		// TODO Auto-generated method stub
+		Seller seller = sellerRepository.findById(dto.getSellerId());
+		
+		if(seller == null)
+		{
+			throw new SellerDoesNotExistsException("Seller with id="+dto.getSellerId()+" does not exists");
+		}
 	}
 }
 

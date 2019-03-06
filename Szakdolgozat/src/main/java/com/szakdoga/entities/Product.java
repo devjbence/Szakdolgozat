@@ -18,15 +18,6 @@ import javax.persistence.OneToMany;
 @Entity
 public class Product extends EntityBase {
 	
-	//isActive - if the product is not yet been sold
-	//isBidding
-	//isFixedPrice
-	//biddingList
-	//commentList
-	//endDate - if bidding then end date 
-	//buyer - Buyer entity
-	//price null if bidding number if fixed
-	
 	String name;
 	@Lob
 	@Column(name = "description", length = 2048)
@@ -43,18 +34,23 @@ public class Product extends EntityBase {
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Comment> comments;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<ProductImage> images;
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinTable(
+            name = "product_image",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+            )
+	private Set<Image> images;
 
 	
-	public void addImage(ProductImage image)
+	public void addImage(Image image)
 	{
 		if(images == null)
-			images = new HashSet<ProductImage>();
+			images = new HashSet<Image>();
 		images.add(image);
 	}
 	
-	public void removeImage(ProductImage image)
+	public void removeImage(Image image)
 	{
 		if(images == null)
 			return;
@@ -122,11 +118,11 @@ public class Product extends EntityBase {
 		category.getJobs().remove(this);
 	}
 
-	public Set<ProductImage> getImages() {
+	public Set<Image> getImages() {
 		return images;
 	}
 
-	public void setImages(Set<ProductImage> images) {
+	public void setImages(Set<Image> images) {
 		this.images = images;
 	}
 	

@@ -123,19 +123,16 @@ CREATE TABLE `product_product_category` (
   FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table `product_image`
+create table `image`
 (
 	`id` int(11) not null auto_increment,
-	`product_id` int(11) not null,
-    `product_image` BLOB DEFAULT NULL,
+    `file` BLOB DEFAULT NULL,
 	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`),
-    KEY `product_id` (`product_id`),
-    FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
+	PRIMARY KEY (`id`)
 );
 
-create table `product_comment`
+create table `comment`
 (
 	`id` int(11) not null auto_increment,
 	`product_id` int(11) not null,
@@ -172,19 +169,19 @@ insert into product_category(id,product_name,parent_id,about,active) values(3,'X
 select * from role;
 select * from user;
 select * from user_role;
-select * from product_image;
+select * from image;
 select * from product;
 select * from product_category;
 select * from product_product_category;
-select * from product_comment;
+select * from comment;
 select * from attribute;
 
-drop table product_comment;
+drop table comment;
 drop table product_product_category;
 drop table seller_product_category;
 drop table buyer_product_category;
 drop table product_category;
-drop table product_image;
+drop table image;
 drop table product;
 drop table buyer;
 drop table seller;

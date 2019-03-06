@@ -27,7 +27,7 @@ public class CommentController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping("/")
+	@PostMapping
 	public void create(@RequestBody CommentDTO dto, HttpServletResponse response) {
 		
 		userService.checkIfActivated(userService.getCurrentUser());
