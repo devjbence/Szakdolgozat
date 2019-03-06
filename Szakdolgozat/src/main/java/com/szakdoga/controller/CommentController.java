@@ -34,6 +34,8 @@ public class CommentController {
 		
 		commentService.ValidateDto(dto);
 		
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		
 		commentService.add(dto);
 	}
 
