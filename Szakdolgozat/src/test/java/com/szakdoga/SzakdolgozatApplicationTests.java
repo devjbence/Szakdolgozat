@@ -19,7 +19,7 @@ import com.szakdoga.repos.BuyerRepository;
 import com.szakdoga.repos.RefreshTokenRepository;
 import com.szakdoga.repos.RoleRepository;
 import com.szakdoga.repos.UserRepository;
-import com.szakdoga.services.UserService;
+import com.szakdoga.services.interfaces.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

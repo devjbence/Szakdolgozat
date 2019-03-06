@@ -1,4 +1,4 @@
-package com.szakdoga.services;
+package com.szakdoga.services.interfaces;
 
 import java.util.List;
 

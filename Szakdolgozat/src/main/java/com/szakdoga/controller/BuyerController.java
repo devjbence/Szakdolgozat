@@ -19,8 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.BuyerDTO;
-import com.szakdoga.services.BuyerService;
-import com.szakdoga.services.UserService;
+import com.szakdoga.services.interfaces.BuyerService;
+import com.szakdoga.services.interfaces.UserService;
 
 @RestController
 @RequestMapping("/buyer")

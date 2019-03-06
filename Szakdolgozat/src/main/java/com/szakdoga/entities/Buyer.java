@@ -31,7 +31,7 @@ public class Buyer extends EntityBase {
 	private User user;
 	
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<ProductComment> comments;
+	private List<Comment> comments;
 
 	@Column(name = "first_name")
 	private String firstName;
@@ -113,15 +113,15 @@ public class Buyer extends EntityBase {
 		return user.getUsername();
 	}
 
-	public List<ProductComment> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(List<ProductComment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 	
-	public void removeComment(ProductComment comment)
+	public void removeComment(Comment comment)
 	{
 		comments.remove(comment);
 	}

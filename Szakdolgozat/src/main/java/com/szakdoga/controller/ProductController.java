@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.szakdoga.entities.DTOs.ProductCommentDTO;
+import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
-import com.szakdoga.services.ProductService;
+import com.szakdoga.services.interfaces.ProductService;
 
 @RestController
 @RequestMapping("/product")
@@ -88,41 +88,5 @@ public class ProductController {
 	public byte[] getImage(@PathVariable("imageId") Integer imageId) {
 
 		return productService.getProductImage(imageId);
-	}
-	
-	@GetMapping("getComment/{commentId}")
-	public ProductCommentDTO getComment(@PathVariable("commentId") Integer commentId)
-	{
-		return productService.getComment(commentId);
-	}
-	
-	@GetMapping("getComments/productId/{productId}/page/{page}/size/{size}")
-	public List<ProductCommentDTO> getComments(@PathVariable("productId") Integer productId,@PathVariable("page") Integer page,@PathVariable("size") Integer size)
-	{
-		return productService.getCommentsByProductId(productId, page, size);
-	}
-	
-	@PostMapping("/createComment")
-	public void createComment(@RequestBody ProductCommentDTO commentDTO)
-	{
-		productService.createComment(commentDTO);
-	}
-	
-	@PutMapping("/updateComment")
-	public void updateComment(@RequestBody ProductCommentDTO commentDTO)
-	{
-		productService.updateComment(commentDTO);
-	}
-	
-	@DeleteMapping("/deleteComment/{productCommentId}")
-	public void deleteComment(@PathVariable("productCommentId") Integer productCommentId)
-	{
-		productService.deleteComment(productCommentId);
-	}
-	
-	@DeleteMapping("/deleteAllComments/{username}")
-	public void deleteComment(@PathVariable("username") String username)
-	{
-		productService.deleteAllComments(username);
 	}
 }

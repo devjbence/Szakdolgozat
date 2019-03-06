@@ -14,26 +14,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.szakdoga.entities.User;
-import com.szakdoga.entities.DTOs.AttributeDTO;
-import com.szakdoga.exceptions.UserDoesNotExistsException;
-import com.szakdoga.services.interfaces.AttributeService;
+import com.szakdoga.entities.DTOs.CommentDTO;
+import com.szakdoga.services.interfaces.CommentService;
+import com.szakdoga.services.interfaces.UserService;
 
 @RestController
-@RequestMapping("/attribute")
-public class AttributeController {
+@RequestMapping("/comment")
+public class CommentController {
 
 	@Autowired
-	private AttributeService attributeService;
+	private CommentService commentService;
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/")
-	public void create(@RequestBody AttributeDTO dto) {
-		attributeService.add(dto);
+	public void create(@RequestBody CommentDTO dto, HttpServletResponse response) {
+		
+		userService.checkIfActivated(userService.getCurrentUser());
+		
+		commentService.ValidateDto(dto);
+		
+		commentService.add(dto);
 	}
 
 	@GetMapping("/{id}")
-	public AttributeDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
-		AttributeDTO dto = attributeService.get(id);
+	public CommentDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
+		CommentDTO dto = commentService.get(id);
 
 		if (dto == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
@@ -44,44 +50,38 @@ public class AttributeController {
 	}
 	
 	@GetMapping("/all")
-	public List<AttributeDTO> getAll() {
-		return attributeService.getAll();
+	public List<CommentDTO> getAll() {
+		return commentService.getAll();
 	}
 	
 	@GetMapping("/size")
 	public int size() {
-		return attributeService.size();
-	}
-	
-	@GetMapping("/all/page/{page}/size/{size}")
-	public List<AttributeDTO> getAll(
-			@PathVariable("page") Integer page,
-			@PathVariable("size") Integer size)
-	{
-		return attributeService.getAll(page,size);
+		return commentService.size();
 	}
 
 	@PutMapping("/{id}")
 	public void update(
-			@RequestBody AttributeDTO dto,
+			@RequestBody CommentDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
-		if (attributeService.get(id) == null) {		
+		if (commentService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return;
 		}
 		
-		attributeService.update(id,dto);
+		userService.checkIfActivated(userService.getCurrentUser());
+		
+		commentService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable("id") Integer id, HttpServletResponse response) {
 
-		if (attributeService.get(id) == null) {		
+		if (commentService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 		}
 		
-		attributeService.delete(id);
+		commentService.delete(id);
 	}
 }

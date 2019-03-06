@@ -2,11 +2,26 @@ package com.szakdoga.entities.DTOs;
 
 import java.util.List;
 
-public class ProductCommentDTO {
-	Integer productId;
-	Integer productCommentId;
-	String username;
-	String message;
+public class CommentDTO {
+	private Integer id;
+	private Integer productId;
+	private Integer buyerId;
+	private String username;
+	private String message;
+	
+	
+	public Integer getBuyerId() {
+		return buyerId;
+	}
+	public void setBuyerId(Integer buyerId) {
+		this.buyerId = buyerId;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Integer getProductId() {
 		return productId;
 	}
@@ -25,15 +40,9 @@ public class ProductCommentDTO {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public Integer getProductCommentId() {
-		return productCommentId;
-	}
-	public void setProductCommentId(Integer productCommentId) {
-		this.productCommentId = productCommentId;
-	}
 	@Override
 	public String toString() {
-		return "ProductCommentDTO [productId=" + productId + ", productCommentId=" + productCommentId + ", username="
+		return "ProductCommentDTO [productId=" + productId + ", productCommentId=" + id + ", username="
 				+ username + ", message=" + message + "]";
 	}
 	

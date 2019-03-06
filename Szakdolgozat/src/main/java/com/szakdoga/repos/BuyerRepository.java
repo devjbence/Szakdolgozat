@@ -8,4 +8,6 @@ import com.szakdoga.entities.User;
 public interface BuyerRepository extends JpaRepository<Buyer, Integer> {
 
 	Buyer findByUser(User user);
+	
+	Buyer findById(Integer id);
 }

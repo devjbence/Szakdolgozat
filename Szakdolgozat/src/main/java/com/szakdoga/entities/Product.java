@@ -41,7 +41,7 @@ public class Product extends EntityBase {
 	private Seller seller;
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<ProductComment> comments;
+	private List<Comment> comments;
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<ProductImage> images;
@@ -94,11 +94,11 @@ public class Product extends EntityBase {
 	}
 	
 
-	public List<ProductComment> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(List<ProductComment> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 
@@ -130,7 +130,7 @@ public class Product extends EntityBase {
 		this.images = images;
 	}
 	
-	public void removeComment(ProductComment comment)
+	public void removeComment(Comment comment)
 	{
 		comments.remove(comment);
 	}

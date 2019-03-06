@@ -1,4 +1,4 @@
-package com.szakdoga.services;
+package com.szakdoga.services.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.szakdoga.entities.Attribute;
 import com.szakdoga.entities.DTOs.AttributeDTO;
 import com.szakdoga.repos.AttributeRepository;
+import com.szakdoga.services.interfaces.AttributeService;
 
 @Service
 public class AttributeServiceImpl implements AttributeService {
@@ -28,7 +29,7 @@ public class AttributeServiceImpl implements AttributeService {
 
 	@Override
 	public AttributeDTO get(Integer id) {
-		Attribute entity = attributeRepository.findOne(id);
+		Attribute entity = attributeRepository.findById(id);
 
 		if (entity == null)
 			return null;
@@ -73,7 +74,7 @@ public class AttributeServiceImpl implements AttributeService {
 
 	@Override
 	public void update(int id, AttributeDTO dto) {
-		Attribute entity = attributeRepository.findOne(id);
+		Attribute entity = attributeRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 

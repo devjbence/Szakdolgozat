@@ -26,7 +26,7 @@ import com.szakdoga.entities.DTOs.UserDTO;
 import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.WrongActivationCodeException;
 import com.szakdoga.repos.UserRepository;
-import com.szakdoga.services.UserService;
+import com.szakdoga.services.interfaces.UserService;
 
 @CrossOrigin
 @RestController

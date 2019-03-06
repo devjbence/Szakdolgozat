@@ -1,4 +1,4 @@
-package com.szakdoga.services;
+package com.szakdoga.services.implementations;
 
 import java.security.Principal;
 import java.util.Date;
@@ -42,6 +42,7 @@ import com.szakdoga.repos.RefreshTokenRepository;
 import com.szakdoga.repos.RoleRepository;
 import com.szakdoga.repos.UserActivationRepository;
 import com.szakdoga.repos.UserRepository;
+import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.EmailUtil;
 import com.szakdoga.utils.Utils;
 

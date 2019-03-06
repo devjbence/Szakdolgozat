@@ -7,8 +7,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="product_comment")
-public class ProductComment extends EntityBase{
+@Table(name="comment")
+public class Comment extends EntityBase{
 	
 	@ManyToOne
 	@JoinColumn(name = "product_id")

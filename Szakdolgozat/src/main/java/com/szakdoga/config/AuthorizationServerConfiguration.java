@@ -22,7 +22,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
-import com.szakdoga.services.CustomUserDetailsService;
+import com.szakdoga.services.interfaces.CustomUserDetailsService;
 
 @Configuration
 @EnableAuthorizationServer

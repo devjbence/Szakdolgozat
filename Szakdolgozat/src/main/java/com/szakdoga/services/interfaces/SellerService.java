@@ -1,4 +1,4 @@
-package com.szakdoga.services;
+package com.szakdoga.services.interfaces;
 
 import org.springframework.web.multipart.MultipartFile;
 
