@@ -1,7 +1,9 @@
 package com.szakdoga.entities.DTOs;
 
 import java.util.List;
+import lombok.Data;
 
+@Data
 public class BuyerDTO{
 	private int id;
 	private String username;
@@ -10,47 +12,4 @@ public class BuyerDTO{
 	private String aboutMe;
 	private int profileImage;
 	List<Integer> categories;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getAboutMe() {
-		return aboutMe;
-	}
-	public void setAboutMe(String aboutMe) {
-		this.aboutMe = aboutMe;
-	}
-	public int getProfileImage() {
-		return profileImage;
-	}
-	public void setProfileImage(int profileImage) {
-		this.profileImage = profileImage;
-	}
-	public List<Integer> getCategories() {
-		return categories;
-	}
-	public void setCategories(List<Integer> categories) {
-		this.categories = categories;
-	}
 }

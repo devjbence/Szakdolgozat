@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
 		dto.setImages(entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setSellerId(entity.getSeller().getId());
 		dto.setDescription(entity.getDescription());
-		dto.setProductId(entity.getId());
+		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 	}
 

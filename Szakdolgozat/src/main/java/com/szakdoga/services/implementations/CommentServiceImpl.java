@@ -6,11 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.szakdoga.entities.Attribute;
 import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Comment;
 import com.szakdoga.entities.Product;
-import com.szakdoga.entities.DTOs.BuyerDTO;
 import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.exceptions.BuyerDoesNotExistsException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;

@@ -14,8 +14,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Product extends EntityBase {
 	
 	String name;
@@ -56,47 +60,6 @@ public class Product extends EntityBase {
 			return;
 		images.remove(image);
 	}
-	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Set<ProductCategory> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(Set<ProductCategory> categories) {
-		this.categories = categories;
-	}
-
-	public Seller getSeller() {
-		return seller;
-	}
-
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
-	
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
 
 	// https://stackoverflow.com/a/48421327
 	public void addCategory(ProductCategory category) {
@@ -116,14 +79,6 @@ public class Product extends EntityBase {
 			return;
 		categories.remove(category);
 		category.getJobs().remove(this);
-	}
-
-	public Set<Image> getImages() {
-		return images;
-	}
-
-	public void setImages(Set<Image> images) {
-		this.images = images;
 	}
 	
 	public void removeComment(Comment comment)

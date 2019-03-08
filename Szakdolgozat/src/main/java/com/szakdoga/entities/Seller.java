@@ -14,8 +14,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name="seller")
 public class Seller extends EntityBase{
 
@@ -58,64 +62,6 @@ public class Seller extends EntityBase{
 		if(categories == null)
 			return;
 		categories.remove(category);
-	}
-	
-	
-	
-	public Set<ProductCategory> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(Set<ProductCategory> categories) {
-		this.categories = categories;
-	}
-
-	public Set<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(Set<Product> products) {
-		this.products = products;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getAboutMe() {
-		return aboutMe;
-	}
-
-	public void setAboutMe(String aboutMe) {
-		this.aboutMe = aboutMe;
-	}
-
-	public Image getProfileImage() {
-		return profileImage;
-	}
-
-	public void setProfileImage(Image profileImage) {
-		this.profileImage = profileImage;
 	}
 
 	public void addProduct(Product product)

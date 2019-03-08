@@ -15,9 +15,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "buyer")
+@Getter
+@Setter
 public class Buyer extends EntityBase {
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -57,65 +61,9 @@ public class Buyer extends EntityBase {
 		categories.remove(category);
 	}
 
-	public Set<ProductCategory> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(Set<ProductCategory> categories) {
-		this.categories = categories;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getAboutMe() {
-		return aboutMe;
-	}
-
-	public void setAboutMe(String aboutMe) {
-		this.aboutMe = aboutMe;
-	}
-
-	public Image getProfileImage() {
-		return profileImage;
-	}
-
-	public void setProfileImage(Image profileImage) {
-		this.profileImage = profileImage;
-	}
-
 	public String Username()
 	{
 		return user.getUsername();
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
 	}
 	
 	public void removeComment(Comment comment)
