@@ -43,7 +43,7 @@ public class SellerController {
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		sellerService.update(id,dto);		
+		sellerService.update(id,dto);
 	}
 	
 	@PostMapping(path="/profileImage",consumes = "multipart/form-data")
@@ -61,8 +61,8 @@ public class SellerController {
 	public SellerDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
 		SellerDTO dto = sellerService.get(id);
 
-		if (dto == null) {		
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+		if (dto == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
 
