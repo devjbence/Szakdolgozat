@@ -1,6 +1,7 @@
 package com.szakdoga.services.implementations;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +18,12 @@ import org.springframework.stereotype.Service;
 import com.szakdoga.entities.AccessTokenEntity;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.Buyer;
+import com.szakdoga.entities.Comment;
 import com.szakdoga.entities.RefreshTokenEntity;
 import com.szakdoga.entities.Role;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.UserActivation;
+import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.entities.DTOs.UserDTO;
 import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.EmailAddressAlreadyRegisteredException;
@@ -75,78 +78,11 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${server.contextPath}")
 	private String serverContext;
-	
-	@Override
-	public void removeUser(String username) {
-		deleteUsersToken(username);
-	}
-
-	@Override
-	public void removeAllUsers() {
-
-	}
-
-	@Override
-	public List<User> findAll() {
-		return (List<User>) userRepository.findAll();
-	}
 
 	@Override
 	public void checkIfActivated(User user) {
 		if (!user.isActivated())
 			throw new UserIsNotActivatedException("User is not activated.");
-	}
-
-	public User checkUserValues(String username) {
-		if (username == null)
-			throw new UsernameIsMissingException("Username is missing !");
-		User user = userRepository.findByUsername(username);
-		if (user == null)
-			throw new UserDoesNotExistsException("The username given does not exists!");
-
-		checkIfActivated(user);
-		return user;
-	}
-
-	@Override
-	public void register(UserDTO userDTO) {
-		
-		if( userDTO.getUsername() == null || userDTO.getEmail()  == null || 
-			userDTO.getPassword() == null || userDTO.getRole() == null)
-			throw new MissingUserInformationException("Userinformation is missing");
-		
-		if( userDTO.getUsername().isEmpty() || userDTO.getEmail().isEmpty() || 
-				userDTO.getPassword().isEmpty() || userDTO.getRole().isEmpty())
-				throw new MissingUserInformationException("Userinformation is missing");
-			
-		checkIfAlreadyInDb(userDTO.getUsername(), userDTO.getEmail());
-
-		List<String> validRoles = roleRepository.findAll().stream().map( r-> r.getName() ).collect(Collectors.toList());
-		
-		if( !validRoles.contains(userDTO.getRole()) )
-			throw new RoleDoesNotExistsException("The role does not exists !");
-		
-		User user = new User();
-		Role role = roleRepository.findByName(userDTO.getRole());
-
-		user.setEmail(userDTO.getEmail());
-		user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-		user.setUsername(userDTO.getUsername());
-
-		user.addRole(role);
-
-		userRepository.save(user);
-
-		Seller seller = getDefaultSeller(user);
-		Buyer buyer = getDefaultBuyer(user);
-		UserActivation userActivation = getDefaultUserActivation(user);
-
-		sellerRepository.save(seller);
-		buyerRepository.save(buyer);
-		userActivationRepository.save(userActivation);
-
-		emailSender.sendSimpleMessage(userDTO.getEmail(), "Registration",
-				getRegistrationText(userDTO.getUsername(), userActivation.getActivationString()));
 	}
 
 	public void activateUser(String activationCode) {
@@ -163,10 +99,9 @@ public class UserServiceImpl implements UserService {
 			throw new ActivationExpiredException("The activation date has expired!");
 		}
 
-		// findByID nem ment emiatt ez alatt stream-el oldottam meg
-		// User user = userRepository.findByID(activation.getUser().getId());
-		List<User> lista = userRepository.findAll();
-		User user = lista.stream().filter(e -> e.getId().equals(activation.getUser().getId())).findFirst().get();
+		List<User> users = userRepository.findAll();
+		User user = users.stream().filter(e -> e.getId().equals(activation.getUser().getId())).findFirst().get();
+
 		user.setActivated(true);
 
 		userActivationRepository.delete(activation);
@@ -183,12 +118,10 @@ public class UserServiceImpl implements UserService {
 			refTokenRepository.delete(refToken);
 			accTokenIterator.remove();
 		}
-		
+
 	}
 
 	private void checkIfAlreadyInDb(String username, String email) {
-		// TODO: error message localization
-
 		if (userRepository.findByUsername(username) != null)
 			throw new UserameAlreadyRegisteredException("Already registered with the username: " + username);
 
@@ -198,19 +131,20 @@ public class UserServiceImpl implements UserService {
 
 	private String getRegistrationText(String username, String activationCode) {
 		StringBuilder sb = new StringBuilder();
-		String link = "localhost:" + port + serverContext + "/user" + "/registered/activation/" + activationCode;
+		String link = "localhost:" + port + serverContext + "/user/activation/" + activationCode;
 
 		sb.append("<h1>" + "Üdvözöljük " + username + "!" + "</h1></br>");
 		sb.append("<p>" + "Köszöntjük oldalunkon." + "</p>");
-		sb.append("</br>" + "A linkre kattintva tudja regisztrációját megerősíteni: " + "</br>" + link);
-		// sb.append("<a href='"+link+"'>"+ "Aktiválás"+"</a>");
+		sb.append("</br>" + "Regisztrációja megerősítéséhez kérjük " + "</br>");
+		// sb.append("<a href=+'" + link + "'>kattintson ide</a>");
+		sb.append("kattinson ide: " + link);
 
 		return sb.toString();
 	}
 
 	private Seller getDefaultSeller(User user) {
 		Seller offerer = new Seller();
-		
+
 		offerer.setAboutMe("Empty");
 		offerer.setCategories(null);
 		offerer.setFirstName("John");
@@ -247,52 +181,179 @@ public class UserServiceImpl implements UserService {
 		return activation;
 	}
 
-	@Override
-	public void changePassword(UserDTO userDTO) {
-		if(userDTO ==null)
-			throw new UsernameIsMissingException("No data found!");
-		
-		User user = userRepository.findByUsername(userDTO.getUsername());
-		
-		if(user==null)
-			throw new UsernameIsMissingException("Username is missing!");
-		
-		if(!user.getUsername().equals(getCurrentUsername()))
-			throw new NotOwnUsernameException("The given username is not your own!");
-		
-		checkIfActivated(user);
-		
-		if(userDTO.getNewPassword() ==null)
-			throw new NewPasswordIsMissingException("No new password was found!");
-		
-		if(userDTO.getPassword() ==null)
-			throw new OldPasswordIsMissingException("No old password was found!");
-		
-		String givenOldPasswordEncripted =  bCryptPasswordEncoder.encode(userDTO.getPassword()); 
-		String givenNewPasswordEncripted = bCryptPasswordEncoder.encode(userDTO.getNewPassword());
-		
-		String oldPasswordEncripted = user.getPassword();
-		
-		if(bCryptPasswordEncoder.matches(userDTO.getPassword(), oldPasswordEncripted))
-		{
-			user.setPassword(givenNewPasswordEncripted);
-			userRepository.save(user);
+	private void changePassword(User entity, UserDTO dto) {
+
+		checkIfActivated(entity);
+
+		String givenOldPasswordEncripted = bCryptPasswordEncoder.encode(dto.getPassword());
+		String givenNewPasswordEncripted = bCryptPasswordEncoder.encode(dto.getNewPassword());
+
+		String oldPasswordEncripted = entity.getPassword();
+
+		if (bCryptPasswordEncoder.matches(dto.getPassword(), oldPasswordEncripted)) {
+			entity.setPassword(givenNewPasswordEncripted);
 			return;
-		}
-		else
+		} else
 			throw new OldPasswordDoesNotMatchException("The given password does not match with the old one!");
 	}
-	
-	@Override
-	public String getCurrentUsername()
-	{
-	    Principal principal = request.getUserPrincipal();
 
-	    return principal.getName();
+	@Override
+	public String getCurrentUsername() {
+		Principal principal = request.getUserPrincipal();
+
+		return principal.getName();
 	}
 
 	@Override
 	public User getCurrentUser() {
 		return userRepository.findByUsername(getCurrentUsername());
+	}
+
+	@Override
+	public void mapDtoToEntity(UserDTO dto, User entity) {
+		if (dto.getEmail() != null) {
+			if (!dto.getEmail().equals(entity.getEmail())) {
+				if (userRepository.findByEmail(dto.getEmail()) != null) {
+					throw new EmailAddressAlreadyRegisteredException(
+							"Already registered with an email: " + (dto.getEmail()));
+				}
+				entity.setEmail(dto.getEmail());
+			}
+		}
+	}
+
+	@Override
+	public void mapEntityToDto(User entity, UserDTO dto) {
+		dto.setEmail(entity.getEmail());
+		dto.setId(entity.getId());
+		dto.setUsername(entity.getUsername());
+	}
+
+	@Override
+	public void mapDtoToEntityNonNullsOnly(UserDTO dto, User entity) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void add(UserDTO dto) {
+		if (dto.getUsername() == null || dto.getEmail() == null || dto.getPassword() == null || dto.getRole() == null)
+			throw new MissingUserInformationException("Userinformation is missing");
+
+		if (dto.getUsername().isEmpty() || dto.getEmail().isEmpty() || dto.getPassword().isEmpty()
+				|| dto.getRole().isEmpty())
+			throw new MissingUserInformationException("Userinformation is missing");
+
+		checkIfAlreadyInDb(dto.getUsername(), dto.getEmail());
+
+		List<String> validRoles = roleRepository.findAll().stream().map(r -> r.getName()).collect(Collectors.toList());
+
+		if (!validRoles.contains(dto.getRole()))
+			throw new RoleDoesNotExistsException("The role does not exists !");
+
+		User user = new User();
+		Role role = roleRepository.findByName(dto.getRole());
+
+		user.setEmail(dto.getEmail());
+		user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+		user.setUsername(dto.getUsername());
+
+		user.addRole(role);
+
+		userRepository.save(user);
+
+		Seller seller = getDefaultSeller(user);
+		Buyer buyer = getDefaultBuyer(user);
+		UserActivation userActivation = getDefaultUserActivation(user);
+
+		sellerRepository.save(seller);
+		buyerRepository.save(buyer);
+		userActivationRepository.save(userActivation);
+
+		emailSender.sendSimpleMessage(dto.getEmail(), "Registration",
+				getRegistrationText(dto.getUsername(), userActivation.getActivationString()));
+	}
+
+	@Override
+	public UserDTO get(Integer id) {
+		User entity = userRepository.findById(id);
+
+		if (entity == null)
+			return null;
+
+		UserDTO dto = new UserDTO();
+
+		mapEntityToDto(entity, dto);
+
+		return dto;
+	}
+
+	@Override
+	public void update(int id, UserDTO dto) {
+		User entity = userRepository.findById(id);
+
+		if (entity == null) {
+			return;
+		}
+
+		checkIfActivated(entity);
+
+		if (dto.getPassword() != null && dto.getNewPassword()!=null) {
+			changePassword(entity, dto);
+		}
+
+		mapDtoToEntity(dto, entity);
+
+		userRepository.save(entity);
+	}
+
+	@Override
+	public void delete(Integer id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<UserDTO> getAll() {
+		List<UserDTO> dtos = new ArrayList<UserDTO>();
+
+		for (User entity : userRepository.findAll()) {
+			UserDTO dto = new UserDTO();
+
+			mapEntityToDto(entity, dto);
+
+			dtos.add(dto);
+		}
+
+		return dtos;
+	}
+
+	@Override
+	public List<UserDTO> getAll(int page, int size) {
+		if (page < 0 || size < 0)
+			return new ArrayList<UserDTO>();
+
+		List<UserDTO> dtos = getAll();
+		List<UserDTO> pagedDtos = new ArrayList<UserDTO>();
+
+		int count = dtos.size();
+		int firstElement = page * size;
+		int endElement = size + page * size;
+
+		if (firstElement > count)
+			return new ArrayList<UserDTO>();
+
+		for (int i = firstElement; i < endElement; i++) {
+			if (i > count - 1)
+				break;
+			pagedDtos.add(dtos.get(i));
+		}
+
+		return pagedDtos;
+	}
+
+	@Override
+	public int size() {
+		return Math.toIntExact(userRepository.count());
 	}
 }
