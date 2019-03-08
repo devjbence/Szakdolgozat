@@ -57,13 +57,6 @@ public class SellerController {
 		sellerService.saveImage(user.getSeller(),file);
 	}
 	
-	@ResponseBody
-	@GetMapping(path="profileImage/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-	public byte[] getImage(@PathVariable("id") int id) {
-
-		return sellerService.getProfileImage(id);
-	}
-	
 	@GetMapping("/{id}")
 	public SellerDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
 		SellerDTO dto = sellerService.get(id);

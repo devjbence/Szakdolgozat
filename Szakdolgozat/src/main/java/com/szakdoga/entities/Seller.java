@@ -42,9 +42,9 @@ public class Seller extends EntityBase{
 	@Column(name="about_me", length=1024)
 	private String aboutMe;
 
-	@Lob
-	@Column(name="profile_image")
-	private byte[] profileImage;
+	@OneToOne
+	@JoinColumn(name="image_id")
+	private Image profileImage;
 
 	public void addCategory(ProductCategory category)
 	{
@@ -110,11 +110,11 @@ public class Seller extends EntityBase{
 		this.aboutMe = aboutMe;
 	}
 
-	public byte[] getProfileImage() {
+	public Image getProfileImage() {
 		return profileImage;
 	}
 
-	public void setProfileImage(byte[] profileImage) {
+	public void setProfileImage(Image profileImage) {
 		this.profileImage = profileImage;
 	}
 

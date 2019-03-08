@@ -1,5 +1,20 @@
 use szakdoga_db;
 
+drop table comment;
+drop table product_product_category;
+drop table seller_product_category;
+drop table buyer_product_category;
+drop table product_category;
+drop table product;
+drop table buyer;
+drop table seller;
+drop table image;
+drop table attribute;
+drop table user_role;
+drop table role;
+drop table user_activation;
+drop table user;
+
 CREATE TABLE `role` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `NAME` varchar(60) DEFAULT NULL,
@@ -44,17 +59,27 @@ CREATE TABLE `user_role` (
   FOREIGN KEY (`USER_ID`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+create table `image`
+(
+	`id` int(11) not null auto_increment,
+    `file` BLOB DEFAULT NULL,
+	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`)
+);
+
 CREATE TABLE `seller` ( 
   `ID` int(11) NOT NULL AUTO_INCREMENT,
     `user_id` int(11) not null,
   `first_name` varchar(60) not NULL,
   `last_name` varchar(60) not NULL,
   `about_me` TEXT DEFAULT NULL,
-  `profile_image` BLOB DEFAULT NULL,
+  `image_id` int(11),
    CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
-  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -64,11 +89,12 @@ CREATE TABLE `buyer` ( /*with user table - one to one*/ /*with job_seeker_job_ca
   `first_name` varchar(60) not NULL,
   `last_name` varchar(60) not NULL,
   `about_me` TEXT DEFAULT NULL,
-  `profile_image` BLOB DEFAULT NULL,
+  `image_id` int(11),
    CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
-  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -123,15 +149,6 @@ CREATE TABLE `product_product_category` (
   FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table `image`
-(
-	`id` int(11) not null auto_increment,
-    `file` BLOB DEFAULT NULL,
-	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (`id`)
-);
-
 create table `comment`
 (
 	`id` int(11) not null auto_increment,
@@ -158,7 +175,6 @@ create table `attribute`
 	PRIMARY KEY (`id`)
 );
 
-
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
 
@@ -170,26 +186,12 @@ select * from role;
 select * from user;
 select * from user_role;
 select * from image;
+select *from seller;
 select * from product;
 select * from product_category;
 select * from product_product_category;
 select * from comment;
 select * from attribute;
-
-drop table comment;
-drop table product_product_category;
-drop table seller_product_category;
-drop table buyer_product_category;
-drop table product_category;
-drop table image;
-drop table product;
-drop table buyer;
-drop table seller;
-drop table user_role;
-drop table role;
-drop table user_activation;
-drop table user;
-drop table attribute;
 
 
 

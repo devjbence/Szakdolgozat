@@ -95,7 +95,7 @@ public class ProductController {
 		productService.delete(id);
 	}
 	
-	@RequestMapping(value = "/addProductImage", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@RequestMapping(value = "/image", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Object> uploadImage(
 			@RequestPart("productId") String productId,
 			@RequestPart("image") MultipartFile imageFile) throws IOException {
@@ -104,11 +104,4 @@ public class ProductController {
 		return new ResponseEntity<>("File is uploaded successfully", HttpStatus.ACCEPTED);
 	}
 	
-	
-	@ResponseBody
-	@RequestMapping(value = "/getProductImage/{imageId}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public byte[] getImage(@PathVariable("imageId") Integer imageId) {
-
-		return productService.getImage(imageId);
-	}
 }

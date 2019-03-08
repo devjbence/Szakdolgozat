@@ -8,6 +8,4 @@ import com.szakdoga.entities.DTOs.BuyerDTO;
 public interface BuyerService extends BaseService<Buyer,BuyerDTO>{
 	
 	void saveImage(Buyer buyer, MultipartFile imageFile);
-	
-	byte[] getProfileImage(int id);
 }

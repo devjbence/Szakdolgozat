@@ -62,11 +62,11 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	EmailUtil emailSender;
+	private EmailUtil emailSender;
 	@Autowired
-	AccessTokenRepository accTokenRepository;
+	private AccessTokenRepository accTokenRepository;
 	@Autowired
-	RefreshTokenRepository refTokenRepository;
+	private RefreshTokenRepository refTokenRepository;
 	@Autowired
 	private HttpServletRequest request;
 
@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserService {
 
 	private Seller getDefaultSeller(User user) {
 		Seller offerer = new Seller();
-
+		
 		offerer.setAboutMe("Empty");
 		offerer.setCategories(null);
 		offerer.setFirstName("John");

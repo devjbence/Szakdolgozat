@@ -3,6 +3,7 @@ package com.szakdoga.entities.DTOs;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.szakdoga.entities.Image;
 
 public class SellerDTO{
 	private int id;
@@ -10,8 +11,7 @@ public class SellerDTO{
 	private String firstName;
 	private String lastName;
 	private String aboutMe;
-	@JsonIgnore
-	private byte[] profileImage;
+	private int profileImageId;
 	List<Integer> categories;
 
 	
@@ -45,11 +45,12 @@ public class SellerDTO{
 	public void setAboutMe(String aboutMe) {
 		this.aboutMe = aboutMe;
 	}
-	public byte[] getProfileImage() {
-		return profileImage;
+
+	public int getProfileImage() {
+		return profileImageId;
 	}
-	public void setProfileImage(byte[] profileImage) {
-		this.profileImage = profileImage;
+	public void setProfileImage(int profileImage) {
+		this.profileImageId = profileImage;
 	}
 	public List<Integer> getCategories() {
 		return categories;

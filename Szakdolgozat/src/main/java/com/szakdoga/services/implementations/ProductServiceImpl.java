@@ -83,16 +83,6 @@ public class ProductServiceImpl implements ProductService {
 		
 		productRepository.save(product);
 	}
-	
-	@Override
-	public byte[] getImage(Integer imageId) {
-
-		Image Image = imageRepository.findById(imageId);
-
-		byte[] image = Image.getFile();
-
-		return image;
-	}
 
 	@Override
 	public void mapDtoToEntity(ProductDTO dto, Product entity) {

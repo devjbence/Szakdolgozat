@@ -1,32 +1,13 @@
 package com.szakdoga.services.implementations;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import com.szakdoga.entities.Product;
-import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.Image;
-import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ImageDTO;
-import com.szakdoga.entities.DTOs.ProductDTO;
-import com.szakdoga.exceptions.ImageSizeIsTooBigException;
-import com.szakdoga.exceptions.SellerDoesNotExistsException;
-import com.szakdoga.repos.CommentRepository;
 import com.szakdoga.repos.ImageRepository;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.SellerRepository;
-import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.ImageService;
-import com.szakdoga.services.interfaces.ProductService;
-import com.szakdoga.services.interfaces.UserService;
-import com.szakdoga.utils.Utils;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -100,8 +81,7 @@ public class ImageServiceImpl implements ImageService {
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return Math.toIntExact(imageRepository.count());
 	}
 }
 

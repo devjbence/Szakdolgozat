@@ -1,32 +1,23 @@
 package com.szakdoga.services.implementations;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.szakdoga.entities.Buyer;
+import com.szakdoga.entities.Image;
 import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.Seller;
-import com.szakdoga.entities.User;
-import com.szakdoga.entities.DTOs.BuyerDTO;
 import com.szakdoga.entities.DTOs.SellerDTO;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.ImageUploadException;
-import com.szakdoga.exceptions.NotOwnUsernameException;
-import com.szakdoga.exceptions.UserDoesNotExistsException;
+import com.szakdoga.repos.ImageRepository;
 import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.SellerRepository;
-import com.szakdoga.repos.UserRepository;
-import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.SellerService;
 import com.szakdoga.utils.Utils;
 
@@ -38,7 +29,7 @@ public class SellerServiceImpl implements SellerService {
 	@Autowired
 	private SellerRepository sellerRepository;
 	@Autowired
-	private ProductService productService;
+	private ImageRepository imageRepository;
 
 	private void updateCategories(SellerDTO dto, Seller entity) {
 		if (dto.getCategories() == null)
@@ -65,7 +56,6 @@ public class SellerServiceImpl implements SellerService {
 
 		Iterator<ProductCategory> categoryIterator = seller.getCategories().iterator();
 		while (categoryIterator.hasNext()) {
-			ProductCategory category = categoryIterator.next();
 			categoryIterator.remove();
 		}
 
@@ -78,29 +68,20 @@ public class SellerServiceImpl implements SellerService {
 		if(imageFile.getSize() > Utils.MAX_IMAGEFILE_SIZE)
 			throw new ImageSizeIsTooBigException("The imagesize is more than: "+ Utils.MAX_IMAGEFILE_SIZE/1000 + " KB");
 		
+		Image image = new Image();
+		
 		try {
-			entity.setProfileImage(imageFile.getBytes());
-			sellerRepository.save(entity);
+			image.setFile(imageFile.getBytes());
+			
+			imageRepository.save(image);
+			
 		} catch (IOException e) {
 			throw new ImageUploadException("Image could not be uploaded");
 		}
-	}
-
-	@Override
-	public byte[] getProfileImage(int id) {
-
-		Seller entity = sellerRepository.findOne(id);
 		
-		if(entity == null)
-			return null;
+		entity.setProfileImage(image);
 		
-		byte[] profileImage = entity.getProfileImage();
-		
-		if (profileImage == null) {
-			return Utils.getDefaultProfileImage();
-		}
-		return profileImage;
-
+		sellerRepository.save(entity);
 	}
 
 	@Override
@@ -114,7 +95,7 @@ public class SellerServiceImpl implements SellerService {
 		dto.setCategories(entity.getCategories().stream().mapToInt(b->b.getId()).boxed().collect(Collectors.toList()));
 		dto.setFirstName(entity.getFirstName());
 		dto.setLastName(entity.getLastName());
-		dto.setProfileImage(entity.getProfileImage());
+		dto.setProfileImage(entity.getProfileImage() == null ? 0 : entity.getProfileImage().getId());
 		dto.setUsername(entity.getUser().getUsername());
 	}
 
