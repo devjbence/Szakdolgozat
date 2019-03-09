@@ -49,6 +49,8 @@ public class Product extends EntityBase {
             )
 	private Set<Image> images;
 
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Attribute> attributes;
 	
 	public void addImage(Image image)
 	{
@@ -64,6 +66,20 @@ public class Product extends EntityBase {
 		images.remove(image);
 	}
 
+	public void addAttribute(Attribute attribute)
+	{
+		if(attributes == null)
+			attributes = new HashSet<Attribute>();
+		attributes.add(attribute);
+	}
+	
+	public void removeAttribute(Attribute attribute)
+	{
+		if(attributes == null)
+			return;
+		attributes.remove(attribute);
+	}
+	
 	// https://stackoverflow.com/a/48421327
 	public void addCategory(ProductCategory category) {
 		if(category == null)

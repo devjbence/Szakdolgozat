@@ -5,8 +5,9 @@ import lombok.Data;
 
 @Data
 public class AttributeDTO {
-	private int id;
-	private String name;
+	private Integer id;
+	private Integer attributeName;
 	private AttributeType type;
 	private String value;
+	private Integer product;
 }

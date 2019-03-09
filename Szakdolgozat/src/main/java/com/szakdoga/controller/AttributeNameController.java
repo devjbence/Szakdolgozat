@@ -14,31 +14,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.szakdoga.entities.User;
-import com.szakdoga.entities.DTOs.AttributeDTO;
-import com.szakdoga.exceptions.UserDoesNotExistsException;
-import com.szakdoga.services.interfaces.AttributeService;
+import com.szakdoga.entities.DTOs.AttributeNameDTO;
+import com.szakdoga.services.interfaces.AttributeNameService;
+import com.szakdoga.services.interfaces.UserService;
 
 @RestController
-@RequestMapping("/attribute")
-public class AttributeController {
+@RequestMapping("/attributename")
+public class AttributeNameController {
 
 	@Autowired
-	private AttributeService attributeService;
+	private AttributeNameService attributeNameService;
+	@Autowired
+	private UserService userService;
 
-	@PostMapping()
-	public void create(@RequestBody AttributeDTO dto, HttpServletResponse response) {
+	@PostMapping
+	public void create(@RequestBody AttributeNameDTO dto, HttpServletResponse response) {
 		
-		response.setStatus(HttpServletResponse.SC_CREATED); 
+		userService.checkIfActivated(userService.getCurrentUser());
 		
-		attributeService.validate(dto);
+		response.setStatus(HttpServletResponse.SC_CREATED);
 		
-		attributeService.add(dto);
+		attributeNameService.add(dto);
 	}
 
 	@GetMapping("/{id}")
-	public AttributeDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
-		AttributeDTO dto = attributeService.get(id);
+	public AttributeNameDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
+		AttributeNameDTO dto = attributeNameService.get(id);
 
 		if (dto == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
@@ -49,46 +50,39 @@ public class AttributeController {
 	}
 	
 	@GetMapping("/all")
-	public List<AttributeDTO> getAll() {
-		return attributeService.getAll();
+	public List<AttributeNameDTO> getAll() {
+		return attributeNameService.getAll();
 	}
 	
 	@GetMapping("/size")
 	public int size() {
-		return attributeService.size();
-	}
-	
-	@GetMapping("/all/page/{page}/size/{size}")
-	public List<AttributeDTO> getAll(
-			@PathVariable("page") Integer page,
-			@PathVariable("size") Integer size)
-	{
-		return attributeService.getAll(page,size);
+		return attributeNameService.size();
 	}
 
 	@PutMapping("/{id}")
 	public void update(
-			@RequestBody AttributeDTO dto,
+			@RequestBody AttributeNameDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
-		if (attributeService.get(id) == null) {		
+		if (attributeNameService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return;
 		}
 		
-		attributeService.validate(dto);
+		userService.checkIfActivated(userService.getCurrentUser());
 		
-		attributeService.update(id,dto);
+		attributeNameService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable("id") Integer id, HttpServletResponse response) {
 
-		if (attributeService.get(id) == null) {		
+		if (attributeNameService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+			return;
 		}
 		
-		attributeService.delete(id);
+		attributeNameService.delete(id);
 	}
 }

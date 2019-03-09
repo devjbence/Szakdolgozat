@@ -14,6 +14,7 @@ public class ProductDTO {
 	private List<Integer> categories;
 	private List<Integer> comments;
 	private List<Integer> images;
+	private List<Integer> attributes;
 	
 	Boolean fixedPrice;
 	Boolean bidding;

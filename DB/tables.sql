@@ -10,6 +10,7 @@ drop table product;
 drop table buyer;
 drop table seller;
 drop table image;
+drop table attribute_name;
 drop table attribute;
 drop table user_role;
 drop table role;
@@ -174,15 +175,29 @@ create table `comment`
 	FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
 );
 
-create table `attribute`
+create table `attribute_name`
 (
 	`id` int(11) not null auto_increment,
     `name` varchar(200) DEFAULT NULL,
-    `type` int(4) default null,
-    `value` varchar(200) DEFAULT NULL,
 	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
+);
+
+create table `attribute`
+(
+	`id` int(11) not null auto_increment,
+    `type` int(4) default null,
+	`attribute_name_id` int(11) not null,
+    `product_id` int(11) not null,
+    `value` varchar(200) DEFAULT NULL,
+	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`),
+	KEY `attribute_name_id` (`attribute_name_id`),
+    KEY `product_id` (`product_id`),
+    FOREIGN KEY (`attribute_name_id`) REFERENCES `attribute_name` (`id`),
+    FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
 );
 
 insert into role(name) values('ROLE_ADMIN');
