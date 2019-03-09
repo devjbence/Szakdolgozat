@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
 
 		commentRepository.save(entity);
 
-		commentRepository.delete(entity);
+		commentRepository.delete(entity); 
 	}
 
 	@Override
