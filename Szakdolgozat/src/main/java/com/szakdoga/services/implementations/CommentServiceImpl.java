@@ -6,16 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Comment;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.DTOs.CommentDTO;
-import com.szakdoga.exceptions.BuyerDoesNotExistsException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
 import com.szakdoga.repos.BuyerRepository;
 import com.szakdoga.repos.CommentRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.CommentService;
+import com.szakdoga.services.interfaces.UserService;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -26,14 +25,20 @@ public class CommentServiceImpl implements CommentService {
 	private ProductRepository productRepository;
 	@Autowired
 	private BuyerRepository buyerRepository;
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public void add(CommentDTO dto) {
 		Comment entity = new Comment();
+		Product product = productRepository.findById(dto.getProductId());
 
 		mapDtoToEntity(dto, entity);
 
 		commentRepository.save(entity);
+		
+		product.addComment(entity);
+		productRepository.save(product);
 	}
 
 	@Override
@@ -114,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void mapDtoToEntity(CommentDTO dto, Comment entity) {
 		entity.setMessage(dto.getMessage());
-		entity.setBuyer(buyerRepository.findOne(dto.getBuyerId()));
+		entity.setBuyer(userService.getCurrentUser().getBuyer());
 		entity.setId(dto.getId());
 		entity.setProduct(productRepository.findOne(dto.getProductId()));
 	}
@@ -141,12 +146,6 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public void ValidateDto(CommentDTO dto) {
-		Buyer buyer = buyerRepository.findById(dto.getBuyerId());
-
-		if (buyer == null) {
-			throw new BuyerDoesNotExistsException("The given buyer does not exists");
-		}
-
 		Product product = productRepository.findById(dto.getProductId());
 
 		if (product == null) {

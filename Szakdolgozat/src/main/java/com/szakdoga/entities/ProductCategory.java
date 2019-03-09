@@ -22,7 +22,7 @@ public class ProductCategory extends EntityBase{
 	Set<Seller> sellers;
 	
 	@ManyToMany(mappedBy = "categories")
-	Set<Product> jobs;
+	Set<Product> products;
 	
 	@Column(name="product_name")
 	private String productName;

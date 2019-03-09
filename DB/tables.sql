@@ -1,11 +1,11 @@
 use szakdoga_db;
 
-drop table comment;
 drop table product_product_category;
 drop table seller_product_category;
 drop table buyer_product_category;
 drop table product_category;
 drop table product_image;
+drop table comment;
 drop table product;
 drop table buyer;
 drop table seller;

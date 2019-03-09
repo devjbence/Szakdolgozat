@@ -1,5 +1,6 @@
 package com.szakdoga.entities;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,9 @@ public class Product extends EntityBase {
 	private String description;
 
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER) // persist https://stackoverflow.com/a/48421327
-	@JoinTable(name = "product_product_category", joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+	@JoinTable(name = "product_product_category", 
+			   joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), 
+			   inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
 	private Set<ProductCategory> categories;
 
 	@ManyToOne
@@ -69,7 +72,7 @@ public class Product extends EntityBase {
 			categories = new HashSet<ProductCategory>();
 		if (!categories.contains(category)) {
 			categories.add(category);
-			category.getJobs().add(this);
+			category.getProducts().add(this);
 		}
 	}
 
@@ -78,7 +81,14 @@ public class Product extends EntityBase {
 		if (categories == null)
 			return;
 		categories.remove(category);
-		category.getJobs().remove(this);
+		category.getProducts().remove(this);
+	}
+	
+	public void addComment(Comment comment)
+	{
+		if(comment == null)
+			comments = new ArrayList<Comment>();
+		comments.add(comment);
 	}
 	
 	public void removeComment(Comment comment)

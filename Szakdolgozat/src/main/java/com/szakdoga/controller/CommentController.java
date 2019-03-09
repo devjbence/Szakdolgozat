@@ -82,6 +82,7 @@ public class CommentController {
 
 		if (commentService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+			return;
 		}
 		
 		commentService.delete(id);
