@@ -76,4 +76,11 @@ public class Seller extends EntityBase{
 			return;
 		products.remove(product);
 	}
+
+	@Override
+	public String toString() {
+		return "Seller [categories=" + categories + ", products=" + products + ", user=" + user + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", aboutMe=" + aboutMe + ", profileImage=" + profileImage
+				+ "]";
+	}
 }

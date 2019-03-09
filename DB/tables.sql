@@ -5,6 +5,7 @@ drop table product_product_category;
 drop table seller_product_category;
 drop table buyer_product_category;
 drop table product_category;
+drop table product_image;
 drop table product;
 drop table buyer;
 drop table seller;
@@ -147,6 +148,15 @@ CREATE TABLE `product_product_category` (
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
   FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `product_image` (
+	`product_id` int(11) NOT NULL,
+	`image_id` int(11) NOT NULL,
+   CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+  FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table `comment`

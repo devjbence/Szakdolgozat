@@ -8,5 +8,6 @@ import com.szakdoga.entities.DTOs.ProductDTO;
 
 public interface ProductService extends BaseService<Product,ProductDTO>{
 	void addImage(Integer productId,MultipartFile imageFile);
-	void ValidateDto(ProductDTO dto);
+	void saveImage(Integer id, MultipartFile file);
+	void removeImage(Integer entityId, Integer imageId);
 }

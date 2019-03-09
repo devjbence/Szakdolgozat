@@ -15,6 +15,7 @@ import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ProductDTO;
+import com.szakdoga.exceptions.CouldNotUploadImageException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.SellerDoesNotExistsException;
 import com.szakdoga.repos.CommentRepository;
@@ -87,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void mapDtoToEntity(ProductDTO dto, Product entity) {
 		entity.setName(dto.getName());
-		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
+		entity.setSeller(sellerRepository.findById(dto.getSeller()));
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
 		dto.setCategories(entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setComments(entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setImages(entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setSellerId(entity.getSeller().getId());
+		dto.setSeller(entity.getSeller().getId());
 		dto.setDescription(entity.getDescription());
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
@@ -106,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
 		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
 		entity.setImages(dto.getImages().stream().map(c->imageRepository.findById(c)).collect(Collectors.toSet()));
 		entity.setName(dto.getName());
-		entity.setSeller(sellerRepository.findById(dto.getSellerId()));
+		entity.setSeller(sellerRepository.findById(dto.getSeller()));
 	}
 
 	@Override
@@ -212,13 +213,30 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void ValidateDto(ProductDTO dto) {
-		Seller seller = sellerRepository.findById(dto.getSellerId());
+	public void saveImage(Integer id, MultipartFile file) {
+		Product entity = productRepository.findById(id);
+		Image image = new Image();
 		
-		if(seller == null)
-		{
-			throw new SellerDoesNotExistsException("Seller with id="+dto.getSellerId()+" does not exists");
+		try {
+			image.setFile(file.getBytes());
+		} catch (IOException e) {
+			throw new CouldNotUploadImageException("File could not be uploaded");
 		}
+		imageRepository.save(image);
+		
+		entity.addImage(image);
+		productRepository.save(entity);
+	}
+
+	@Override
+	public void removeImage(Integer entityId, Integer imageId) {
+		Image image = imageRepository.findById(imageId);
+		Product entity = productRepository.findById(entityId);
+		
+		entity.removeImage(image);
+		imageRepository.delete(image);
+		
+		productRepository.save(entity);
 	}
 }
 
