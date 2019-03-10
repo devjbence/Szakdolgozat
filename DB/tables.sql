@@ -179,7 +179,7 @@ create table `attribute_core`
 (
 	`id` int(11) not null auto_increment,
     `name` varchar(200) DEFAULT NULL,
-	`type` int(4) default null,
+	`type` int(4) not null,
 	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
@@ -221,6 +221,7 @@ select * from product_category;
 select * from product_product_category;
 select * from comment;
 select * from attribute;
+select * from attribute_core;
 
 
 

@@ -17,4 +17,10 @@ public class ProductFilterCore {
 	public Double getDoubleValue() {
 		return Double.parseDouble(value);
 	}
+
+	@Override
+	public String toString() {
+		return "ProductFilterCore [attributeCore=" + attributeCore + ", attributeOperation=" + attributeOperation
+				+ ", value=" + value + "]";
+	}
 }

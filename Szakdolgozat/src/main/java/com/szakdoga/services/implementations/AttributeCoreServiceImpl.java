@@ -14,10 +14,10 @@ import com.szakdoga.repos.AttributeRepository;
 import com.szakdoga.services.interfaces.AttributeCoreService;
 
 @Service
-public class AttributeNameServiceImpl implements AttributeCoreService{
+public class AttributeCoreServiceImpl implements AttributeCoreService{
 
 	@Autowired
-	private AttributeCoreRepository attributeNameRepository;
+	private AttributeCoreRepository attributeCoreRepository;
 	@Autowired
 	private AttributeRepository attributeRepository;
 	
@@ -26,6 +26,7 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 		entity.setAttributes(dto.getAttributes().stream().map(x-> attributeRepository.findById(x)).collect(Collectors.toList()));
 		entity.setId(dto.getId());
 		entity.setName(dto.getName());
+		entity.setType(dto.getType());
 	}
 
 	@Override
@@ -33,6 +34,7 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 		dto.setName(entity.getName());
 		dto.setAttributes(entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setId(entity.getId());
+		dto.setType(entity.getType());
 	}
 
 	@Override
@@ -43,6 +45,8 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 			entity.setId(dto.getId());
 		if(dto.getName() != null)
 			entity.setName(dto.getName());
+		if(dto.getType() != null)
+			entity.setType(dto.getType());
 	}
 
 	@Override
@@ -51,12 +55,12 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 		
-		attributeNameRepository.save(entity);
+		attributeCoreRepository.save(entity);
 	}
 
 	@Override
 	public AttributeCoreDTO get(Integer id) {
-		AttributeCore entity = attributeNameRepository.findById(id);
+		AttributeCore entity = attributeCoreRepository.findById(id);
 
 		if (entity == null)
 			return null;
@@ -70,11 +74,11 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 
 	@Override
 	public void update(int id, AttributeCoreDTO dto) {
-		AttributeCore entity = attributeNameRepository.findById(id);
+		AttributeCore entity = attributeCoreRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
-		attributeNameRepository.save(entity);
+		attributeCoreRepository.save(entity);
 	}
 
 	@Override
@@ -87,7 +91,7 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 	public List<AttributeCoreDTO> getAll() {
 		List<AttributeCoreDTO> dtos = new ArrayList<AttributeCoreDTO>();
 
-		for (AttributeCore entity : attributeNameRepository.findAll()) {
+		for (AttributeCore entity : attributeCoreRepository.findAll()) {
 			AttributeCoreDTO dto = new AttributeCoreDTO();
 
 			mapEntityToDto(entity, dto);
@@ -124,7 +128,7 @@ public class AttributeNameServiceImpl implements AttributeCoreService{
 
 	@Override
 	public int size() {
-		return Math.toIntExact(attributeNameRepository.count());
+		return Math.toIntExact(attributeCoreRepository.count());
 	}
 
 }

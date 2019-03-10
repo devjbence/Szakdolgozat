@@ -26,7 +26,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
-	private AttributeCoreRepository attributeNameRepository;
+	private AttributeCoreRepository attributeCoreRepository;
 	@Autowired
 	private ProductCategoryRepository productCategoryRepository;
 	
@@ -38,7 +38,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		}
 	}
 	
-	private static boolean compareNumericValues(double attriValue,double filterValue,AttributeOperation operation)
+	private static boolean compareNumericValues(Double filterValue,Double attriValue,AttributeOperation operation)
 	{	
 		switch(operation)
 		{
@@ -77,7 +77,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		return false;
 	}
 	
-	private boolean compareNumericValues(int attriValue,int filterValue,AttributeOperation operation)
+	private boolean compareNumericValues(Integer filterValue,Integer attriValue,AttributeOperation operation)
 	{	
 		switch(operation)
 		{
@@ -116,30 +116,52 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
 		List<Product> entites = productRepository.findAll();
-		
+
 		//kategóriákra szűrés
-		entites=entites.stream()
-		.filter(x->x.getCategories()!=null && x.getCategories()
-				.stream()
-				.anyMatch(c->filter.getCategories() != null && filter.getCategories().contains(c.getId())))
-		.collect(Collectors.toList());
+		if(filter.getCategories() != null && filter.getCategories().size() >0)
+		{
+			entites=entites.stream()
+					.filter(x->x.getCategories()!=null && x.getCategories()
+							.stream()
+							.anyMatch(c->filter.getCategories() != null && filter.getCategories().contains(c.getId())))
+					.collect(Collectors.toList());	
+		}
 		
 		List<Product> filteredEntites = new ArrayList<Product>();
 		
 		//szűrés attrikra
 		for(ProductFilterCore filterCore: filter.getProductFilterCores())
-		{					
+		{			
 			for(Product entity : entites) {
-				List<Attribute> attributes = entity.getAttributes();
 				
+				List<Attribute> attributes = entity.getAttributes();
+			
 				for(Attribute attribute : attributes)
-				{
+				{				
 					if(attribute.getId() == filterCore.getAttributeCore())
 					{
 						AttributeOperation operation = AttributeOperation.values()[filterCore.getAttributeOperation()];
 
-						switch(attribute.getAttributeCore().getType())
+						switch(attributeCoreRepository.findById(filterCore.getAttributeCore()).getType())
 						{
+							case integer:
+	
+								if(compareNumericValues(filterCore.getIntValue(),attribute.getIntValue(),operation))
+								{
+									addEntityIfNotAlreadyContained(filteredEntites,entity);	
+								}
+								
+								break;
+						
+							case floatingpoint:
+								
+								if(compareNumericValues(filterCore.getDoubleValue(),attribute.getDoubleValue(),operation))
+								{
+									addEntityIfNotAlreadyContained(filteredEntites,entity);	
+								}
+								
+								break;
+								
 							case characters:
 								
 								if(attribute.getValue().equals(filterCore.getValue()))
@@ -147,31 +169,14 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 									addEntityIfNotAlreadyContained(filteredEntites,entity);	
 								}
 								
-								break;
-								
-							case floatingpoint:
-								
-								if(compareNumericValues(attribute.getDoubleValue(),filterCore.getDoubleValue(),operation))
-								{
-									addEntityIfNotAlreadyContained(filteredEntites,entity);	
-								}
-								
-								break;
-							case integer:
-
-								if(compareNumericValues(attribute.getIntValue(),filterCore.getIntValue(),operation))
-								{
-									addEntityIfNotAlreadyContained(filteredEntites,entity);	
-								}
-								
-								break;
+								break;					
 						}		
 					}
 				}
 			}
 		}
 		
-		mapEntitesToDtos(entites,dtos);
+		mapEntitesToDtos(filteredEntites,dtos);
 		
 		return dtos;
 	}
@@ -227,17 +232,21 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 
 	@Override
 	public void validate(ProductFilterDTO filter) {
-		for(int catId : filter.getCategories())
+		
+		if(filter.getCategories() != null)
 		{
-			if(productCategoryRepository.findById(catId) == null)
+			for(int catId : filter.getCategories())
 			{
-				throw new CategoryDoesNotExistsException("Category doesn't exists");
-			}
+				if(productCategoryRepository.findById(catId) == null)
+				{
+					throw new CategoryDoesNotExistsException("Category doesn't exists");
+				}
+			}	
 		}
 		
 		for(ProductFilterCore filterCore : filter.getProductFilterCores())
 		{
-			if(attributeNameRepository.findById(filterCore.getAttributeCore()) == null)
+			if(attributeCoreRepository.findById(filterCore.getAttributeCore()) == null)
 			{
 				throw new AttributeNameDoesNotExistsException("Attributename does not exists");
 			}

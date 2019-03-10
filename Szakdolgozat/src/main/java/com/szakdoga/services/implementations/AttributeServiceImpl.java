@@ -185,7 +185,7 @@ public class AttributeServiceImpl implements AttributeService {
 				Integer.parseInt(dto.getValue());
 
 			} catch (Exception ex) {
-				throw new NumericConversionException("Double is in wrong format at value " + dto.getValue());
+				throw new NumericConversionException("Integer is in wrong format at value " + dto.getValue());
 			}
 
 			break;
