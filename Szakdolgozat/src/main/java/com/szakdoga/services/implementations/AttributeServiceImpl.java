@@ -12,6 +12,7 @@ import com.szakdoga.entities.Product;
 import com.szakdoga.entities.DTOs.AttributeDTO;
 import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.DtoNullException;
+import com.szakdoga.exceptions.NumericConversionException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
 import com.szakdoga.repos.AttributeNameRepository;
 import com.szakdoga.repos.AttributeRepository;
@@ -37,7 +38,7 @@ public class AttributeServiceImpl implements AttributeService {
 
 		mapDtoToEntity(dto, entity);
 		attributeRepository.save(entity);
-		
+
 		product.addAttribute(entity);
 		productRepository.save(product);
 
@@ -69,17 +70,7 @@ public class AttributeServiceImpl implements AttributeService {
 		entity.setProduct(productRepository.findById(dto.getProduct()));
 		entity.setAttributeName(attributeNameRepository.findById(dto.getAttributeName()));
 		entity.setType(dto.getType());
-		entity.setValue(dto.getValue());		
-	}
-
-	@Override
-	public int getIntValue(String value) {
-		return Integer.parseInt(value);
-	}
-
-	@Override
-	public double getDoubleValue(String value) {
-		return Double.parseDouble(value);
+		entity.setValue(dto.getValue());
 	}
 
 	@Override
@@ -172,11 +163,39 @@ public class AttributeServiceImpl implements AttributeService {
 		if (attributeName == null) {
 			throw new AttributeNameDoesNotExistsException("");
 		}
-		
+
 		Product product = productRepository.findById(dto.getProduct());
-		
+
 		if (product == null) {
 			throw new ProductDoesNotExistsException("");
+		}
+
+		// attribútumhoz tartozó érték validálása
+		switch (dto.getType()) {
+		case floatingpoint:
+
+			try {
+				
+				Double.parseDouble(dto.getValue());
+				
+			} catch (Exception ex) {
+				throw new NumericConversionException("Double is in wrong format at value " + dto.getValue());
+			}
+
+			break;
+		case integer:
+
+			try {
+
+				Integer.parseInt(dto.getValue());
+
+			} catch (Exception ex) {
+				throw new NumericConversionException("Double is in wrong format at value " + dto.getValue());
+			}
+
+			break;
+		default:
+			break;
 		}
 	}
 }

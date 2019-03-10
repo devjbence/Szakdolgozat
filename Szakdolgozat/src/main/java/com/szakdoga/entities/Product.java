@@ -50,7 +50,7 @@ public class Product extends EntityBase {
 	private Set<Image> images;
 
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<Attribute> attributes;
+	private List<Attribute> attributes;
 	
 	public void addImage(Image image)
 	{
@@ -69,7 +69,7 @@ public class Product extends EntityBase {
 	public void addAttribute(Attribute attribute)
 	{
 		if(attributes == null)
-			attributes = new HashSet<Attribute>();
+			attributes = new ArrayList<Attribute>();
 		attributes.add(attribute);
 	}
 	

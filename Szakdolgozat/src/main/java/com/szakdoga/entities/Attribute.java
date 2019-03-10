@@ -23,4 +23,12 @@ public class Attribute extends EntityBase{
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
+	
+	public Integer getIntValue() {
+		return Integer.parseInt(value);
+	}
+
+	public Double getDoubleValue() {
+		return Double.parseDouble(value);
+	}
 }

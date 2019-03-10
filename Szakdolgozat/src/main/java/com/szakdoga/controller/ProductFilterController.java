@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.AttributeDTO;
+import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.services.interfaces.AttributeService;
 
 @RestController
-@RequestMapping("/attribute")
-public class AttributeController {
+@RequestMapping("/productFilter")
+public class ProductFilterController {
 
 	@Autowired
 	private AttributeService attributeService;

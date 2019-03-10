@@ -48,8 +48,6 @@ public class ProductController {
 
 		return dto;
 	}
-	
-	//TODO: search here
 
 	@GetMapping("/all")
 	public List<ProductDTO> getAll() {
