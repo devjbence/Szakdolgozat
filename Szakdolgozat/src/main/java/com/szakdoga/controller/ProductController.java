@@ -48,6 +48,14 @@ public class ProductController {
 
 		return dto;
 	}
+	
+	@GetMapping("/all/{page}/{size}")
+	public List<ProductDTO> getAll(
+			@PathVariable("page") Integer page,
+			@PathVariable("size") Integer size)
+	{		
+		return productService.getAll(page,size);
+	}
 
 	@GetMapping("/all")
 	public List<ProductDTO> getAll() {

@@ -78,7 +78,7 @@ public class BuyerController {
 		return buyerService.size();
 	}
 	
-	@GetMapping("/all/page/{page}/size/{size}")
+	@GetMapping("/all/{page}/{size}")
 	public List<BuyerDTO> getAll(
 			@PathVariable("page") Integer page,
 			@PathVariable("size") Integer size)

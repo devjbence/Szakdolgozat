@@ -98,7 +98,7 @@ public class UserController {
 		return userService.size();
 	}
 	
-	@GetMapping("/all/page/{page}/size/{size}")
+	@GetMapping("/all/{page}/{size}")
 	public List<UserDTO> getAll(
 			@PathVariable("page") Integer page,
 			@PathVariable("size") Integer size)

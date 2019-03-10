@@ -49,6 +49,14 @@ public class AttributeNameController {
 		return dto;
 	}
 	
+	@GetMapping("/all/{page}/{size}")
+	public List<AttributeNameDTO> getAll(
+			@PathVariable("page") Integer page,
+			@PathVariable("size") Integer size)
+	{		
+		return attributeNameService.getAll(page,size);
+	}
+	
 	@GetMapping("/all")
 	public List<AttributeNameDTO> getAll() {
 		return attributeNameService.getAll();

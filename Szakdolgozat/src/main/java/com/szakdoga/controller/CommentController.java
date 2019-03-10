@@ -51,6 +51,14 @@ public class CommentController {
 		return dto;
 	}
 	
+	@GetMapping("/all/{page}/{size}")
+	public List<CommentDTO> getAll(
+			@PathVariable("page") Integer page,
+			@PathVariable("size") Integer size)
+	{		
+		return commentService.getAll(page,size);
+	}
+	
 	@GetMapping("/all")
 	public List<CommentDTO> getAll() {
 		return commentService.getAll();

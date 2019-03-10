@@ -56,7 +56,7 @@ public class AttributeController {
 		return attributeService.size();
 	}
 	
-	@GetMapping("/all/page/{page}/size/{size}")
+	@GetMapping("/all/{page}/{size}")
 	public List<AttributeDTO> getAll(
 			@PathVariable("page") Integer page,
 			@PathVariable("size") Integer size)
