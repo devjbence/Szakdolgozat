@@ -3,7 +3,6 @@ package com.szakdoga.services.implementations;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,33 +14,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.szakdoga.entities.AccessTokenEntity;
+//import com.szakdoga.entities.AccessTokenEntity;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.Buyer;
-import com.szakdoga.entities.Comment;
-import com.szakdoga.entities.RefreshTokenEntity;
+//import com.szakdoga.entities.RefreshTokenEntity;
 import com.szakdoga.entities.Role;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.UserActivation;
-import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.entities.DTOs.UserDTO;
 import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.EmailAddressAlreadyRegisteredException;
 import com.szakdoga.exceptions.MissingUserInformationException;
-import com.szakdoga.exceptions.NewPasswordIsMissingException;
-import com.szakdoga.exceptions.NotOwnUsernameException;
 import com.szakdoga.exceptions.OldPasswordDoesNotMatchException;
-import com.szakdoga.exceptions.OldPasswordIsMissingException;
 import com.szakdoga.exceptions.RoleDoesNotExistsException;
-import com.szakdoga.exceptions.UserDoesNotExistsException;
 import com.szakdoga.exceptions.UserIsNotActivatedException;
 import com.szakdoga.exceptions.UserameAlreadyRegisteredException;
-import com.szakdoga.exceptions.UsernameIsMissingException;
 import com.szakdoga.exceptions.WrongActivationCodeException;
-import com.szakdoga.repos.AccessTokenRepository;
+//import com.szakdoga.repos.AccessTokenRepository;
 import com.szakdoga.repos.SellerRepository;
 import com.szakdoga.repos.BuyerRepository;
-import com.szakdoga.repos.RefreshTokenRepository;
+//import com.szakdoga.repos.RefreshTokenRepository;
 import com.szakdoga.repos.RoleRepository;
 import com.szakdoga.repos.UserActivationRepository;
 import com.szakdoga.repos.UserRepository;
@@ -65,11 +57,11 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private EmailUtil emailSender;
+	private EmailUtil emailSender;/*
 	@Autowired
 	private AccessTokenRepository accTokenRepository;
 	@Autowired
-	private RefreshTokenRepository refTokenRepository;
+	private RefreshTokenRepository refTokenRepository;*/
 	@Autowired
 	private HttpServletRequest request;
 
@@ -107,7 +99,7 @@ public class UserServiceImpl implements UserService {
 		userActivationRepository.delete(activation);
 		userRepository.save(user);
 	}
-
+	/*
 	private void deleteUsersToken(String username) {
 		List<AccessTokenEntity> accTokens = accTokenRepository.findAll();
 
@@ -119,7 +111,7 @@ public class UserServiceImpl implements UserService {
 			accTokenIterator.remove();
 		}
 
-	}
+	}*/
 
 	private void checkIfAlreadyInDb(String username, String email) {
 		if (userRepository.findByUsername(username) != null)
@@ -185,7 +177,7 @@ public class UserServiceImpl implements UserService {
 
 		checkIfActivated(entity);
 
-		String givenOldPasswordEncripted = bCryptPasswordEncoder.encode(dto.getPassword());
+		//String givenOldPasswordEncripted = bCryptPasswordEncoder.encode(dto.getPassword());
 		String givenNewPasswordEncripted = bCryptPasswordEncoder.encode(dto.getNewPassword());
 
 		String oldPasswordEncripted = entity.getPassword();

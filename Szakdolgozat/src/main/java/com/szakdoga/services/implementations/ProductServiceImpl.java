@@ -17,7 +17,6 @@ import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.exceptions.CouldNotUploadImageException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
-import com.szakdoga.exceptions.SellerDoesNotExistsException;
 import com.szakdoga.repos.CommentRepository;
 import com.szakdoga.repos.ImageRepository;
 import com.szakdoga.repos.ProductCategoryRepository;
