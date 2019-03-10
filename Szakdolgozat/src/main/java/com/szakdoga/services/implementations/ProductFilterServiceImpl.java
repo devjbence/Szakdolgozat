@@ -15,7 +15,7 @@ import com.szakdoga.entities.DTOs.ProductFilterCore;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
 import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.CategoryDoesNotExistsException;
-import com.szakdoga.repos.AttributeNameRepository;
+import com.szakdoga.repos.AttributeCoreRepository;
 import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.ProductFilterService;
@@ -26,7 +26,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
-	private AttributeNameRepository attributeNameRepository;
+	private AttributeCoreRepository attributeNameRepository;
 	@Autowired
 	private ProductCategoryRepository productCategoryRepository;
 	
@@ -134,11 +134,11 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 				
 				for(Attribute attribute : attributes)
 				{
-					if(attribute.getId() == filterCore.getAttributeName())
+					if(attribute.getId() == filterCore.getAttributeCore())
 					{
 						AttributeOperation operation = AttributeOperation.values()[filterCore.getAttributeOperation()];
 
-						switch(attribute.getType())
+						switch(attribute.getAttributeCore().getType())
 						{
 							case characters:
 								
@@ -237,7 +237,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		
 		for(ProductFilterCore filterCore : filter.getProductFilterCores())
 		{
-			if(attributeNameRepository.findById(filterCore.getAttributeName()) == null)
+			if(attributeNameRepository.findById(filterCore.getAttributeCore()) == null)
 			{
 				throw new AttributeNameDoesNotExistsException("Attributename does not exists");
 			}

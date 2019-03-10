@@ -6,12 +6,12 @@ drop table buyer_product_category;
 drop table product_category;
 drop table product_image;
 drop table comment;
+drop table attribute;
+drop table attribute_core;
 drop table product;
 drop table buyer;
 drop table seller;
 drop table image;
-drop table attribute_name;
-drop table attribute;
 drop table user_role;
 drop table role;
 drop table user_activation;
@@ -175,10 +175,11 @@ create table `comment`
 	FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
 );
 
-create table `attribute_name`
+create table `attribute_core`
 (
 	`id` int(11) not null auto_increment,
     `name` varchar(200) DEFAULT NULL,
+	`type` int(4) default null,
 	CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
@@ -187,7 +188,6 @@ create table `attribute_name`
 create table `attribute`
 (
 	`id` int(11) not null auto_increment,
-    `type` int(4) default null,
 	`attribute_name_id` int(11) not null,
     `product_id` int(11) not null,
     `value` varchar(200) DEFAULT NULL,
@@ -196,7 +196,7 @@ create table `attribute`
 	PRIMARY KEY (`id`),
 	KEY `attribute_name_id` (`attribute_name_id`),
     KEY `product_id` (`product_id`),
-    FOREIGN KEY (`attribute_name_id`) REFERENCES `attribute_name` (`id`),
+    FOREIGN KEY (`attribute_name_id`) REFERENCES `attribute_core` (`id`),
     FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
 );
 
@@ -206,6 +206,10 @@ insert into role(name) values('ROLE_USER');
 insert into product_category(id,product_name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
 insert into product_category(id,product_name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
 insert into product_category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
+
+insert into attribute_core(id,name,type) values(1,'height',0);
+insert into attribute_core(id,name,type) values(2,'weight',1);
+insert into attribute_core(id,name,type) values(3,'othername',2);
 
 select * from role;
 select * from user;

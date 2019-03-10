@@ -38,8 +38,11 @@ public class Product extends EntityBase {
 	@JoinColumn(name = "seller_id")
 	private Seller seller;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Comment> comments;
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Attribute> attributes;
 	
     @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(
@@ -48,9 +51,6 @@ public class Product extends EntityBase {
             inverseJoinColumns = @JoinColumn(name = "image_id")
             )
 	private Set<Image> images;
-
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private List<Attribute> attributes;
 	
 	public void addImage(Image image)
 	{

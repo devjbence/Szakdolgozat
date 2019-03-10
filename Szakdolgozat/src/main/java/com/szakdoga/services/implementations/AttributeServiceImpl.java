@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.szakdoga.entities.Attribute;
-import com.szakdoga.entities.AttributeName;
+import com.szakdoga.entities.AttributeCore;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.DTOs.AttributeDTO;
 import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.DtoNullException;
 import com.szakdoga.exceptions.NumericConversionException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
-import com.szakdoga.repos.AttributeNameRepository;
+import com.szakdoga.repos.AttributeCoreRepository;
 import com.szakdoga.repos.AttributeRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.AttributeService;
@@ -25,7 +25,7 @@ public class AttributeServiceImpl implements AttributeService {
 	@Autowired
 	private AttributeRepository attributeRepository;
 	@Autowired
-	private AttributeNameRepository attributeNameRepository;
+	private AttributeCoreRepository attributeCoreRepository;
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -33,7 +33,7 @@ public class AttributeServiceImpl implements AttributeService {
 	public void add(AttributeDTO dto) {
 
 		Attribute entity = new Attribute();
-		AttributeName attributeName = attributeNameRepository.findById(dto.getAttributeName());
+		AttributeCore attributeName = attributeCoreRepository.findById(dto.getAttributeCore());
 		Product product = productRepository.findById(dto.getProduct());
 
 		mapDtoToEntity(dto, entity);
@@ -43,7 +43,7 @@ public class AttributeServiceImpl implements AttributeService {
 		productRepository.save(product);
 
 		attributeName.addAttribute(entity);
-		attributeNameRepository.save(attributeName);
+		attributeCoreRepository.save(attributeName);
 	}
 
 	@Override
@@ -68,16 +68,14 @@ public class AttributeServiceImpl implements AttributeService {
 	@Override
 	public void mapDtoToEntity(AttributeDTO dto, Attribute entity) {
 		entity.setProduct(productRepository.findById(dto.getProduct()));
-		entity.setAttributeName(attributeNameRepository.findById(dto.getAttributeName()));
-		entity.setType(dto.getType());
+		entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()));
 		entity.setValue(dto.getValue());
 	}
 
 	@Override
 	public void mapEntityToDto(Attribute entity, AttributeDTO dto) {
 		dto.setId(entity.getId());
-		dto.setAttributeName(entity.getAttributeName().getId());
-		dto.setType(entity.getType());
+		dto.setAttributeCore(entity.getAttributeCore().getId());
 		dto.setValue(entity.getValue());
 		dto.setProduct(entity.getProduct().getId());
 	}
@@ -96,11 +94,8 @@ public class AttributeServiceImpl implements AttributeService {
 		if (dto == null)
 			return;
 
-		if (dto.getAttributeName() != 0)
-			entity.setAttributeName(attributeNameRepository.findById(dto.getAttributeName()));
-
-		if (dto.getType() != null)
-			entity.setType(dto.getType());
+		if (dto.getAttributeCore() != 0)
+			entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()));
 
 		if (dto.getValue() != null)
 			entity.setValue(dto.getValue());
@@ -158,9 +153,9 @@ public class AttributeServiceImpl implements AttributeService {
 			throw new DtoNullException("");
 		}
 
-		AttributeName attributeName = attributeNameRepository.findById(dto.getAttributeName());
+		AttributeCore attributeCore = attributeCoreRepository.findById(dto.getAttributeCore());
 
-		if (attributeName == null) {
+		if (attributeCore == null) {
 			throw new AttributeNameDoesNotExistsException("");
 		}
 
@@ -169,9 +164,9 @@ public class AttributeServiceImpl implements AttributeService {
 		if (product == null) {
 			throw new ProductDoesNotExistsException("");
 		}
-
+		
 		// attribútumhoz tartozó érték validálása
-		switch (dto.getType()) {
+		switch (attributeCore.getType()) {
 		case floatingpoint:
 
 			try {

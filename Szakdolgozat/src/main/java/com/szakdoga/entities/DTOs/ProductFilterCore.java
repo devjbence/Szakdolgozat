@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductFilterCore {
-	private Integer attributeName;
+	private Integer attributeCore;
 	private Integer attributeOperation;
 	private String value;
 	

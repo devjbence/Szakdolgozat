@@ -14,32 +14,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.szakdoga.entities.DTOs.AttributeNameDTO;
-import com.szakdoga.services.interfaces.AttributeNameService;
+import com.szakdoga.entities.DTOs.AttributeCoreDTO;
+import com.szakdoga.services.interfaces.AttributeCoreService;
 import com.szakdoga.services.interfaces.UserService;
 
 @RestController
-@RequestMapping("/attributename")
-public class AttributeNameController {
+@RequestMapping("/attributecore")
+public class AttributeCoreController {
 
 	@Autowired
-	private AttributeNameService attributeNameService;
+	private AttributeCoreService attributeCoreService;
 	@Autowired
 	private UserService userService;
 
 	@PostMapping
-	public void create(@RequestBody AttributeNameDTO dto, HttpServletResponse response) {
+	public void create(@RequestBody AttributeCoreDTO dto, HttpServletResponse response) {
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
 		response.setStatus(HttpServletResponse.SC_CREATED);
 		
-		attributeNameService.add(dto);
+		attributeCoreService.add(dto);
 	}
 
 	@GetMapping("/{id}")
-	public AttributeNameDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
-		AttributeNameDTO dto = attributeNameService.get(id);
+	public AttributeCoreDTO get(@PathVariable("id") Integer id, HttpServletResponse response) {
+		AttributeCoreDTO dto = attributeCoreService.get(id);
 
 		if (dto == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
@@ -50,47 +50,47 @@ public class AttributeNameController {
 	}
 	
 	@GetMapping("/all/{page}/{size}")
-	public List<AttributeNameDTO> getAll(
+	public List<AttributeCoreDTO> getAll(
 			@PathVariable("page") Integer page,
 			@PathVariable("size") Integer size)
 	{		
-		return attributeNameService.getAll(page,size);
+		return attributeCoreService.getAll(page,size);
 	}
 	
 	@GetMapping("/all")
-	public List<AttributeNameDTO> getAll() {
-		return attributeNameService.getAll();
+	public List<AttributeCoreDTO> getAll() {
+		return attributeCoreService.getAll();
 	}
 	
 	@GetMapping("/size")
 	public int size() {
-		return attributeNameService.size();
+		return attributeCoreService.size();
 	}
 
 	@PutMapping("/{id}")
 	public void update(
-			@RequestBody AttributeNameDTO dto,
+			@RequestBody AttributeCoreDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
-		if (attributeNameService.get(id) == null) {		
+		if (attributeCoreService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return;
 		}
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		attributeNameService.update(id,dto);
+		attributeCoreService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable("id") Integer id, HttpServletResponse response) {
 
-		if (attributeNameService.get(id) == null) {		
+		if (attributeCoreService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
 			return;
 		}
 		
-		attributeNameService.delete(id);
+		attributeCoreService.delete(id);
 	}
 }
