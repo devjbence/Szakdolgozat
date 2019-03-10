@@ -10,25 +10,25 @@ import org.springframework.stereotype.Service;
 import com.szakdoga.entities.Attribute;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.DTOs.AttributeOperation;
-import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterCore;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
+import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
+import com.szakdoga.exceptions.CategoryDoesNotExistsException;
 import com.szakdoga.repos.AttributeNameRepository;
+import com.szakdoga.repos.ProductCategoryRepository;
 import com.szakdoga.repos.ProductRepository;
 import com.szakdoga.services.interfaces.ProductFilterService;
 
 @Service
 public class ProductFilterServiceImpl implements ProductFilterService{
-
-	//TODO: a filter összes attrinevát le kell validálni h léteznek-e, ha nem akkor ex
-	
-	//TODO: attri addolásnál validálni kell hog az attrhizo tartzó érték a megadott tipushoz megfeleltethető-e
 	
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
 	private AttributeNameRepository attributeNameRepository;
+	@Autowired
+	private ProductCategoryRepository productCategoryRepository;
 	
 	private void addEntityIfNotAlreadyContained(List<Product> entites,Product entity)
 	{
@@ -178,7 +178,22 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	
 	@Override
 	public void mapEntitesToDtos(List<Product> entites, List<ProductDTO> dtos) {
-		
+		for(Product entity : entites)
+		{
+			ProductDTO dto = new ProductDTO();
+			
+			dto.setAttributes(entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+			dto.setCategories(entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+			dto.setComments(entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+			dto.setImages(entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+			dto.setDescription(entity.getDescription());
+			dto.setId(entity.getId());
+			dto.setName(entity.getName());
+			dto.setSeller(entity.getSeller().getId());
+			dto.setUsername(entity.getSeller().getUser().getUsername());
+			
+			dtos.add(dto);
+		}
 	}
 
 	@Override
@@ -208,6 +223,25 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	@Override
 	public int size(ProductFilterDTO filter) {
 		return getAll(filter).size();
+	}
+
+	@Override
+	public void validate(ProductFilterDTO filter) {
+		for(int catId : filter.getCategories())
+		{
+			if(productCategoryRepository.findById(catId) == null)
+			{
+				throw new CategoryDoesNotExistsException("Category doesn't exists");
+			}
+		}
+		
+		for(ProductFilterCore filterCore : filter.getProductFilterCores())
+		{
+			if(attributeNameRepository.findById(filterCore.getAttributeName()) == null)
+			{
+				throw new AttributeNameDoesNotExistsException("Attributename does not exists");
+			}
+		}
 	}
 }
 

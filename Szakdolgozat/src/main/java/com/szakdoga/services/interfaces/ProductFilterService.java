@@ -5,5 +5,5 @@ import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
 
 public interface ProductFilterService extends BaseFilterService<ProductDTO,Product,ProductFilterDTO>{
-
+	
 }
