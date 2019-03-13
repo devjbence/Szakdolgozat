@@ -12,13 +12,13 @@ import com.szakdoga.entities.Product;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.RefreshTokenEntity;
 import com.szakdoga.entities.User;
-import com.szakdoga.repos.AccessTokenRepository;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.SellerRepository;
-import com.szakdoga.repos.BuyerRepository;
-import com.szakdoga.repos.RefreshTokenRepository;
-import com.szakdoga.repos.RoleRepository;
-import com.szakdoga.repos.UserRepository;
+import com.szakdoga.repositories.AccessTokenRepository;
+import com.szakdoga.repositories.BuyerRepository;
+import com.szakdoga.repositories.CategoryRepository;
+import com.szakdoga.repositories.RefreshTokenRepository;
+import com.szakdoga.repositories.RoleRepository;
+import com.szakdoga.repositories.SellerRepository;
+import com.szakdoga.repositories.UserRepository;
 import com.szakdoga.services.interfaces.UserService;
 
 @RunWith(SpringRunner.class)
@@ -34,7 +34,7 @@ public class SzakdolgozatApplicationTests {
 	@Autowired
 	SellerRepository sellerRepository;
 	@Autowired
-	ProductCategoryRepository categoryRepository;
+	CategoryRepository categoryRepository;
 	@Autowired
 	AccessTokenRepository accTokenRepository;
 	@Autowired

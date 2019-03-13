@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.szakdoga.entities.User;
-import com.szakdoga.repos.UserRepository;
+import com.szakdoga.repositories.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

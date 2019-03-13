@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.szakdoga.entities.AttributeCore;
 import com.szakdoga.entities.DTOs.AttributeCoreDTO;
-import com.szakdoga.repos.AttributeCoreRepository;
-import com.szakdoga.repos.AttributeRepository;
+import com.szakdoga.repositories.AttributeCoreRepository;
+import com.szakdoga.repositories.AttributeRepository;
 import com.szakdoga.services.interfaces.AttributeCoreService;
 
 @Service

@@ -30,13 +30,11 @@ import com.szakdoga.exceptions.RoleDoesNotExistsException;
 import com.szakdoga.exceptions.UserIsNotActivatedException;
 import com.szakdoga.exceptions.UserameAlreadyRegisteredException;
 import com.szakdoga.exceptions.WrongActivationCodeException;
-//import com.szakdoga.repos.AccessTokenRepository;
-import com.szakdoga.repos.SellerRepository;
-import com.szakdoga.repos.BuyerRepository;
-//import com.szakdoga.repos.RefreshTokenRepository;
-import com.szakdoga.repos.RoleRepository;
-import com.szakdoga.repos.UserActivationRepository;
-import com.szakdoga.repos.UserRepository;
+import com.szakdoga.repositories.BuyerRepository;
+import com.szakdoga.repositories.RoleRepository;
+import com.szakdoga.repositories.SellerRepository;
+import com.szakdoga.repositories.UserActivationRepository;
+import com.szakdoga.repositories.UserRepository;
 import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.EmailUtil;
 import com.szakdoga.utils.Utils;
@@ -138,7 +136,6 @@ public class UserServiceImpl implements UserService {
 		Seller offerer = new Seller();
 
 		offerer.setAboutMe("Empty");
-		offerer.setCategories(null);
 		offerer.setFirstName("John");
 		offerer.setLastName("Doe");
 		offerer.setProfileImage(null);
@@ -151,7 +148,6 @@ public class UserServiceImpl implements UserService {
 		Buyer seeker = new Buyer();
 
 		seeker.setAboutMe("Empty");
-		seeker.setCategories(null);
 		seeker.setFirstName("John");
 		seeker.setLastName("Doe");
 		seeker.setProfileImage(null);

@@ -1,6 +1,5 @@
 package com.szakdoga.entities.DTOs;
 
-import java.util.List;
 
 import lombok.Data;
 
@@ -12,5 +11,4 @@ public class SellerDTO{
 	private String lastName;
 	private String aboutMe;
 	private int profileImage;
-	List<Integer> categories;
 }

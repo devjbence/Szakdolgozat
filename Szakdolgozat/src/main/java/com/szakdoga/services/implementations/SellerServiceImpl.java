@@ -2,22 +2,18 @@ package com.szakdoga.services.implementations;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.Image;
-import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.SellerDTO;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.ImageUploadException;
-import com.szakdoga.repos.ImageRepository;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.SellerRepository;
+import com.szakdoga.repositories.ImageRepository;
+import com.szakdoga.repositories.SellerRepository;
 import com.szakdoga.services.interfaces.SellerService;
 import com.szakdoga.utils.Utils;
 
@@ -25,42 +21,9 @@ import com.szakdoga.utils.Utils;
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
-	private ProductCategoryRepository categoryRepository;
-	@Autowired
 	private SellerRepository sellerRepository;
 	@Autowired
 	private ImageRepository imageRepository;
-
-	private void updateCategories(SellerDTO dto, Seller entity) {
-		if (dto.getCategories() == null)
-			return;
-
-		for (int categoryId : dto.getCategories()) {
-			if (categoryId < 0) {
-				ProductCategory category = categoryRepository.findById(categoryId * (-1));
-				entity.removeCategory(category);
-			} else {
-				ProductCategory category = categoryRepository.findById(categoryId);
-				if (category != null) {
-					if (!entity.getCategories().contains(category)) {
-						entity.addCategory(category);
-					}
-				}
-			}
-		}
-	}
-
-	public void removeDescendants(int id) {
-
-		Seller seller = sellerRepository.findOne(id);
-
-		Iterator<ProductCategory> categoryIterator = seller.getCategories().iterator();
-		while (categoryIterator.hasNext()) {
-			categoryIterator.remove();
-		}
-
-		//productService.removeAllProducts(seller);
-	}
 
 	@Override
 	public void saveImage(Seller entity, MultipartFile imageFile) {
@@ -92,7 +55,6 @@ public class SellerServiceImpl implements SellerService {
 	public void mapEntityToDto(Seller entity, SellerDTO dto) {
 		dto.setId(entity.getId());
 		dto.setAboutMe(entity.getAboutMe());
-		dto.setCategories(entity.getCategories().stream().mapToInt(b->b.getId()).boxed().collect(Collectors.toList()));
 		dto.setFirstName(entity.getFirstName());
 		dto.setLastName(entity.getLastName());
 		dto.setProfileImage(entity.getProfileImage() == null ? 0 : entity.getProfileImage().getId());
@@ -128,7 +90,6 @@ public class SellerServiceImpl implements SellerService {
 		Seller entity = sellerRepository.findOne(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
-		updateCategories(dto, entity);
 		
 		sellerRepository.save(entity);
 	}

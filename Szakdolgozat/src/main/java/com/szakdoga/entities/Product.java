@@ -1,6 +1,7 @@
 package com.szakdoga.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -15,6 +18,9 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.szakdoga.enums.ProductType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,10 +35,10 @@ public class Product extends EntityBase {
 	private String description;
 
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER) // persist https://stackoverflow.com/a/48421327
-	@JoinTable(name = "product_product_category", 
+	@JoinTable(name = "product_category", 
 			   joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"), 
 			   inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
-	private Set<ProductCategory> categories;
+	private Set<Category> categories;
 
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
@@ -52,6 +58,36 @@ public class Product extends EntityBase {
             )
 	private Set<Image> images;
 	
+	@Enumerated(EnumType.ORDINAL)
+	private ProductType type;
+    
+	//bindding
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Bid> biddings;
+	private Date start;
+	private Date end;
+
+	//fixed price
+	private int price;
+	@ManyToOne
+	@JoinColumn(name = "buyer_id")
+	private Buyer buyer;
+	
+	
+	public void addBid(Bid bid)
+	{
+		if(biddings == null)
+			biddings = new ArrayList<Bid>();
+		biddings.add(bid);
+	}
+	
+	public void removeBid(Bid bid)
+	{
+		if(biddings == null)
+			return;
+		biddings.remove(bid);
+	}
+    
 	public void addImage(Image image)
 	{
 		if(images == null)
@@ -81,11 +117,11 @@ public class Product extends EntityBase {
 	}
 	
 	// https://stackoverflow.com/a/48421327
-	public void addCategory(ProductCategory category) {
+	public void addCategory(Category category) {
 		if(category == null)
 			return;
 		if (categories == null)
-			categories = new HashSet<ProductCategory>();
+			categories = new HashSet<Category>();
 		if (!categories.contains(category)) {
 			categories.add(category);
 			category.getProducts().add(this);
@@ -93,7 +129,7 @@ public class Product extends EntityBase {
 	}
 
 	// https://stackoverflow.com/a/48421327
-	public void removeCategory(ProductCategory category) {
+	public void removeCategory(Category category) {
 		if (categories == null)
 			return;
 		categories.remove(category);

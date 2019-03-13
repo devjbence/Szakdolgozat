@@ -1,4 +1,4 @@
-package com.szakdoga.repos;
+package com.szakdoga.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

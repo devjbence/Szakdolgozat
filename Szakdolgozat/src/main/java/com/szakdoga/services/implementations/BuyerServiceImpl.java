@@ -3,21 +3,18 @@ package com.szakdoga.services.implementations;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.szakdoga.entities.ProductCategory;
 import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.DTOs.BuyerDTO;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.ImageUploadException;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.BuyerRepository;
-import com.szakdoga.repos.ImageRepository;
+import com.szakdoga.repositories.BuyerRepository;
+import com.szakdoga.repositories.ImageRepository;
 import com.szakdoga.services.interfaces.BuyerService;
 import com.szakdoga.utils.Utils;
 
@@ -25,30 +22,9 @@ import com.szakdoga.utils.Utils;
 public class BuyerServiceImpl implements BuyerService {
 
 	@Autowired
-	private ProductCategoryRepository categoryRepository;
-	@Autowired
 	private BuyerRepository buyerRepository;
 	@Autowired
 	private ImageRepository imageRepository;
-
-	private void updateCategories(BuyerDTO dto, Buyer entity) {
-		if (dto.getCategories() == null)
-			return;
-
-		for (int categoryId : dto.getCategories()) {
-			if (categoryId < 0) {
-				ProductCategory category = categoryRepository.findById(categoryId * (-1));
-				entity.removeCategory(category);
-			} else {
-				ProductCategory category = categoryRepository.findById(categoryId);
-				if (category != null) {
-					if (!entity.getCategories().contains(category)) {
-						entity.addCategory(category);
-					}
-				}
-			}
-		}
-	}
 	
 	@Override
 	public void saveImage(Buyer entity, MultipartFile imageFile) {
@@ -80,7 +56,6 @@ public class BuyerServiceImpl implements BuyerService {
 	public void mapEntityToDto(Buyer entity, BuyerDTO dto) {
 		dto.setId(entity.getId());
 		dto.setAboutMe(entity.getAboutMe());
-		dto.setCategories(entity.getCategories().stream().mapToInt(b->b.getId()).boxed().collect(Collectors.toList()));
 		dto.setFirstName(entity.getFirstName());
 		dto.setLastName(entity.getLastName());
 		dto.setProfileImage(entity.getProfileImage() == null ? 0 : entity.getProfileImage().getId());
@@ -116,7 +91,6 @@ public class BuyerServiceImpl implements BuyerService {
 		Buyer entity = buyerRepository.findOne(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
-		updateCategories(dto, entity);
 		
 		buyerRepository.save(entity);
 	}

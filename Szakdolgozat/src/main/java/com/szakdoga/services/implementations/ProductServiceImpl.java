@@ -11,17 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.Product;
-import com.szakdoga.entities.ProductCategory;
+import com.szakdoga.entities.Category;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.exceptions.CouldNotUploadImageException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
-import com.szakdoga.repos.CommentRepository;
-import com.szakdoga.repos.ImageRepository;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.SellerRepository;
-import com.szakdoga.repos.ProductRepository;
+import com.szakdoga.repositories.CommentRepository;
+import com.szakdoga.repositories.ImageRepository;
+import com.szakdoga.repositories.CategoryRepository;
+import com.szakdoga.repositories.ProductRepository;
+import com.szakdoga.repositories.SellerRepository;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.Utils;
@@ -29,7 +29,7 @@ import com.szakdoga.utils.Utils;
 @Service
 public class ProductServiceImpl implements ProductService {
 	@Autowired
-	private ProductCategoryRepository categoryRepository;
+	private CategoryRepository categoryRepository;
 	@Autowired
 	private SellerRepository sellerRepository;
 	@Autowired
@@ -47,10 +47,10 @@ public class ProductServiceImpl implements ProductService {
 
 		for (int categoryId : dto.getCategories()) {
 			if (categoryId < 0) {
-				ProductCategory category = categoryRepository.findById(categoryId * (-1));
+				Category category = categoryRepository.findById(categoryId * (-1));
 				entity.removeCategory(category);
 			} else {
-				ProductCategory category = categoryRepository.findById(categoryId);
+				Category category = categoryRepository.findById(categoryId);
 				if (category != null) {
 					if (!entity.getCategories().contains(category)) {
 						entity.addCategory(category);
@@ -155,9 +155,9 @@ public class ProductServiceImpl implements ProductService {
 		//removeAllImages(id);
 		
 		Product product = productRepository.findById(id);
-		Set<ProductCategory> categories = product.getCategories();
+		Set<Category> categories = product.getCategories();
 
-		Iterator<ProductCategory> categoryIterator = categories.iterator();
+		Iterator<Category> categoryIterator = categories.iterator();
 		while (categoryIterator.hasNext()) {
 			categoryIterator.remove();
 		}

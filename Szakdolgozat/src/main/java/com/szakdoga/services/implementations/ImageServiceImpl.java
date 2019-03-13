@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.DTOs.ImageDTO;
-import com.szakdoga.repos.ImageRepository;
+import com.szakdoga.repositories.ImageRepository;
 import com.szakdoga.services.interfaces.ImageService;
 
 @Service

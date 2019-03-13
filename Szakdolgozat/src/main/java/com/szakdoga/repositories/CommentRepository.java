@@ -1,4 +1,4 @@
-package com.szakdoga.repos;
+package com.szakdoga.repositories;
 
 import java.util.List;
 

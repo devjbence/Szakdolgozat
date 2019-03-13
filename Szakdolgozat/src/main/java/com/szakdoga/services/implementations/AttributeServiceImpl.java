@@ -14,9 +14,9 @@ import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.DtoNullException;
 import com.szakdoga.exceptions.NumericConversionException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
-import com.szakdoga.repos.AttributeCoreRepository;
-import com.szakdoga.repos.AttributeRepository;
-import com.szakdoga.repos.ProductRepository;
+import com.szakdoga.repositories.AttributeCoreRepository;
+import com.szakdoga.repositories.AttributeRepository;
+import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.services.interfaces.AttributeService;
 
 @Service

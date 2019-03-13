@@ -1,17 +1,13 @@
 package com.szakdoga.entities;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,10 +19,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Buyer extends EntityBase {
-
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "buyer_product_category", joinColumns = @JoinColumn(name = "buyer_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
-	private Set<ProductCategory> categories;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
@@ -48,19 +40,13 @@ public class Buyer extends EntityBase {
 	@OneToOne
 	@JoinColumn(name="image_id")
 	private Image profileImage;
+	
+	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Bid> biddings;
 
-	public void addCategory(ProductCategory category) {
-		if (categories == null)
-			categories = new HashSet<ProductCategory>();
-		categories.add(category);
-	}
-
-	public void removeCategory(ProductCategory category) {
-		if (categories == null)
-			return;
-		categories.remove(category);
-	}
-
+	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Product> products;
+	
 	public String Username()
 	{
 		return user.getUsername();

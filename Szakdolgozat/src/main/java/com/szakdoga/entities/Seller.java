@@ -8,9 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -22,12 +20,6 @@ import lombok.Setter;
 @Setter
 @Table(name="seller")
 public class Seller extends EntityBase{
-
-	@ManyToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
-	@JoinTable(name="seller_product_category",
-	joinColumns = @JoinColumn(name="seller_id", referencedColumnName="id"),
-	inverseJoinColumns=@JoinColumn(name="category_id",referencedColumnName="id"))
-	private Set<ProductCategory> categories;
 	
 	@OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Product> products;
@@ -50,20 +42,6 @@ public class Seller extends EntityBase{
 	@JoinColumn(name="image_id")
 	private Image profileImage;
 
-	public void addCategory(ProductCategory category)
-	{
-		if(categories == null)
-			categories = new HashSet<ProductCategory>();
-		categories.add(category);
-	}
-	
-	public void removeCategory(ProductCategory category)
-	{
-		if(categories == null)
-			return;
-		categories.remove(category);
-	}
-
 	public void addProduct(Product product)
 	{
 		if(products==null)
@@ -79,7 +57,7 @@ public class Seller extends EntityBase{
 
 	@Override
 	public String toString() {
-		return "Seller [categories=" + categories + ", products=" + products + ", user=" + user + ", firstName="
+		return "Seller [ products=" + products + ", user=" + user + ", firstName="
 				+ firstName + ", lastName=" + lastName + ", aboutMe=" + aboutMe + ", profileImage=" + profileImage
 				+ "]";
 	}

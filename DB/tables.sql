@@ -1,14 +1,13 @@
 use szakdoga_db;
 
-drop table product_product_category;
-drop table seller_product_category;
-drop table buyer_product_category;
 drop table product_category;
 drop table product_image;
 drop table comment;
 drop table attribute;
 drop table attribute_core;
+drop table bid;
 drop table product;
+drop table category;
 drop table buyer;
 drop table seller;
 drop table image;
@@ -24,7 +23,7 @@ CREATE TABLE `role` (
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `NAME` (`NAME`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE `user` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -37,7 +36,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `username` (`username`),
    UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE `user_activation` (
  `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -48,7 +47,7 @@ CREATE TABLE `user_activation` (
   expiration_date TIMESTAMP,
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE `user_role` (
   `USER_ID` int(11) DEFAULT NULL,
@@ -59,7 +58,7 @@ CREATE TABLE `user_role` (
   KEY `ROLE_ID` (`ROLE_ID`),
   FOREIGN KEY (`ROLE_ID`) REFERENCES `role` (`id`),
   FOREIGN KEY (`USER_ID`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 create table `image`
 (
@@ -82,10 +81,10 @@ CREATE TABLE `seller` (
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
-CREATE TABLE `buyer` ( /*with user table - one to one*/ /*with job_seeker_job_categry many to many*/
+CREATE TABLE `buyer` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) not null,
   `first_name` varchar(60) not NULL,
@@ -97,10 +96,9 @@ CREATE TABLE `buyer` ( /*with user table - one to one*/ /*with job_seeker_job_ca
   PRIMARY KEY (`ID`),
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
-
-CREATE TABLE `product_category` ( 
+CREATE TABLE `category` ( 
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `product_name` varchar(255) DEFAULT NULL,
   parent_id int(11) ,
@@ -109,47 +107,45 @@ CREATE TABLE `product_category` (
    CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-
-CREATE TABLE `seller_product_category` (
-	`seller_id` int(11) NOT NULL,
-	`category_id` int(11) NOT NULL,
-   CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-   modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`),
-  FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `buyer_product_category` (
-	`buyer_id` int(11) NOT NULL,
-	`category_id` int(11) NOT NULL,
-   CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-   modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`),
-  FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE `product` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `seller_id` int(11) DEFAULT NULL,
+  `buyer_id` int(11) DEFAULT NULL,
   `name` varchar(200) default null,
   `description` text default null,
+  `type` int(4) not null,
+  `price` int(11),
+  `start` TIMESTAMP,
+  `end` TIMESTAMP,
+  CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`),
+  FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
+);
+
+CREATE TABLE `bid` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) DEFAULT NULL,
+  `buyer_id` int(11) DEFAULT NULL,
+  `price` int(11),
     CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `seller_id` (`seller_id`),
-  FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
+  FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`id`)
+);
 
-CREATE TABLE `product_product_category` (
+CREATE TABLE `product_category` (
 	`product_id` int(11) NOT NULL,
 	`category_id` int(11) NOT NULL,
    CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
-  FOREIGN KEY (`category_id`) REFERENCES `product_category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
+);
 
 CREATE TABLE `product_image` (
 	`product_id` int(11) NOT NULL,
@@ -158,7 +154,7 @@ CREATE TABLE `product_image` (
    modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`product_id`) REFERENCES `product` (`id`),
   FOREIGN KEY (`image_id`) REFERENCES `image` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 create table `comment`
 (
@@ -203,14 +199,15 @@ create table `attribute`
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
 
-insert into product_category(id,product_name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
-insert into product_category(id,product_name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
-insert into product_category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
+insert into category(id,product_name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
+insert into category(id,product_name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
+insert into category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
 
 insert into attribute_core(id,name,type) values(1,'height',0);
 insert into attribute_core(id,name,type) values(2,'weight',1);
 insert into attribute_core(id,name,type) values(3,'othername',2);
 
+/*
 select * from role;
 select * from user;
 select * from user_role;
@@ -220,9 +217,10 @@ select * from product;
 select * from product_category;
 select * from product_product_category;
 select * from comment;
+select * from bid;
 select * from attribute;
 select * from attribute_core;
-
+*/
 
 
 

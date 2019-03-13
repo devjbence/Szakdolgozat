@@ -10,9 +10,9 @@ import com.szakdoga.entities.Comment;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
-import com.szakdoga.repos.BuyerRepository;
-import com.szakdoga.repos.CommentRepository;
-import com.szakdoga.repos.ProductRepository;
+import com.szakdoga.repositories.BuyerRepository;
+import com.szakdoga.repositories.CommentRepository;
+import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.services.interfaces.CommentService;
 import com.szakdoga.services.interfaces.UserService;
 

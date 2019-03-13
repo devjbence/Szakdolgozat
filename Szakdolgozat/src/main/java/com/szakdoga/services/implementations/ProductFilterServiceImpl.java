@@ -15,9 +15,9 @@ import com.szakdoga.entities.DTOs.ProductFilterCore;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
 import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.CategoryDoesNotExistsException;
-import com.szakdoga.repos.AttributeCoreRepository;
-import com.szakdoga.repos.ProductCategoryRepository;
-import com.szakdoga.repos.ProductRepository;
+import com.szakdoga.repositories.AttributeCoreRepository;
+import com.szakdoga.repositories.CategoryRepository;
+import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.services.interfaces.ProductFilterService;
 
 @Service
@@ -28,7 +28,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	@Autowired
 	private AttributeCoreRepository attributeCoreRepository;
 	@Autowired
-	private ProductCategoryRepository productCategoryRepository;
+	private CategoryRepository productCategoryRepository;
 	
 	private void addEntityIfNotAlreadyContained(List<Product> entites,Product entity)
 	{
