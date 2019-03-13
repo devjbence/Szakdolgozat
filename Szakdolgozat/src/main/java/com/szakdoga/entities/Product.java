@@ -61,11 +61,12 @@ public class Product extends EntityBase {
 	@Enumerated(EnumType.ORDINAL)
 	private ProductType type;
     
+	private Date start;
+	private Date end;
+	
 	//bindding
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Bid> biddings;
-	private Date start;
-	private Date end;
 
 	//fixed price
 	private int price;

@@ -5,6 +5,6 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ProductCategoryDTO {
+public class CategoryDTO {
 	private List<Integer> ids;
 }
