@@ -19,7 +19,7 @@ import com.szakdoga.services.interfaces.BuyerService;
 import com.szakdoga.utils.Utils;
 
 @Service
-public class BuyerServiceImpl implements BuyerService {
+public class BuyerServiceImpl extends BaseServiceClass<Buyer,BuyerDTO> implements BuyerService {
 
 	@Autowired
 	private BuyerRepository buyerRepository;
@@ -46,10 +46,6 @@ public class BuyerServiceImpl implements BuyerService {
 		entity.setProfileImage(image);
 		
 		buyerRepository.save(entity);
-	}
-
-	@Override
-	public void mapDtoToEntity(BuyerDTO dto, Buyer entity) {
 	}
 
 	@Override
@@ -87,12 +83,16 @@ public class BuyerServiceImpl implements BuyerService {
 	}
 
 	@Override
-	public void update(int id, BuyerDTO dto) {
+	public BuyerDTO update(int id, BuyerDTO dto) {
 		Buyer entity = buyerRepository.findOne(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
 		
 		buyerRepository.save(entity);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -137,14 +137,5 @@ public class BuyerServiceImpl implements BuyerService {
 	@Override
 	public int size() {
 		return Math.toIntExact(buyerRepository.count());
-	}
-
-	@Override
-	public void add(BuyerDTO dto) {
-	}
-	
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub	
 	}
 }

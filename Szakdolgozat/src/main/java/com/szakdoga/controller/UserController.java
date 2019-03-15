@@ -25,11 +25,11 @@ public class UserController {
 	private UserService userService;
 	
 	@PostMapping
-	public void create(@RequestBody UserDTO dto, HttpServletResponse response)
-	{
-		userService.add(dto);
-		
+	public UserDTO create(@RequestBody UserDTO dto, HttpServletResponse response)
+	{		
 		response.setStatus(HttpServletResponse.SC_CREATED); 
+		
+		return userService.add(dto);
 	}
 	
 	@GetMapping("/activation/{activationCode}")
@@ -63,17 +63,17 @@ public class UserController {
 	}
 	
 	@PutMapping("/{id}")
-	public void update(
+	public UserDTO update(
 			@PathVariable("id") int id,
 			@RequestBody UserDTO dto,
 			HttpServletResponse response)
 	{
 		if (userService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
-			return;
+			return null;
 		}
 		
-		userService.update(id,dto);		
+		return userService.update(id,dto);		
 	}
 	
 	@GetMapping("/{id}")

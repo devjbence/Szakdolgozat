@@ -17,7 +17,7 @@ import com.szakdoga.services.interfaces.CommentService;
 import com.szakdoga.services.interfaces.UserService;
 
 @Service
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> implements CommentService {
 
 	@Autowired
 	private CommentRepository commentRepository;
@@ -29,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
 	private UserService userService;
 
 	@Override
-	public void add(CommentDTO dto) {
+	public CommentDTO add(CommentDTO dto) {
 		Comment entity = new Comment();
 		Product product = productRepository.findById(dto.getProductId());
 
@@ -39,6 +39,10 @@ public class CommentServiceImpl implements CommentService {
 		
 		product.addComment(entity);
 		productRepository.save(product);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -56,12 +60,16 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public void update(int id, CommentDTO dto) {
+	public CommentDTO update(int id, CommentDTO dto) {
 		Comment entity = commentRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
 		commentRepository.save(entity);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override

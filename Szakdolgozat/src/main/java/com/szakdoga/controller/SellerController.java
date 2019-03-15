@@ -29,19 +29,19 @@ public class SellerController {
 	private UserService userService;
 	
 	@PutMapping("/{id}")
-	public void update(
+	public SellerDTO update(
 			@PathVariable("id") int id,
 			@RequestBody SellerDTO dto,
 			HttpServletResponse response)
 	{
 		if (sellerService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
-			return;
+			return null;
 		}
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		sellerService.update(id,dto);
+		return sellerService.update(id,dto);
 	}
 	
 	@PostMapping(path="/profileImage",consumes = "multipart/form-data")

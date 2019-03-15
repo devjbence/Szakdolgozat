@@ -28,7 +28,7 @@ public class CommentController {
 	private UserService userService;
 
 	@PostMapping
-	public void create(@RequestBody CommentDTO dto, HttpServletResponse response) {
+	public CommentDTO create(@RequestBody CommentDTO dto, HttpServletResponse response) {
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
@@ -36,7 +36,7 @@ public class CommentController {
 		
 		response.setStatus(HttpServletResponse.SC_CREATED);
 		
-		commentService.add(dto);
+		return commentService.add(dto);
 	}
 
 	@GetMapping("/{id}")
@@ -70,19 +70,19 @@ public class CommentController {
 	}
 
 	@PutMapping("/{id}")
-	public void update(
+	public CommentDTO update(
 			@RequestBody CommentDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
 		if (commentService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
-			return;
+			return null;
 		}
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		commentService.update(id,dto);
+		return commentService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")

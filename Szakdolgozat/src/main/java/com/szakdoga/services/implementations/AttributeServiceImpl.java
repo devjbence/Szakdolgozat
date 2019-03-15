@@ -20,7 +20,7 @@ import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.services.interfaces.AttributeService;
 
 @Service
-public class AttributeServiceImpl implements AttributeService {
+public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDTO> implements AttributeService {
 
 	@Autowired
 	private AttributeRepository attributeRepository;
@@ -30,7 +30,7 @@ public class AttributeServiceImpl implements AttributeService {
 	private ProductRepository productRepository;
 
 	@Override
-	public void add(AttributeDTO dto) {
+	public AttributeDTO add(AttributeDTO dto) {
 
 		Attribute entity = new Attribute();
 		AttributeCore attributeName = attributeCoreRepository.findById(dto.getAttributeCore());
@@ -44,6 +44,10 @@ public class AttributeServiceImpl implements AttributeService {
 
 		attributeName.addAttribute(entity);
 		attributeCoreRepository.save(attributeName);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -81,12 +85,16 @@ public class AttributeServiceImpl implements AttributeService {
 	}
 
 	@Override
-	public void update(int id, AttributeDTO dto) {
+	public AttributeDTO update(int id, AttributeDTO dto) {
 		Attribute entity = attributeRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
 		attributeRepository.save(entity);
+		
+		mapEntityToDto(entity, dto);
+
+		return dto;
 	}
 
 	@Override

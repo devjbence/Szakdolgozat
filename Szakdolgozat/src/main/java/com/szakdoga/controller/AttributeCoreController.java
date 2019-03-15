@@ -28,13 +28,13 @@ public class AttributeCoreController {
 	private UserService userService;
 
 	@PostMapping
-	public void create(@RequestBody AttributeCoreDTO dto, HttpServletResponse response) {
+	public AttributeCoreDTO create(@RequestBody AttributeCoreDTO dto, HttpServletResponse response) {
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
 		response.setStatus(HttpServletResponse.SC_CREATED);
 		
-		attributeCoreService.add(dto);
+		return attributeCoreService.add(dto);
 	}
 
 	@GetMapping("/{id}")
@@ -68,19 +68,19 @@ public class AttributeCoreController {
 	}
 
 	@PutMapping("/{id}")
-	public void update(
+	public AttributeCoreDTO update(
 			@RequestBody AttributeCoreDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
 		if (attributeCoreService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
-			return;
+			return null;
 		}
 		
 		userService.checkIfActivated(userService.getCurrentUser());
 		
-		attributeCoreService.update(id,dto);
+		return attributeCoreService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")

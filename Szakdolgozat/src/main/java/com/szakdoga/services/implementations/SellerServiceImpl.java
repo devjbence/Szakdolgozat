@@ -18,7 +18,7 @@ import com.szakdoga.services.interfaces.SellerService;
 import com.szakdoga.utils.Utils;
 
 @Service
-public class SellerServiceImpl implements SellerService {
+public class SellerServiceImpl extends BaseServiceClass<Seller,SellerDTO> implements SellerService {
 
 	@Autowired
 	private SellerRepository sellerRepository;
@@ -86,12 +86,16 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public void update(int id, SellerDTO dto) {
+	public SellerDTO update(int id, SellerDTO dto) {
 		Seller entity = sellerRepository.findOne(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
 		
 		sellerRepository.save(entity);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -136,15 +140,5 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public int size() {
 		return Math.toIntExact(sellerRepository.count());
-	}
-
-	@Override
-	public void add(SellerDTO dto) {
-		// TODO Auto-generated method stub	
-	}
-
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub	
 	}
 }

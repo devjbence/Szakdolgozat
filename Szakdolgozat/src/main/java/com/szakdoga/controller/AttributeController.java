@@ -25,13 +25,13 @@ public class AttributeController {
 	private AttributeService attributeService;
 
 	@PostMapping()
-	public void create(@RequestBody AttributeDTO dto, HttpServletResponse response) {
+	public AttributeDTO create(@RequestBody AttributeDTO dto, HttpServletResponse response) {
 		
 		response.setStatus(HttpServletResponse.SC_CREATED); 
 		
 		attributeService.validate(dto);
 		
-		attributeService.add(dto);
+		return attributeService.add(dto);
 	}
 
 	@GetMapping("/{id}")
@@ -65,19 +65,19 @@ public class AttributeController {
 	}
 
 	@PutMapping("/{id}")
-	public void update(
+	public AttributeDTO update(
 			@RequestBody AttributeDTO dto,
 			@PathVariable("id") Integer id, 
 			HttpServletResponse response)
 	{		
 		if (attributeService.get(id) == null) {		
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND); 
-			return;
+			return null;
 		}
 		
 		attributeService.validate(dto);
 		
-		attributeService.update(id,dto);
+		return attributeService.update(id,dto);
 	}
 	
 	@DeleteMapping("/{id}")

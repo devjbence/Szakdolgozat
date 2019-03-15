@@ -40,7 +40,7 @@ import com.szakdoga.utils.EmailUtil;
 import com.szakdoga.utils.Utils;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements UserService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -218,13 +218,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void mapDtoToEntityNonNullsOnly(UserDTO dto, User entity) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void add(UserDTO dto) {
+	public UserDTO add(UserDTO dto) {
 		if (dto.getUsername() == null || dto.getEmail() == null || dto.getPassword() == null || dto.getRole() == null)
 			throw new MissingUserInformationException("Userinformation is missing");
 
@@ -239,20 +233,20 @@ public class UserServiceImpl implements UserService {
 		if (!validRoles.contains(dto.getRole()))
 			throw new RoleDoesNotExistsException("The role does not exists !");
 
-		User user = new User();
+		User entity = new User();
 		Role role = roleRepository.findByName(dto.getRole());
 
-		user.setEmail(dto.getEmail());
-		user.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
-		user.setUsername(dto.getUsername());
+		entity.setEmail(dto.getEmail());
+		entity.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
+		entity.setUsername(dto.getUsername());
 
-		user.addRole(role);
+		entity.addRole(role);
 
-		userRepository.save(user);
+		userRepository.save(entity);
 
-		Seller seller = getDefaultSeller(user);
-		Buyer buyer = getDefaultBuyer(user);
-		UserActivation userActivation = getDefaultUserActivation(user);
+		Seller seller = getDefaultSeller(entity);
+		Buyer buyer = getDefaultBuyer(entity);
+		UserActivation userActivation = getDefaultUserActivation(entity);
 
 		sellerRepository.save(seller);
 		buyerRepository.save(buyer);
@@ -260,6 +254,10 @@ public class UserServiceImpl implements UserService {
 
 		emailSender.sendSimpleMessage(dto.getEmail(), "Registration",
 				getRegistrationText(dto.getUsername(), userActivation.getActivationString()));
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -277,11 +275,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void update(int id, UserDTO dto) {
+	public UserDTO update(int id, UserDTO dto) {
 		User entity = userRepository.findById(id);
 
 		if (entity == null) {
-			return;
+			return null;
 		}
 
 		checkIfActivated(entity);
@@ -293,12 +291,10 @@ public class UserServiceImpl implements UserService {
 		mapDtoToEntity(dto, entity);
 
 		userRepository.save(entity);
-	}
-
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub
-
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override

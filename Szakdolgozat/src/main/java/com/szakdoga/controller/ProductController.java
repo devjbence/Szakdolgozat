@@ -29,12 +29,12 @@ public class ProductController {
 	private UserService userService;
 
 	@PostMapping
-	public void create(@RequestBody ProductDTO dto, HttpServletResponse response) {
+	public ProductDTO create(@RequestBody ProductDTO dto, HttpServletResponse response) {
 		userService.checkIfActivated(userService.getCurrentUser());
 
 		response.setStatus(HttpServletResponse.SC_CREATED);
 
-		productService.add(dto);
+		return productService.add(dto);
 	}
 
 	@GetMapping("/{id}")
@@ -68,15 +68,15 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
-	public void update(@RequestBody ProductDTO dto, @PathVariable("id") Integer id, HttpServletResponse response) {
+	public ProductDTO update(@RequestBody ProductDTO dto, @PathVariable("id") Integer id, HttpServletResponse response) {
 		if (productService.get(id) == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return null;
 		}
 
 		userService.checkIfActivated(userService.getCurrentUser());
 
-		productService.update(id, dto);
+		return productService.update(id, dto);
 	}
 
 	@DeleteMapping("/{id}")
@@ -133,5 +133,12 @@ public class ProductController {
 
 		productService.removeImage(entityId, imageId);
 	}
+	
+	//bidding
+	//public void placeBid(BidDTO bidDTO)
+	
+	
+	//fix
+	//public void buy(FixedPriceDTO fixedPriceDTO)
 
 }

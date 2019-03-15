@@ -7,9 +7,9 @@ public interface BaseService <E,D> {
 	void mapEntityToDto(E entity,D dto);
 	void mapDtoToEntityNonNullsOnly(D dto,E entity);
 	
-	void add(D dto);
+	D add(D dto);
 	D get(Integer id);
-	void update(int id,D dto);
+	D update(int id,D dto);
 	void delete(Integer id);
 	
 	List<D> getAll();

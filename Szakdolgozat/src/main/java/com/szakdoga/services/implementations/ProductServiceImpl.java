@@ -27,7 +27,7 @@ import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.Utils;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> implements ProductService{
 	@Autowired
 	private CategoryRepository categoryRepository;
 	@Autowired
@@ -88,18 +88,29 @@ public class ProductServiceImpl implements ProductService {
 	public void mapDtoToEntity(ProductDTO dto, Product entity) {
 		entity.setName(dto.getName());
 		entity.setSeller(sellerRepository.findById(dto.getSeller()));
+		entity.setEnd(dto.getEnd());
+		entity.setStart(dto.getStart());
+		entity.setDescription(dto.getDescription());
+		entity.setPrice(entity.getPrice());
+		entity.setType(dto.getType());
 	}
 
 	@Override
 	public void mapEntityToDto(Product entity, ProductDTO dto) {
-		dto.setCategories(entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setComments(entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setImages(entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setAttributes(entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setCategories(entity.getCategories() == null ? new ArrayList<Integer>() : entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setComments(entity.getComments() == null ? new ArrayList<Integer>() : entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setImages(entity.getImages() == null ? new ArrayList<Integer>() : entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setAttributes(entity.getAttributes() == null ? new ArrayList<Integer>() : entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setBiddings(entity.getBiddings() == null ? new ArrayList<Integer>() : entity.getBiddings().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setSeller(entity.getSeller().getId());
+		dto.setBuyer(entity.getBuyer() == null ? 0 : entity.getBuyer().getId() );
 		dto.setDescription(entity.getDescription());
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
+		dto.setEnd(entity.getEnd());
+		dto.setStart(entity.getStart());
+		dto.setPrice(entity.getPrice());
+		dto.setType(entity.getType());
 	}
 
 	@Override
@@ -111,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void add(ProductDTO dto) {
+	public ProductDTO add(ProductDTO dto) {
 		Product entity = new Product();
 		Seller seller = userService.getCurrentUser().getSeller();
 
@@ -124,6 +135,10 @@ public class ProductServiceImpl implements ProductService {
 		seller.addProduct(entity);
 		
 		sellerRepository.save(seller);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -141,13 +156,17 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public void update(int id, ProductDTO dto) {
+	public ProductDTO update(int id, ProductDTO dto) {
 		Product entity = productRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 		updateCategories(dto,entity);
 
 		productRepository.save(entity);
+		
+	    mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override

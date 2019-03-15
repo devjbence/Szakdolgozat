@@ -14,7 +14,7 @@ import com.szakdoga.repositories.AttributeRepository;
 import com.szakdoga.services.interfaces.AttributeCoreService;
 
 @Service
-public class AttributeCoreServiceImpl implements AttributeCoreService{
+public class AttributeCoreServiceImpl extends BaseServiceClass<AttributeCore,AttributeCoreDTO> implements AttributeCoreService{
 
 	@Autowired
 	private AttributeCoreRepository attributeCoreRepository;
@@ -32,7 +32,7 @@ public class AttributeCoreServiceImpl implements AttributeCoreService{
 	@Override
 	public void mapEntityToDto(AttributeCore entity, AttributeCoreDTO dto) {
 		dto.setName(entity.getName());
-		dto.setAttributes(entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setAttributes(entity.getAttributes() == null ? new ArrayList<Integer>() : entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
 		dto.setId(entity.getId());
 		dto.setType(entity.getType());
 	}
@@ -50,12 +50,16 @@ public class AttributeCoreServiceImpl implements AttributeCoreService{
 	}
 
 	@Override
-	public void add(AttributeCoreDTO dto) {
+	public AttributeCoreDTO add(AttributeCoreDTO dto) {
 		AttributeCore entity = new AttributeCore();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 		
 		attributeCoreRepository.save(entity);
+		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
@@ -73,18 +77,16 @@ public class AttributeCoreServiceImpl implements AttributeCoreService{
 	}
 
 	@Override
-	public void update(int id, AttributeCoreDTO dto) {
+	public AttributeCoreDTO update(int id, AttributeCoreDTO dto) {
 		AttributeCore entity = attributeCoreRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
 		attributeCoreRepository.save(entity);
-	}
-
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub
 		
+		mapEntityToDto(entity, dto);
+		
+		return dto;
 	}
 
 	@Override
