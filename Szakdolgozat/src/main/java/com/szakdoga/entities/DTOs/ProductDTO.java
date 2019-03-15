@@ -18,11 +18,10 @@ public class ProductDTO {
 	private Integer seller;
 	private Integer buyer;
 	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")
-	private Date start;
-	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")
 	private Date end;
-	private int price;
+	private Integer price;
 	private ProductType type;
+	private Boolean active;
 	private List<Integer> categories;
 	private List<Integer> comments;
 	private List<Integer> images;
@@ -32,7 +31,7 @@ public class ProductDTO {
 	@Override
 	public String toString() {
 		return "ProductDTO [id=" + id + ", username=" + username + ", name=" + name + ", description=" + description
-				+ ", seller=" + seller + ", buyer=" + buyer + ", start=" + start + ", end=" + end + ", type=" + type
+				+ ", seller=" + seller + ", buyer=" + buyer + ", end=" + end + ", type=" + type
 				+ ", price=" + price + ", categories=" + categories + ", comments=" + comments + ", images=" + images
 				+ ", attributes=" + attributes + ", biddings=" + biddings + "]";
 	}

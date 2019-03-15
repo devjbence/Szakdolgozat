@@ -117,7 +117,7 @@ CREATE TABLE `product` (
   `description` text default null,
   `type` int(4) not null,
   `price` int(11),
-  `start` TIMESTAMP,
+  `active` int not null,
   `end` TIMESTAMP,
   CREATED    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   modified    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -206,6 +206,11 @@ insert into category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,
 insert into attribute_core(id,name,type) values(1,'height',0);
 insert into attribute_core(id,name,type) values(2,'weight',1);
 insert into attribute_core(id,name,type) values(3,'othername',2);
+
+CREATE EVENT productActivityUpdater
+ON SCHEDULE EVERY 50 SECOND
+DO
+   UPDATE szakdoga_db.product SET `active` = true where `end` <= CURRENT_TIMESTAMP;
 
 /*
 select * from role;

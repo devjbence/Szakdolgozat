@@ -1,5 +1,6 @@
 package com.szakdoga.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -23,7 +24,7 @@ public class Buyer extends EntityBase {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Comment> comments;
 
@@ -38,22 +39,34 @@ public class Buyer extends EntityBase {
 	private String aboutMe;
 
 	@OneToOne
-	@JoinColumn(name="image_id")
+	@JoinColumn(name = "image_id")
 	private Image profileImage;
-	
+
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Bid> biddings;
 
 	@OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Product> products;
-	
-	public String Username()
-	{
+
+	public String Username() {
 		return user.getUsername();
 	}
+
+	public void addProduct(Product product) {
+		if (products == null) {
+			products = new ArrayList<Product>();
+		}
+		products.add(product);
+	}
 	
-	public void removeComment(Comment comment)
+	public void removeProduct(Product product)
 	{
+		if(products == null)
+			return;
+		products.remove(product);
+	}
+
+	public void removeComment(Comment comment) {
 		comments.remove(comment);
 	}
 }

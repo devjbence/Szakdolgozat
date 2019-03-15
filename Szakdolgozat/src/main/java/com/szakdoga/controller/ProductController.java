@@ -33,6 +33,8 @@ public class ProductController {
 		userService.checkIfActivated(userService.getCurrentUser());
 
 		response.setStatus(HttpServletResponse.SC_CREATED);
+		
+		productService.validate(dto);
 
 		return productService.add(dto);
 	}
@@ -135,10 +137,24 @@ public class ProductController {
 	}
 	
 	//bidding
+	//@PostMapping("/bid")
 	//public void placeBid(BidDTO bidDTO)
 	
-	
-	//fix
-	//public void buy(FixedPriceDTO fixedPriceDTO)
+	@PostMapping("/buy/{id}")
+	public void buy(
+			@PathVariable("id") Integer id,
+			HttpServletResponse response)
+	{
+		User user = userService.getCurrentUser();
 
+		userService.checkIfActivated(user);
+		
+		if(productService.get(id) == null)
+		{
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		productService.buy(id);
+	}
 }

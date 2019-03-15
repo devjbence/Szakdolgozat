@@ -66,4 +66,10 @@ public abstract class BaseServiceClass<E, D> implements BaseService<E, D> {
 		return 0;
 	}
 	
+	@Override
+	public void validate(D dto)
+	{
+		
+	}
+	
 }

@@ -2,6 +2,7 @@ package com.szakdoga.services.implementations;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -11,14 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.Product;
+import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Category;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.ProductDTO;
+import com.szakdoga.enums.ProductType;
+import com.szakdoga.exceptions.AlreadySoldException;
 import com.szakdoga.exceptions.CouldNotUploadImageException;
+import com.szakdoga.exceptions.FixedPriceProductDoesNotHavePriceException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
+import com.szakdoga.exceptions.NotFixedPricedProductException;
+import com.szakdoga.exceptions.OverdueException;
+import com.szakdoga.exceptions.ProductDateNullException;
 import com.szakdoga.repositories.CommentRepository;
 import com.szakdoga.repositories.ImageRepository;
+import com.szakdoga.repositories.BuyerRepository;
 import com.szakdoga.repositories.CategoryRepository;
 import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.repositories.SellerRepository;
@@ -32,6 +41,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 	private CategoryRepository categoryRepository;
 	@Autowired
 	private SellerRepository sellerRepository;
+	@Autowired
+	private BuyerRepository buyerRepository;
 	@Autowired
 	private ProductRepository productRepository;
 	@Autowired
@@ -89,9 +100,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		entity.setName(dto.getName());
 		entity.setSeller(sellerRepository.findById(dto.getSeller()));
 		entity.setEnd(dto.getEnd());
-		entity.setStart(dto.getStart());
 		entity.setDescription(dto.getDescription());
-		entity.setPrice(entity.getPrice());
+		entity.setPrice(dto.getPrice());
 		entity.setType(dto.getType());
 	}
 
@@ -108,9 +118,9 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 		dto.setEnd(entity.getEnd());
-		dto.setStart(entity.getStart());
 		dto.setPrice(entity.getPrice());
 		dto.setType(entity.getType());
+		dto.setActive(entity.getActive());
 	}
 
 	@Override
@@ -129,6 +139,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		mapDtoToEntity(dto, entity);
 
 		entity.setSeller(seller);
+		entity.setActive(true);
 
 		productRepository.save(entity);
 		
@@ -256,6 +267,40 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		imageRepository.delete(image);
 		
 		productRepository.save(entity);
+	}
+	
+	@Override
+	public void validate(ProductDTO dto)
+	{
+		if(dto.getType() == ProductType.FixedPrice && dto.getPrice() == null)
+			throw new FixedPriceProductDoesNotHavePriceException("");
+		
+		if(dto.getEnd() == null)
+			throw new ProductDateNullException("");
+	}
+
+	@Override
+	public void buy(Integer id) {
+		Product entity = productRepository.findById(id);
+		Buyer buyer = userService.getCurrentUser().getBuyer();
+		
+		if(entity.getType() != ProductType.FixedPrice)
+			throw new NotFixedPricedProductException("The product is not fix priced");
+		
+		if(entity.getBuyer() != null)
+			throw new AlreadySoldException("The product is already sold");
+		
+		if(entity.getEnd().before(new Date()))
+			throw new OverdueException("The selling period has ended");
+		
+		entity.setBuyer(buyer);
+		entity.setActive(false);
+		
+		productRepository.save(entity);
+		
+		buyer.addProduct(entity);
+		
+		buyerRepository.save(buyer);
 	}
 }
 

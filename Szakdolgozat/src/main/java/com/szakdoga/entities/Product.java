@@ -19,6 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Type;
+
 import com.szakdoga.enums.ProductType;
 
 import lombok.Getter;
@@ -60,8 +62,7 @@ public class Product extends EntityBase {
 	
 	@Enumerated(EnumType.ORDINAL)
 	private ProductType type;
-    
-	private Date start;
+  
 	private Date end;
 	
 	//bindding
@@ -74,6 +75,8 @@ public class Product extends EntityBase {
 	@JoinColumn(name = "buyer_id")
 	private Buyer buyer;
 	
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private Boolean active;
 	
 	public void addBid(Bid bid)
 	{

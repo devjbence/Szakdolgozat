@@ -11,6 +11,7 @@ public interface BaseService <E,D> {
 	D get(Integer id);
 	D update(int id,D dto);
 	void delete(Integer id);
+	void validate(D dto);
 	
 	List<D> getAll();
 	List<D> getAll(int page,int size);
