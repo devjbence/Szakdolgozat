@@ -1,6 +1,8 @@
 package com.szakdoga.services.implementations;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -290,12 +292,11 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		if(entity.getBuyer() != null)
 			throw new AlreadySoldException("The product is already sold");
 		
-		if(entity.getEnd().before(new Date()))
+		if(!entity.getActive())
 			throw new OverdueException("The selling period has ended");
 		
 		entity.setBuyer(buyer);
 		entity.setActive(false);
-		
 		productRepository.save(entity);
 		
 		buyer.addProduct(entity);
