@@ -70,7 +70,7 @@ public class Product extends EntityBase {
 	private List<Bid> biddings;
 
 	//fixed price
-	private int price;
+	private Integer price;
 	@ManyToOne
 	@JoinColumn(name = "buyer_id")
 	private Buyer buyer;

@@ -1,10 +1,7 @@
 package com.szakdoga.services.implementations;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.Product;
+import com.szakdoga.entities.Bid;
 import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Category;
 import com.szakdoga.entities.Image;
@@ -24,11 +22,14 @@ import com.szakdoga.exceptions.AlreadySoldException;
 import com.szakdoga.exceptions.CouldNotUploadImageException;
 import com.szakdoga.exceptions.FixedPriceProductDoesNotHavePriceException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
+import com.szakdoga.exceptions.NotBiddingProductException;
 import com.szakdoga.exceptions.NotFixedPricedProductException;
 import com.szakdoga.exceptions.OverdueException;
 import com.szakdoga.exceptions.ProductDateNullException;
+import com.szakdoga.exceptions.SmallerPriceException;
 import com.szakdoga.repositories.CommentRepository;
 import com.szakdoga.repositories.ImageRepository;
+import com.szakdoga.repositories.BidRepository;
 import com.szakdoga.repositories.BuyerRepository;
 import com.szakdoga.repositories.CategoryRepository;
 import com.szakdoga.repositories.ProductRepository;
@@ -38,7 +39,7 @@ import com.szakdoga.services.interfaces.UserService;
 import com.szakdoga.utils.Utils;
 
 @Service
-public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> implements ProductService{
+public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> implements ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 	@Autowired
@@ -53,6 +54,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 	private ImageRepository imageRepository;
 	@Autowired
 	private CommentRepository commentRepository;
+	@Autowired
+	private BidRepository bidRepository;
 
 	private void updateCategories(ProductDTO dto, Product entity) {
 		if (dto.getCategories() == null)
@@ -82,18 +85,18 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 			throw new ImageSizeIsTooBigException(
 					"The imagesize is more than: " + Utils.MAX_IMAGEFILE_SIZE / 1000 + " KB");
 
-		Image image = new Image();		
+		Image image = new Image();
 
 		try {
 			image.setFile(imageFile.getBytes());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
-		
+
 		imageRepository.save(image);
 
 		product.addImage(image);
-		
+
 		productRepository.save(product);
 	}
 
@@ -109,13 +112,18 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 
 	@Override
 	public void mapEntityToDto(Product entity, ProductDTO dto) {
-		dto.setCategories(entity.getCategories() == null ? new ArrayList<Integer>() : entity.getCategories().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setComments(entity.getComments() == null ? new ArrayList<Integer>() : entity.getComments().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setImages(entity.getImages() == null ? new ArrayList<Integer>() : entity.getImages().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setAttributes(entity.getAttributes() == null ? new ArrayList<Integer>() : entity.getAttributes().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
-		dto.setBiddings(entity.getBiddings() == null ? new ArrayList<Integer>() : entity.getBiddings().stream().mapToInt(x->x.getId()).boxed().collect(Collectors.toList()));
+		dto.setCategories(entity.getCategories() == null ? new ArrayList<Integer>()
+				: entity.getCategories().stream().mapToInt(x -> x.getId()).boxed().collect(Collectors.toList()));
+		dto.setComments(entity.getComments() == null ? new ArrayList<Integer>()
+				: entity.getComments().stream().mapToInt(x -> x.getId()).boxed().collect(Collectors.toList()));
+		dto.setImages(entity.getImages() == null ? new ArrayList<Integer>()
+				: entity.getImages().stream().mapToInt(x -> x.getId()).boxed().collect(Collectors.toList()));
+		dto.setAttributes(entity.getAttributes() == null ? new ArrayList<Integer>()
+				: entity.getAttributes().stream().mapToInt(x -> x.getId()).boxed().collect(Collectors.toList()));
+		dto.setBiddings(entity.getBiddings() == null ? new ArrayList<Integer>()
+				: entity.getBiddings().stream().mapToInt(x -> x.getId()).boxed().collect(Collectors.toList()));
 		dto.setSeller(entity.getSeller().getId());
-		dto.setBuyer(entity.getBuyer() == null ? 0 : entity.getBuyer().getId() );
+		dto.setBuyer(entity.getBuyer() == null ? 0 : entity.getBuyer().getId());
 		dto.setDescription(entity.getDescription());
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
@@ -127,8 +135,9 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 
 	@Override
 	public void mapDtoToEntityNonNullsOnly(ProductDTO dto, Product entity) {
-		entity.setComments(dto.getComments().stream().map(c->commentRepository.findById(c)).collect(Collectors.toList()));
-		entity.setImages(dto.getImages().stream().map(c->imageRepository.findById(c)).collect(Collectors.toSet()));
+		entity.setComments(
+				dto.getComments().stream().map(c -> commentRepository.findById(c)).collect(Collectors.toList()));
+		entity.setImages(dto.getImages().stream().map(c -> imageRepository.findById(c)).collect(Collectors.toSet()));
 		entity.setName(dto.getName());
 		entity.setSeller(sellerRepository.findById(dto.getSeller()));
 	}
@@ -144,13 +153,13 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		entity.setActive(true);
 
 		productRepository.save(entity);
-		
+
 		seller.addProduct(entity);
-		
+
 		sellerRepository.save(seller);
-		
+
 		mapEntityToDto(entity, dto);
-		
+
 		return dto;
 	}
 
@@ -173,19 +182,19 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 		Product entity = productRepository.findById(id);
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
-		updateCategories(dto,entity);
+		updateCategories(dto, entity);
 
 		productRepository.save(entity);
-		
-	    mapEntityToDto(entity, dto);
-		
+
+		mapEntityToDto(entity, dto);
+
 		return dto;
 	}
 
 	@Override
 	public void delete(Integer id) {
-		//removeAllImages(id);
-		
+		// removeAllImages(id);
+
 		Product product = productRepository.findById(id);
 		Set<Category> categories = product.getCategories();
 
@@ -248,14 +257,14 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 	public void saveImage(Integer id, MultipartFile file) {
 		Product entity = productRepository.findById(id);
 		Image image = new Image();
-		
+
 		try {
 			image.setFile(file.getBytes());
 		} catch (IOException e) {
 			throw new CouldNotUploadImageException("File could not be uploaded");
 		}
 		imageRepository.save(image);
-		
+
 		entity.addImage(image);
 		productRepository.save(entity);
 	}
@@ -264,20 +273,19 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 	public void removeImage(Integer entityId, Integer imageId) {
 		Image image = imageRepository.findById(imageId);
 		Product entity = productRepository.findById(entityId);
-		
+
 		entity.removeImage(image);
 		imageRepository.delete(image);
-		
+
 		productRepository.save(entity);
 	}
-	
+
 	@Override
-	public void validate(ProductDTO dto)
-	{
-		if(dto.getType() == ProductType.FixedPrice && dto.getPrice() == null)
+	public void validate(ProductDTO dto) {
+		if (dto.getType() == ProductType.FixedPrice && dto.getPrice() == null)
 			throw new FixedPriceProductDoesNotHavePriceException("");
-		
-		if(dto.getEnd() == null)
+
+		if (dto.getEnd() == null)
 			throw new ProductDateNullException("");
 	}
 
@@ -285,45 +293,52 @@ public class ProductServiceImpl extends BaseServiceClass<Product,ProductDTO> imp
 	public void buy(Integer id) {
 		Product entity = productRepository.findById(id);
 		Buyer buyer = userService.getCurrentUser().getBuyer();
-		
-		if(entity.getType() != ProductType.FixedPrice)
+
+		if (entity.getType() != ProductType.FixedPrice)
 			throw new NotFixedPricedProductException("The product is not fix priced");
-		
-		if(entity.getBuyer() != null)
+
+		if (entity.getBuyer() != null)
 			throw new AlreadySoldException("The product is already sold");
-		
-		if(!entity.getActive())
+
+		if (!entity.getActive())
 			throw new OverdueException("The selling period has ended");
-		
+
 		entity.setBuyer(buyer);
 		entity.setActive(false);
 		productRepository.save(entity);
-		
+
 		buyer.addProduct(entity);
-		
+
 		buyerRepository.save(buyer);
 	}
+
+	@Override
+	public void bid(int entityId, int price) {
+		Product entity = productRepository.findById(entityId);
+		Buyer buyer = userService.getCurrentUser().getBuyer();
+
+		if (!entity.getActive()) {
+			throw new OverdueException("The selling period has ended");
+		}
+
+		if (entity.getType() != ProductType.Bidding) {
+			throw new NotBiddingProductException("The product is not for bidding");
+		}
+
+		Bid bid = new Bid();
+		bid.setBuyer(buyer);
+		bid.setPrice(price);
+		bid.setProduct(entity);
+
+		if (entity.getBiddings() != null && !entity.getBiddings().isEmpty()
+				&& price <= entity.getBiddings().stream().mapToInt(x -> x.getPrice()).max().getAsInt()) {
+			throw new SmallerPriceException("The price must be higher");
+		}
+
+		bidRepository.save(bid);
+
+		entity.addBid(bid);
+		productRepository.save(entity);
+
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

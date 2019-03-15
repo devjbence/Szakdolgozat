@@ -11,4 +11,5 @@ public interface ProductService extends BaseService<Product,ProductDTO>{
 	void saveImage(Integer id, MultipartFile file);
 	void removeImage(Integer entityId, Integer imageId);
 	void buy(Integer id);
+	void bid(int entityId, int price);
 }

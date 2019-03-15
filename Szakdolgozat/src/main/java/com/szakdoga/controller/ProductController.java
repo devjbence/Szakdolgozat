@@ -136,9 +136,24 @@ public class ProductController {
 		productService.removeImage(entityId, imageId);
 	}
 	
-	//bidding
-	//@PostMapping("/bid")
-	//public void placeBid(BidDTO bidDTO)
+	@PostMapping("/bid/{entityId}/{price}")
+	public void placeBid(
+			@PathVariable("entityId") int entityId,
+			@PathVariable("price") int price,
+			HttpServletResponse response)
+	{
+		User user = userService.getCurrentUser();
+
+		userService.checkIfActivated(user);
+		
+		if(productService.get(entityId) == null)
+		{
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		productService.bid(entityId,price);
+	}
 	
 	@PostMapping("/buy/{id}")
 	public void buy(
