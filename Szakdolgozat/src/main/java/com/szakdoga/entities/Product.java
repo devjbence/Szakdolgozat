@@ -18,7 +18,10 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.transaction.Transactional;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 
 import com.szakdoga.enums.ProductType;
@@ -29,6 +32,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Transactional
 public class Product extends EntityBase {
 	
 	String name;
@@ -66,7 +70,8 @@ public class Product extends EntityBase {
 	private Date end;
 	
 	//bindding
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Bid> biddings;
 
 	//fixed price

@@ -36,6 +36,7 @@ import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.repositories.SellerRepository;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
+import com.szakdoga.utils.EmailUtil;
 import com.szakdoga.utils.Utils;
 
 @Service
@@ -56,6 +57,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	private CommentRepository commentRepository;
 	@Autowired
 	private BidRepository bidRepository;
+	@Autowired
+	private EmailUtil emailUtil;
 
 	private void updateCategories(ProductDTO dto, Product entity) {
 		if (dto.getCategories() == null)
@@ -310,6 +313,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		buyer.addProduct(entity);
 
 		buyerRepository.save(buyer);
+		
+		emailUtil.sendSimpleMessage(buyer.getUser().getEmail(), "You baught a product", "You baught the product: "+ entity.getName());
 	}
 
 	@Override
@@ -339,6 +344,5 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 		entity.addBid(bid);
 		productRepository.save(entity);
-
 	}
 }

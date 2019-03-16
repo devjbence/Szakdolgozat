@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.szakdoga.entities.DTOs.UserDTO;
 import com.szakdoga.exceptions.ActivationExpiredException;
 import com.szakdoga.exceptions.WrongActivationCodeException;
+import com.szakdoga.services.implementations.DbPollService;
 import com.szakdoga.services.interfaces.UserService;
 
 @CrossOrigin
@@ -23,6 +24,21 @@ import com.szakdoga.services.interfaces.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private DbPollService poll;
+	
+	private boolean once = true;
+	
+	@GetMapping("/poll")
+	public void startPoll()
+	{
+		if(once)
+		{
+			poll.start(5);
+			System.out.println("Poll has started");
+			once=false;
+		}
+	}
 	
 	@PostMapping
 	public UserDTO create(@RequestBody UserDTO dto, HttpServletResponse response)
