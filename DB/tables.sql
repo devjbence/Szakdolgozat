@@ -1,20 +1,20 @@
 use szakdoga_db;
 
-drop table product_category;
-drop table product_image;
-drop table comment;
-drop table attribute;
-drop table attribute_core;
-drop table bid;
-drop table product;
-drop table category;
-drop table buyer;
-drop table seller;
-drop table image;
-drop table user_role;
-drop table role;
-drop table user_activation;
-drop table user;
+DROP TABLE IF EXISTS  product_category;
+DROP TABLE IF EXISTS  product_image;
+DROP TABLE IF EXISTS  comment;
+DROP TABLE IF EXISTS  attribute;
+DROP TABLE IF EXISTS  attribute_core;
+DROP TABLE IF EXISTS  bid;
+DROP TABLE IF EXISTS  product;
+DROP TABLE IF EXISTS  category;
+DROP TABLE IF EXISTS  buyer;
+DROP TABLE IF EXISTS  seller;
+DROP TABLE IF EXISTS  image;
+DROP TABLE IF EXISTS  user_role;
+DROP TABLE IF EXISTS  role;
+DROP TABLE IF EXISTS  user_activation;
+DROP TABLE IF EXISTS  user;
 
 CREATE TABLE `role` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -210,7 +210,7 @@ insert into attribute_core(id,name,type) values(3,'othername',2);
 CREATE EVENT productActivityUpdater
 ON SCHEDULE EVERY 50 SECOND
 DO
-   UPDATE szakdoga_db.product SET `active` = true where `end` <= CURRENT_TIMESTAMP;
+   UPDATE szakdoga_db.product SET `active` = 0 where `end` <= CURRENT_TIMESTAMP;
 
 /*
 select * from role;
