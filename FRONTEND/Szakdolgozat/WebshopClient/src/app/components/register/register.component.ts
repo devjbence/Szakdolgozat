@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RegisterService } from 'src/app/services/register.service';
 import { FormGroup, FormControl, Validators, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,9 +10,11 @@ import { FormGroup, FormControl, Validators, ValidationErrors, ValidatorFn } fro
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private _service: RegisterService) { }
+  constructor(private _service: RegisterService,private router:Router) { }
 
   registerForm: FormGroup;
+  registerData:any;
+  errorMsg:string;
 
   ngOnInit() {
     this.registerForm = new FormGroup({
@@ -26,14 +29,25 @@ export class RegisterComponent implements OnInit {
 
   public onSubmit()
   {
-    //this._service.saveAccessToken(registerData);
-    if(!this.registerForm.valid)
+    if(this.registerForm.valid)
     {
-      console.log("nemvalid");
+      this.registerData = {
+        username: this.registerForm.controls['username'].value,
+        password: this.registerForm.controls['password'].value,
+        email: this.registerForm.controls['email'].value,
+        role: 'ROLE_USER'
+      };
+
+       this._service.register(this.registerData).subscribe(
+        data => this.router.navigate(['/login']),
+        error => this.handleError(error));
     }
-    else{
-      console.log(this.registerForm.value);
-    }
+  }
+
+  handleError(error)
+  {
+    const errorObject = JSON.parse(error._body);
+    this.errorMsg = errorObject.message;
   }
 
   public passwordConfirmationValidator(): ValidatorFn {

@@ -7,13 +7,16 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ShopRouterModule } from './routing.module';
 import { ProductsComponent } from './components/products/products.component';
-import { RegisterService } from './services/register.service';
+import { LoginComponent } from './components/login/login.component';
+import { IndexComponent } from './components/index/index.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegisterComponent,
-    ProductsComponent
+    ProductsComponent,
+    LoginComponent,
+    IndexComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +25,7 @@ import { RegisterService } from './services/register.service';
     HttpModule,
     ReactiveFormsModule
   ],
-  providers: [RegisterService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
