@@ -13,9 +13,6 @@
           {{errorMsg}}
         </div>
         <div class="form-group input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-          </div>
           <input class="form-control" placeholder="User name" formControlName="username" type="text">
         </div>
         <div class="alert alert-danger validation" *ngIf="registerForm.controls['username'].hasError('minlength')">
@@ -26,9 +23,6 @@
         </div>
 
         <div class="form-group input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-          </div>
           <input formControlName="email" class="form-control" placeholder="Email address" type="email">
         </div>
         <div class="alert alert-danger validation" *ngIf="registerForm.controls['email'].hasError('email')">
@@ -39,9 +33,6 @@
         </div>
 
         <div class="form-group input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-          </div>
           <input formControlName="password" class="form-control" placeholder="Password" type="password">
         </div>
         <div class="alert alert-danger validation" *ngIf="registerForm.controls['password'].hasError('required')">
@@ -49,9 +40,6 @@
         </div>
 
         <div class="form-group input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
-          </div>
           <input formControlName="confirmPassword" class="form-control" placeholder="Repeat password" type="password">
         </div>
         <div class="alert alert-danger validation" *ngIf="registerForm.controls['password'].hasError('minlength')">
@@ -73,7 +61,7 @@
         </div>
 
         <p class="text-center">
-          Have an account? <a href="">Log In</a>
+          Have an account? <a [routerLink]="'/login'">Log In</a>
         </p>
       </form>
     </article>

@@ -1,0 +1,14 @@
+<nav>
+  <div class="nav-wrapper">
+    <a href="#" class="brand-logo right">Logo</a>
+    <ul id="nav-mobile" class="left" *ngIf="!_userService.checkToken(); else logoutTemplate">
+      <li><a [routerLink]="'/register'" style="text-decoration: none;">Register</a></li>
+      <li><a [routerLink]="'/login'" style="text-decoration: none;">Login</a></li>
+    </ul>
+    <ng-template #logoutTemplate>
+      <ul id="nav-mobile" class="left">
+        <a (click)="logOut()">Logout</a>
+      </ul>
+    </ng-template>
+  </div>
+</nav>
