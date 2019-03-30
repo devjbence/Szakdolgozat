@@ -7,7 +7,8 @@
     </ul>
     <ng-template #logoutTemplate>
       <ul id="nav-mobile" class="left">
-        <a (click)="logOut()">Logout</a>
+          <li><a [routerLink]="'/products'" style="text-decoration: none;">Products</a></li>
+          <li><a (click)="logOut()">Logout</a></li>
       </ul>
     </ng-template>
   </div>

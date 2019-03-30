@@ -16,8 +16,7 @@ public class Category extends EntityBase{
 	@ManyToMany(mappedBy = "categories")
 	Set<Product> products;
 	
-	@Column(name="product_name")
-	private String productName;
+	private String name;
 	
 	@Column(name="parent_id")
 	private Integer parentId;

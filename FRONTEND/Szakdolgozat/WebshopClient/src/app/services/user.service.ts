@@ -19,4 +19,9 @@ export class UserService {
       //TODO: token kill backendben
      this._cookie.delete('access_token');
    }
+
+   public getToken():string
+   {
+    return this._cookie.get('access_token');
+   }
 }

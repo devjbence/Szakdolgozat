@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.szakdoga.entities.User;
+import com.szakdoga.entities.DTOs.CategoryDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
@@ -62,6 +63,12 @@ public class ProductController {
 	@GetMapping("/all")
 	public List<ProductDTO> getAll() {
 		return productService.getAll();
+	}
+	
+	///get all categories
+	@GetMapping("/categories")
+	public List<CategoryDTO> getAllCategories() {
+		return productService.getAllCategories();
 	}
 
 	@GetMapping("/size")

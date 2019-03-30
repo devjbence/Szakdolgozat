@@ -72,7 +72,7 @@ public class UserController {
 			return;
 		}
 
-		url="https://en.m.wikipedia.org/wiki/Success\"";
+		url="http://localhost:4200/login";
 		
 		response.setHeader("Location", url);
 		response.setStatus(302);

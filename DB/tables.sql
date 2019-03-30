@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS  user_role;
 DROP TABLE IF EXISTS  role;
 DROP TABLE IF EXISTS  user_activation;
 DROP TABLE IF EXISTS  user;
+drop event if exists productActivityUpdater;
 
 CREATE TABLE `role` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
@@ -100,7 +101,7 @@ CREATE TABLE `buyer` (
 
 CREATE TABLE `category` ( 
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `product_name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
   parent_id int(11) ,
   `about` varchar(255) DEFAULT NULL,
    active tinyint(1),
@@ -199,9 +200,9 @@ create table `attribute`
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
 
-insert into category(id,product_name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
-insert into category(id,product_name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
-insert into category(id,product_name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
+insert into category(id,name,parent_id,about,active) values(1,'mobil',null,'Mobilkészülékek',0);
+insert into category(id,name,parent_id,about,active) values(2,'IPHONE',1,'Legújabb iphone X',1);
+insert into category(id,name,parent_id,about,active) values(3,'XIOMI',1,'Legújabb Xiomi redmi',1);
 
 insert into attribute_core(id,name,type) values(1,'height',0);
 insert into attribute_core(id,name,type) values(2,'weight',1);

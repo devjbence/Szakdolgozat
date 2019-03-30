@@ -1,5 +1,8 @@
-<p>
-  products works!
+<app-navbar></app-navbar>
 
-  usernevem: {{data}}
-</p>
+<a [routerLink]="'/product/0'">new product</a>
+<ul>
+  <li *ngFor="let product of products">
+    <a [routerLink]="'/product/'+product.id">{{product.name}}</a>
+  </li>
+</ul>

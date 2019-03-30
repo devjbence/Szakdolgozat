@@ -16,6 +16,8 @@ import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Category;
 import com.szakdoga.entities.Image;
 import com.szakdoga.entities.Seller;
+import com.szakdoga.entities.DTOs.CategoryDTO;
+import com.szakdoga.entities.DTOs.CategoryDTOMin;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.enums.ProductType;
 import com.szakdoga.exceptions.AlreadySoldException;
@@ -71,7 +73,11 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 			} else {
 				Category category = categoryRepository.findById(categoryId);
 				if (category != null) {
-					if (!entity.getCategories().contains(category)) {
+					if(entity.getCategories() == null)
+					{
+						entity.addCategory(category);
+					}
+					else if (!entity.getCategories().contains(category)) {
 						entity.addCategory(category);
 					}
 				}
@@ -138,19 +144,31 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public void mapDtoToEntityNonNullsOnly(ProductDTO dto, Product entity) {
-		entity.setComments(
-				dto.getComments().stream().map(c -> commentRepository.findById(c)).collect(Collectors.toList()));
-		entity.setImages(dto.getImages().stream().map(c -> imageRepository.findById(c)).collect(Collectors.toSet()));
-		entity.setName(dto.getName());
-		entity.setSeller(sellerRepository.findById(dto.getSeller()));
+		if(dto.getComments() != null)
+			entity.setComments(dto.getComments().stream().map(c -> commentRepository.findById(c)).collect(Collectors.toList()));
+		if(dto.getImages() != null)
+			entity.setImages(dto.getImages().stream().map(c -> imageRepository.findById(c)).collect(Collectors.toSet()));
+		if(dto.getName() != null)
+			entity.setName(dto.getName());
+		if(dto.getSeller() != null)
+			entity.setSeller(sellerRepository.findById(dto.getSeller()));
+		if(dto.getEnd() != null)
+			entity.setEnd(dto.getEnd());
+		if(dto.getDescription() != null)
+			entity.setDescription(dto.getDescription());
+		if(dto.getPrice() != null)
+			entity.setPrice(dto.getPrice());
+		if(dto.getType() != null)
+			entity.setType(dto.getType());
 	}
 
 	@Override
 	public ProductDTO add(ProductDTO dto) {
 		Product entity = new Product();
 		Seller seller = userService.getCurrentUser().getSeller();
-
+		
 		mapDtoToEntity(dto, entity);
+		updateCategories(dto,entity);
 
 		entity.setSeller(seller);
 		entity.setActive(true);
@@ -286,10 +304,10 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	@Override
 	public void validate(ProductDTO dto) {
 		if (dto.getType() == ProductType.FixedPrice && dto.getPrice() == null)
-			throw new FixedPriceProductDoesNotHavePriceException("");
+			throw new FixedPriceProductDoesNotHavePriceException("The fixed priced product should have a price");
 
 		if (dto.getEnd() == null)
-			throw new ProductDateNullException("");
+			throw new ProductDateNullException("The end date is required");
 	}
 
 	@Override
@@ -344,5 +362,22 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 		entity.addBid(bid);
 		productRepository.save(entity);
+	}
+
+	@Override
+	public List<CategoryDTO> getAllCategories() {
+		
+		List<CategoryDTO> cdtos = new ArrayList<CategoryDTO>();
+		
+		for( Category cat : categoryRepository.findAll() ) 
+		{
+			CategoryDTO cdto = new CategoryDTO();
+			cdto.setId(cat.getId());
+			cdto.setName(cat.getName());
+			cdto.setParentId(cat.getParentId());
+			cdtos.add(cdto);
+		}
+		
+		return cdtos;
 	}
 }

@@ -1,0 +1,78 @@
+<app-navbar></app-navbar>
+
+<br>
+<div class="container">
+  <div class="card bg-light">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+
+      <h4 class="card-title mt-3 text-center">Product</h4>
+
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+
+        <div class="alert alert-danger validation" *ngIf="errorMsg">
+          {{errorMsg}}
+        </div>
+
+        <div class="form-group input-group">
+          <input class="form-control" placeholder="Name" formControlName="name" type="text">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="productForm.controls['name'].hasError('minlength')">
+          The name should be longer <br> than 3 characters
+        </div>
+        <div class="alert alert-danger validation" *ngIf="productForm.controls['name'].hasError('required')">
+          The name is required
+        </div>
+
+        <div class="form-group input-group">
+          <textarea id="description" class="form-control" placeholder="Description" formControlName="description"
+            data-length="120">
+            </textarea>
+        </div>
+        <div class="alert alert-danger validation" *ngIf="productForm.controls['description'].hasError('minlength')">
+          The description should be longer <br> than 3 characters
+        </div>
+        <div class="alert alert-danger validation" *ngIf="productForm.controls['description'].hasError('required')">
+          The description is required
+        </div>
+
+        <div class="form-group">
+          <label>Type</label>
+          <select id="type" name="type" class="form-control" formControlName="type">
+            <option *ngFor="let type of types" [value]="type.value">
+              {{type.viewValue}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+            <label>Categories</label>
+            <select id="categories" name="categories" multiple class="form-control" formControlName="categories">
+              <option *ngFor="let category of categories" [value]="category.value">
+                {{category.viewValue}}
+              </option>
+            </select>
+        </div>
+        
+        <div class="form-group input-group">
+            <label>End Date </label>
+            <input class="form-control" placeholder="yyyy-MM-dd HH:mm" [attr.disabled]="disabled ? Id>0 : false" formControlName="endDate" type="datetime">
+          </div>
+          <div class="alert alert-danger validation" *ngIf="productForm.controls['endDate'].hasError('required')">
+            The end date is required
+          </div>
+
+          <div class="form-group input-group" *ngIf="productForm.controls['type'].value == 0">
+              <label>Price</label>
+              <input class="form-control" placeholder="Price" formControlName="price" type="number">
+          </div>
+
+        <div class="form-group" >
+          <button type="submit" id="productSubmit" [disabled]="!productForm.valid" class="btn btn-dark btn-block">
+            Save
+          </button>
+        </div>
+
+      </form>
+    </article>
+  </div>
+</div>
