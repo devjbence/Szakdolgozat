@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import {NgbModule,NgbCarouselModule} from '@ng-bootstrap/ng-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CookieService } from 'ngx-cookie-service';
@@ -30,7 +31,9 @@ import { ProductComponent } from './components/product/product.component';
     ShopRouterModule,
     FormsModule,
     HttpModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule,
+    NgbCarouselModule
   ],
   providers: [CookieService],
   bootstrap: [AppComponent]

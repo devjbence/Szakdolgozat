@@ -99,7 +99,7 @@ public class ProductController {
 	}
 
 	@PostMapping(path = "/image/{id}", consumes = "multipart/form-data")
-	public void uploadImage(@PathVariable("id") Integer id, @RequestPart("image") MultipartFile file,
+	public int uploadImage(@PathVariable("id") Integer id, @RequestPart("image") MultipartFile file,
 			HttpServletResponse response) {
 		User user = userService.getCurrentUser();
 
@@ -109,14 +109,14 @@ public class ProductController {
 
 		if (dto == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return;
+			return 0;
 		}
 		
 		if (dto.getSeller() != user.getSeller().getId()) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		}
 
-		productService.saveImage(id, file);
+		return productService.addImage(id, file);
 	}
 	
 	@DeleteMapping("/image/{entityId}/{imageId}")

@@ -86,7 +86,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	}
 
 	@Override
-	public void addImage(Integer productId, MultipartFile imageFile) {
+	public int addImage(Integer productId, MultipartFile imageFile) {
 		Product product = productRepository.findById(productId);
 
 		// max file méret < 64kb
@@ -102,11 +102,13 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 			// TODO Auto-generated catch block
 		}
 
-		imageRepository.save(image);
+		int id = imageRepository.save(image).getId();
 
 		product.addImage(image);
 
 		productRepository.save(product);
+		
+		return id;
 	}
 
 	@Override

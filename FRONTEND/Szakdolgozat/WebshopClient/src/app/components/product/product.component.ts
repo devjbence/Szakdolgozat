@@ -4,15 +4,22 @@ import { FormGroup, FormControl, Validators, ValidationErrors, ValidatorFn } fro
 import { ProductService } from 'src/app/services/product.service';
 import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
 import { ProductCategoryInterface } from 'src/app/enums/ProductCategoryInterface';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css']
+  styleUrls: ['./product.component.css'],
+  providers:[NgbCarouselConfig]
 })
 export class ProductComponent implements OnInit {
 
-  constructor(private router: Router, private _service: ProductService, private route:ActivatedRoute) { }
+  constructor(private router: Router, private _service: ProductService, private route:ActivatedRoute,config: NgbCarouselConfig) {
+    config.interval = 5000;
+    config.wrap = true;
+    config.keyboard = false;
+   }
 
   Id:number;
   productForm: FormGroup;
@@ -20,12 +27,17 @@ export class ProductComponent implements OnInit {
   productType:any;
   errorMsg: string;
   existingProduct:any;
+  images = [1, 2, 3].map(() => `https://picsum.photos/900/500?random&t=${Math.random()}`);
 
   types:ProductTypeInterface[];
   categories:ProductCategoryInterface[];
 
   ngOnInit() {
     this.Id = parseInt(this.route.snapshot.paramMap.get("id"));
+/*
+    this.images = [
+      "http://localhost:8080/szak/image/1","http://localhost:8080/szak/image/2","http://localhost:8080/szak/image/3"
+    ];*/
 
     if(this.Id > 0)
     {
