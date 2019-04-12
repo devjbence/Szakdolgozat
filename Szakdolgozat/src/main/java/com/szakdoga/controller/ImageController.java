@@ -13,8 +13,7 @@ import com.szakdoga.entities.DTOs.ImageDTO;
 import com.szakdoga.services.interfaces.ImageService;
 import com.szakdoga.utils.Utils;
 
-@RestController
-@RequestMapping("/image")
+@RestController("/image")
 public class ImageController {
 
 	@Autowired

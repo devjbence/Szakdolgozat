@@ -13,8 +13,7 @@ import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
 import com.szakdoga.services.interfaces.ProductFilterService;
 
-@RestController
-@RequestMapping("/productfilter")
+@RestController("/productfilter")
 public class ProductFilterController {
 
 	@Autowired

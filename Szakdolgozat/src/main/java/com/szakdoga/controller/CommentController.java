@@ -18,8 +18,7 @@ import com.szakdoga.entities.DTOs.CommentDTO;
 import com.szakdoga.services.interfaces.CommentService;
 import com.szakdoga.services.interfaces.UserService;
 
-@RestController
-@RequestMapping("/comment")
+@RestController("/comment")
 public class CommentController {
 
 	@Autowired
