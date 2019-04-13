@@ -110,10 +110,6 @@ public class ProductController {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return 0;
 		}
-		
-		if (dto.getSeller() != user.getSeller().getId()) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		}
 
 		return productService.addImage(id, file);
 	}
