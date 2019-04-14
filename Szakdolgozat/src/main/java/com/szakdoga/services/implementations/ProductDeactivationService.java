@@ -49,7 +49,9 @@ public class ProductDeactivationService {
 					    		buyer.getUser().getEmail(), "You have won a bidding", "Your bidding for the product: '"+ product.getName()+"' had resulted that, you have won it!");
 					}
 					break;
-				case FixedPrice: 
+				case FixedPrice:
+					product.setActive(false);
+					productRepository.save(product);					
 					break;
 				}
 			}

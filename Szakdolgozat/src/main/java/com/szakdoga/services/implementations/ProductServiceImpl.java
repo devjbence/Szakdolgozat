@@ -318,13 +318,16 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		Buyer buyer = userService.getCurrentUser().getBuyer();
 
 		if (entity.getType() != ProductType.FixedPrice)
-			throw new NotFixedPricedProductException("The product is not fix priced");
+			throw new NotFixedPricedProductException(
+					"The product is not fix priced");
 
 		if (entity.getBuyer() != null)
-			throw new AlreadySoldException("The product is already sold");
+			throw new AlreadySoldException(
+					"The product is already sold");
 
 		if (!entity.getActive())
-			throw new OverdueException("The selling period has ended");
+			throw new OverdueException(
+					"The selling period has ended");
 
 		entity.setBuyer(buyer);
 		entity.setActive(false);
@@ -334,7 +337,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 		buyerRepository.save(buyer);
 		
-		emailUtil.sendSimpleMessage(buyer.getUser().getEmail(), "You baught a product", "You baught the product: "+ entity.getName());
+		emailUtil.sendSimpleMessage(buyer.getUser().getEmail(),
+		"You baught a product", "You baught the product: "+ entity.getName());
 	}
 
 	@Override
@@ -343,22 +347,27 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		Buyer buyer = userService.getCurrentUser().getBuyer();
 
 		if (!entity.getActive()) {
-			throw new OverdueException("The selling period has ended");
+			throw new OverdueException(
+					"The selling period has ended");
 		}
 
 		if (entity.getType() != ProductType.Bidding) {
-			throw new NotBiddingProductException("The product is not for bidding");
+			throw new NotBiddingProductException(
+					"The product is not for bidding");
 		}
 
+		if (entity.getBiddings() != null && !entity.getBiddings().isEmpty()
+				&& price <= entity.getBiddings()
+				.stream().mapToInt(x -> x.getPrice())
+				.max().getAsInt()) {
+			throw new SmallerPriceException(
+					"The price must be higher");
+		}
+		
 		Bid bid = new Bid();
 		bid.setBuyer(buyer);
 		bid.setPrice(price);
 		bid.setProduct(entity);
-
-		if (entity.getBiddings() != null && !entity.getBiddings().isEmpty()
-				&& price <= entity.getBiddings().stream().mapToInt(x -> x.getPrice()).max().getAsInt()) {
-			throw new SmallerPriceException("The price must be higher");
-		}
 
 		bidRepository.save(bid);
 
