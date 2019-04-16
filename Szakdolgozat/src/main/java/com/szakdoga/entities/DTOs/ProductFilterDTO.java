@@ -10,4 +10,5 @@ import lombok.Setter;
 public class ProductFilterDTO {
 	private List<ProductFilterCore> productFilterCores;
 	private List<Integer> categories;
+	private String ProductName;
 }

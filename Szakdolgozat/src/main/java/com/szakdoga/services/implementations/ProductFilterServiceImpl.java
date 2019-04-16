@@ -30,6 +30,8 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 	@Autowired
 	private CategoryRepository productCategoryRepository;
 	
+	private final static double Epsilon = 0.0001;
+	
 	private void addEntityIfNotAlreadyContained(List<Product> entites,Product entity)
 	{
 		if(!entites.stream().anyMatch(x->x.getId() == entity.getId()))
@@ -44,7 +46,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		{
 			case equal:
 				
-				if(filterValue == attriValue)
+				if(Math.abs(filterValue - attriValue) > Epsilon)
 					return true;
 				
 				break;
@@ -117,6 +119,14 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
 		List<Product> entites = productRepository.findAll();
 
+		//termék névre való szűrés
+		if(filter.getProductName() != null)
+		{
+			entites = entites.stream()
+					.filter(x->x.getName().toLowerCase().contains(filter.getProductName().toLowerCase()))
+					.collect(Collectors.toList());
+		}
+		
 		//kategóriákra szűrés
 		if(filter.getCategories() != null && filter.getCategories().size() >0)
 		{
@@ -150,6 +160,9 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 								{
 									addEntityIfNotAlreadyContained(filteredEntites,entity);	
 								}
+								else {
+									filteredEntites.remove(entity);
+								}
 								
 								break;
 						
@@ -159,6 +172,9 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 								{
 									addEntityIfNotAlreadyContained(filteredEntites,entity);	
 								}
+								else {
+									filteredEntites.remove(entity);
+								}
 								
 								break;
 								
@@ -167,6 +183,9 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 								if(attribute.getValue().equals(filterCore.getValue()))
 								{
 									addEntityIfNotAlreadyContained(filteredEntites,entity);	
+								}
+								else {
+									filteredEntites.remove(entity);
 								}
 								
 								break;					
