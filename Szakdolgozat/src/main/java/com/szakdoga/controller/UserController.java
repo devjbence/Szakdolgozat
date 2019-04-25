@@ -19,7 +19,8 @@ import com.szakdoga.services.implementations.DbPollService;
 import com.szakdoga.services.interfaces.UserService;
 
 @CrossOrigin
-@RestController("/user")
+@RequestMapping("/user")
+@RestController()
 public class UserController {
 	@Autowired
 	private UserService userService;

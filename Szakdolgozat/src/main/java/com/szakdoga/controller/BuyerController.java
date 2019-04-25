@@ -20,7 +20,8 @@ import com.szakdoga.entities.DTOs.BuyerDTO;
 import com.szakdoga.services.interfaces.BuyerService;
 import com.szakdoga.services.interfaces.UserService;
 
-@RestController("/buyer")
+@RequestMapping("/buyer")
+@RestController()
 public class BuyerController {
 
 	@Autowired

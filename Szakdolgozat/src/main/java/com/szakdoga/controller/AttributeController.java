@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.szakdoga.entities.DTOs.AttributeDTO;
 import com.szakdoga.services.interfaces.AttributeService;
 
-@RestController("/attribute")
+@RequestMapping("/attribute")
+@RestController()
 public class AttributeController {
 
 	@Autowired

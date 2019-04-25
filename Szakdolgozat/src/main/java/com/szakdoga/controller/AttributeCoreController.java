@@ -18,7 +18,8 @@ import com.szakdoga.entities.DTOs.AttributeCoreDTO;
 import com.szakdoga.services.interfaces.AttributeCoreService;
 import com.szakdoga.services.interfaces.UserService;
 
-@RestController("/attributecore")
+@RequestMapping("/attributecore")
+@RestController()
 public class AttributeCoreController {
 
 	@Autowired

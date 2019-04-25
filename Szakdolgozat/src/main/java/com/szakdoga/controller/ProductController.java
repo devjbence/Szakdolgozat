@@ -20,7 +20,8 @@ import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
 
-@RestController("/product")
+@RequestMapping("/product")
+@RestController()
 public class ProductController {
 
 	@Autowired

@@ -20,7 +20,8 @@ import com.szakdoga.entities.DTOs.SellerDTO;
 import com.szakdoga.services.interfaces.SellerService;
 import com.szakdoga.services.interfaces.UserService;
 
-@RestController("/seller")
+@RequestMapping("/seller")
+@RestController()
 public class SellerController {
 	@Autowired
 	private SellerService sellerService;
