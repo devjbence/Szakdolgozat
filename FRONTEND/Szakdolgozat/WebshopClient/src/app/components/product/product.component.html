@@ -15,15 +15,15 @@
           <!-- Wrapper for slides -->
           <div class="carousel-inner">
             <div class="item active">
-              <img src="https://www.w3schools.com/bootstrap/la.jpg" alt="Los Angeles" style="width:100%;">
+              <img src="http://localhost:8080/szak/image/1" alt="Los Angeles" style="width:100%;">
             </div>
       
             <div class="item">
-              <img src="https://www.w3schools.com/bootstrap/la.jpg" alt="Chicago" style="width:100%;">
+              <img src="http://localhost:8080/szak/image/2" alt="Chicago" style="width:100%;">
             </div>
           
             <div class="item">
-              <img src="https://www.w3schools.com/bootstrap/la.jpg" alt="New york" style="width:100%;">
+              <img src="http://localhost:8080/szak/image/3" alt="New york" style="width:100%;">
             </div>
           </div>
       
@@ -70,9 +70,9 @@
           The description is required
         </div>
 
-        <div class="form-group">
+        <div class="form-group" >
           <label>Type</label>
-          <select id="type" name="type" class="form-control" formControlName="type">
+          <select id="type" name="type" class="form-control" formControlName="type" [(ngModel)]="type" [attr.disabled]="Id > 0 ? true : null" > 
             <option *ngFor="let type of types" [value]="type.value">
               {{type.viewValue}}
             </option>
@@ -90,15 +90,15 @@
         
         <div class="form-group input-group">
             <label>End Date </label>
-            <input class="form-control" placeholder="yyyy-MM-dd HH:mm" [attr.disabled]="disabled ? Id>0 : false" formControlName="endDate" type="datetime">
+            <input class="form-control" placeholder="yyyy-MM-dd HH:mm" [attr.disabled]="Id > 0 ? true : null" formControlName="endDate" type="datetime">
           </div>
           <div class="alert alert-danger validation" *ngIf="productForm.controls['endDate'].hasError('required')">
             The end date is required
           </div>
 
-          <div class="form-group input-group" *ngIf="productForm.controls['type'].value == 0">
+          <div class="form-group input-group" *ngIf="this.showPrice && productForm.controls['type'].value == 0">
               <label>Price</label>
-              <input class="form-control" placeholder="Price" formControlName="price" type="number">
+              <input class="form-control" placeholder="Price" formControlName="price" type="number" [attr.disabled]="Id > 0 ? true : null">
           </div>
 
         <div class="form-group" >

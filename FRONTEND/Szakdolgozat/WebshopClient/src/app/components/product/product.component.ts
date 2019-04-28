@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import { FormGroup, FormControl, Validators, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProductService } from 'src/app/services/product.service';
 import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
 import { ProductCategoryInterface } from 'src/app/enums/ProductCategoryInterface';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-product',
@@ -15,7 +15,13 @@ import { NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ProductComponent implements OnInit {
 
-  constructor(private router: Router, private _service: ProductService, private route:ActivatedRoute,config: NgbCarouselConfig) {
+  type=0;
+
+  constructor(private router: Router,
+     private _service: ProductService,
+      private route:ActivatedRoute,
+      private _userService:UserService,
+      config: NgbCarouselConfig) {
     config.interval = 5000;
     config.wrap = true;
     config.keyboard = false;
@@ -27,17 +33,19 @@ export class ProductComponent implements OnInit {
   productType:any;
   errorMsg: string;
   existingProduct:any;
-  images = [1, 2, 3].map(() => `https://picsum.photos/900/500?random&t=${Math.random()}`);
+  showPrice:boolean;
+  images;// = [1, 2, 3].map(() => `https://picsum.photos/900/500?random&t=${Math.random()}`);
 
   types:ProductTypeInterface[];
   categories:ProductCategoryInterface[];
 
   ngOnInit() {
     this.Id = parseInt(this.route.snapshot.paramMap.get("id"));
-/*
+    this.showPrice=true;
+
     this.images = [
       "http://localhost:8080/szak/image/1","http://localhost:8080/szak/image/2","http://localhost:8080/szak/image/3"
-    ];*/
+    ];
 
     if(this.Id > 0)
     {
@@ -50,18 +58,22 @@ export class ProductComponent implements OnInit {
            
            this.productForm.controls['name'].setValue(this.existingProduct.name);
            this.productForm.controls['description'].setValue(this.existingProduct.description);
-           this.productForm.controls['type'].setValue(this.existingProduct.type);
+           this.productForm.controls['type'].setValue(this.existingProduct.type == 'FixedPrice' ? 0: 1);
            this.productForm.controls['endDate'].setValue(this.existingProduct.end);
            this.productForm.controls['price'].setValue(this.existingProduct.price);
            this.productForm.controls['categories'].setValue(this.existingProduct.categories);
-           this.productForm.controls['type'].setValue(this.existingProduct.type);
+
+           if(this.existingProduct.type == 'Bidding')
+           {
+             this.showPrice = false;
+           }
         },
-        error => this.router.navigate(['/index']));
+        () => this.router.navigate(['/index']));
     }
 
     this.types =[
-      { value:0, viewValue:"FixedPrice" },
-      { value:1, viewValue:"Bidding" }
+      { value:0, viewValue:"FixedPrice"},
+      { value:1, viewValue:"Bidding"}
     ];
 
     this.categories = [];
@@ -103,14 +115,14 @@ export class ProductComponent implements OnInit {
       if(this.Id == 0)
       {
         this._service.addProduct(this.productData).subscribe(
-          data => {
+          () => {
             this.router.navigate(['/products']);
           },
           error => this.handleError(error));
       }
       else{
         this._service.updateProduct(this.productData,this.Id).subscribe(
-          data => {
+          () => {
             this.router.navigate(['/products']);
           },
           error => this.handleError(error));
@@ -121,7 +133,15 @@ export class ProductComponent implements OnInit {
   }
 
   handleError(error) {
+    console.log(error);
     const errorObject = JSON.parse(error._body);
+    
+    if(errorObject.error == "invalid_token")
+    {
+      this._userService.logOut();
+      this.router.navigate(['/login']);
+    }
+
     this.errorMsg = errorObject.message;
   }
 }

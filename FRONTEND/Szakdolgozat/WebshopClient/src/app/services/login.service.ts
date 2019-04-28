@@ -46,9 +46,9 @@ export class LoginService {
 
   saveToken(token){
     let parsedToken = JSON.parse(token._body);
-    console.log(parsedToken);
-    var expireDate = new Date().getTime() + (1000 * parsedToken.expires_in);
-    this._cookie.set("access_token", parsedToken.access_token, expireDate);
+    var expireDate = new Date().getTime() + (1000*parsedToken.expires_in);
+    //this._cookie.set("access_token", parsedToken.access_token, expireDate);
+    document.cookie="access_token="+ parsedToken.access_token +"; expires="+ new Date(expireDate).toString();
   }
 
 }

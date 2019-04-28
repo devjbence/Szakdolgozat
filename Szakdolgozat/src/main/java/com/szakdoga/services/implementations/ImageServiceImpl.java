@@ -6,6 +6,7 @@ import com.szakdoga.entities.Image;
 import com.szakdoga.entities.DTOs.ImageDTO;
 import com.szakdoga.repositories.ImageRepository;
 import com.szakdoga.services.interfaces.ImageService;
+import com.szakdoga.utils.Utils;
 
 @Service
 public class ImageServiceImpl extends BaseServiceClass<Image, ImageDTO> implements ImageService{
@@ -22,13 +23,14 @@ public class ImageServiceImpl extends BaseServiceClass<Image, ImageDTO> implemen
 	@Override
 	public ImageDTO get(Integer id) {
 		Image entity = imageRepository.findById(id);
+		ImageDTO dto = new ImageDTO();
 		
 		if(entity==null)
 		{
-			return null;
+			dto.setFile(Utils.getDefaultImage());
+			
+			return dto;
 		}
-		
-		ImageDTO dto = new ImageDTO();
 		
 		mapEntityToDto(entity,dto);
 		

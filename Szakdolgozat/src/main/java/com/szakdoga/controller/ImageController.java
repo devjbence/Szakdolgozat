@@ -39,7 +39,7 @@ public class ImageController {
 		ImageDTO dto = imageService.get(id);
 		
 		if(dto == null)
-			return Utils.getDefaultProfileImage();
+			return Utils.getDefaultImage();
 		
 		return dto.getFile();
 	}

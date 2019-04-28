@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Random;
 
 import com.szakdoga.exceptions.BadYearException;
@@ -13,8 +16,14 @@ public class Utils {
 
 	public static int MAX_IMAGEFILE_SIZE=64000;
 	
-	public static byte[] getDefaultProfileImage() {
-		File defaultFile = new File("src/main/resources/images/defaultProfileImage.jpg");
+	public static byte[] getDefaultImage() {
+		URL resource = Utils.class.getResource("/images/defaultImage.jpg");
+		File defaultFile=null;
+		try {
+			defaultFile = Paths.get(resource.toURI()).toFile();
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		}
 		InputStream targetStream = null;
 		try {
 			targetStream = new FileInputStream(defaultFile);

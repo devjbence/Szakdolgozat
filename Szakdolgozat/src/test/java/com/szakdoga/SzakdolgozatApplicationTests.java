@@ -45,7 +45,7 @@ public class SzakdolgozatApplicationTests {
 	
 	@Test
 	public void createProducts()
-	{
+	{/*
 		User user = userRepository.findByUsername("user");
 		Seller seller = sellerRepository.findByUser(user);
 		
@@ -62,12 +62,12 @@ public class SzakdolgozatApplicationTests {
 		seller.addProduct(pro1);
 		seller.addProduct(pro2);
 		
-		sellerRepository.save(seller);
+		sellerRepository.save(seller);*/
 	}
 	
 	@Test
 	public void checkTokens()
-	{
+	{/*
 		List<AccessTokenEntity> findAll = accTokenRepository.findAll();
 		for(AccessTokenEntity token : findAll)
 		{
@@ -78,7 +78,7 @@ public class SzakdolgozatApplicationTests {
 			
 			System.out.println("\n\n\n"+token.getUsername()+"\n\n\n");
 		}
-	}
+	*/}
 }
 
 
