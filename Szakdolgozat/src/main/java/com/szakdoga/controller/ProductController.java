@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.CategoryDTO;
 import com.szakdoga.entities.DTOs.ProductDTO;
+import com.szakdoga.exceptions.ProductIsNotYoursException;
 import com.szakdoga.services.interfaces.ProductService;
 import com.szakdoga.services.interfaces.UserService;
 
@@ -83,7 +84,14 @@ public class ProductController {
 			return null;
 		}
 
-		userService.checkIfActivated(userService.getCurrentUser());
+		User currentUser = userService.getCurrentUser();
+		
+		userService.checkIfActivated(currentUser);
+		
+		if(!currentUser.getSeller().getProducts().stream().anyMatch(x->x.getId() == id))
+		{
+			throw new ProductIsNotYoursException("You can't change someone else's product");
+		}
 
 		return productService.update(id, dto);
 	}
