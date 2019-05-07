@@ -1,5 +1,6 @@
 package com.szakdoga.entities;
 
+import java.time.Instant;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -25,9 +26,9 @@ public class EntityBase {
 	@JsonIgnore
 	@CreationTimestamp //https://www.thoughts-on-java.org/persist-creation-update-timestamps-hibernate/
 	@Column(updatable = false)
-	protected Date created;
+	protected Instant created;
 	
 	@JsonIgnore
 	@UpdateTimestamp
-	protected Date modified;	
+	protected Instant modified;	
 }

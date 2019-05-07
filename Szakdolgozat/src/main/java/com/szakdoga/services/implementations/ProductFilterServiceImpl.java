@@ -85,7 +85,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 		{
 			case equal:
 				
-				if(filterValue == attriValue)
+				if(filterValue.equals(attriValue))
 					return true;				
 				break;
 				
@@ -148,7 +148,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 			
 				for(Attribute attribute : attributes)
 				{				
-					if(attribute.getId() == filterCore.getAttributeCore())
+					if(attribute.getAttributeCore().getId() == filterCore.getAttributeCore())
 					{
 						AttributeOperation operation = AttributeOperation.values()[filterCore.getAttributeOperation()];
 
