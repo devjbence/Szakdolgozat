@@ -14,6 +14,7 @@ import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.DtoNullException;
 import com.szakdoga.exceptions.NumericConversionException;
 import com.szakdoga.exceptions.ProductDoesNotExistsException;
+import com.szakdoga.exceptions.SameAttributeCoreMoreThanOnceException;
 import com.szakdoga.repositories.AttributeCoreRepository;
 import com.szakdoga.repositories.AttributeRepository;
 import com.szakdoga.repositories.ProductRepository;
@@ -170,8 +171,11 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 		Product product = productRepository.findById(dto.getProduct()).get();
 
 		if (product == null) {
-			throw new ProductDoesNotExistsException("");
+			throw new ProductDoesNotExistsException("Product does not exists");
 		}
+		
+		if(product.getAttributes().stream().anyMatch(x->x.getAttributeCore().getId().equals(attributeCore.getId())))
+			throw new SameAttributeCoreMoreThanOnceException("The same attribute core is given more than once");
 		
 		// attribútumhoz tartozó érték validálása
 		switch (attributeCore.getType()) {
