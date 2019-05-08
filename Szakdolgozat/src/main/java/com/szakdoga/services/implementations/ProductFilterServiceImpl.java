@@ -152,7 +152,7 @@ public class ProductFilterServiceImpl implements ProductFilterService{
 					{
 						AttributeOperation operation = AttributeOperation.values()[filterCore.getAttributeOperation()];
 
-						switch(attributeCoreRepository.findById(filterCore.getAttributeCore()).getType())
+						switch(attributeCoreRepository.findById(filterCore.getAttributeCore()).get().getType())
 						{
 							case integer:
 	

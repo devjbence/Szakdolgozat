@@ -1,9 +1,11 @@
 package com.szakdoga.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.szakdoga.entities.Attribute;
 
 public interface AttributeRepository extends JpaRepository<Attribute, Integer> {
-	Attribute findById(Integer id);
+	Optional<Attribute> findById(Integer id);
 }

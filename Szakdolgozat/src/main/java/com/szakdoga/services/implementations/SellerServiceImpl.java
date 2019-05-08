@@ -73,7 +73,7 @@ public class SellerServiceImpl extends BaseServiceClass<Seller,SellerDTO> implem
 
 	@Override
 	public SellerDTO get(Integer id) {
-		Seller entity = sellerRepository.findOne(id);
+		Seller entity = sellerRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -87,7 +87,7 @@ public class SellerServiceImpl extends BaseServiceClass<Seller,SellerDTO> implem
 
 	@Override
 	public SellerDTO update(int id, SellerDTO dto) {
-		Seller entity = sellerRepository.findOne(id);
+		Seller entity = sellerRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
 		

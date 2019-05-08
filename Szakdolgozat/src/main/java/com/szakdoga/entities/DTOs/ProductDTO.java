@@ -1,10 +1,19 @@
 package com.szakdoga.entities.DTOs;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.szakdoga.enums.ProductType;
 
 import lombok.Data;
@@ -18,7 +27,9 @@ public class ProductDTO {
 	private Integer seller;
 	private Integer buyer;
 	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")
-	private Date end;
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)  
+	@JsonSerialize(using = LocalDateTimeSerializer.class) 
+	private LocalDateTime end;
 	private Integer price;
 	private ProductType type;
 	private Boolean active;

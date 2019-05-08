@@ -76,6 +76,7 @@ public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements U
 	}
 
 	public void activateUser(String activationCode) {
+		System.out.println("itt");
 		UserActivation activation = userActivationRepository.findByActivationString(activationCode);
 
 		if (activation == null)
@@ -85,7 +86,7 @@ public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements U
 
 		if (activation.getExpiration_date().before(thisMoment)) {
 			userActivationRepository.delete(activation);
-			userRepository.delete(activation.getUser().getId());
+			userRepository.deleteById(activation.getUser().getId());
 			throw new ActivationExpiredException("The activation date has expired!");
 		}
 
@@ -121,7 +122,7 @@ public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements U
 
 	private String getRegistrationText(String username, String activationCode) {
 		StringBuilder sb = new StringBuilder();
-		String link = "localhost:" + port + serverContext + "/user/activation/" + activationCode;
+		String link = "localhost:" + port + "/user/activation/" + activationCode;
 
 		sb.append("<h1>" + "Üdvözöljük " + username + "!" + "</h1></br>");
 		sb.append("<p>" + "Köszöntjük oldalunkon." + "</p>");
@@ -262,7 +263,7 @@ public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements U
 
 	@Override
 	public UserDTO get(Integer id) {
-		User entity = userRepository.findById(id);
+		User entity = userRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -276,7 +277,7 @@ public class UserServiceImpl extends BaseServiceClass<User,UserDTO> implements U
 
 	@Override
 	public UserDTO update(int id, UserDTO dto) {
-		User entity = userRepository.findById(id);
+		User entity = userRepository.findById(id).get();
 
 		if (entity == null) {
 			return null;

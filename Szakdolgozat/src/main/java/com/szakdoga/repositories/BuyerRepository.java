@@ -1,5 +1,7 @@
 package com.szakdoga.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.szakdoga.entities.Buyer;
@@ -9,5 +11,5 @@ public interface BuyerRepository extends JpaRepository<Buyer, Integer> {
 
 	Buyer findByUser(User user);
 	
-	Buyer findById(Integer id);
+	Optional<Buyer> findById(Integer id);
 }

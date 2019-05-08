@@ -1,5 +1,7 @@
 package com.szakdoga.services.implementations;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.szakdoga.entities.Image;
@@ -22,17 +24,17 @@ public class ImageServiceImpl extends BaseServiceClass<Image, ImageDTO> implemen
 	
 	@Override
 	public ImageDTO get(Integer id) {
-		Image entity = imageRepository.findById(id);
+		Optional<Image> entity = imageRepository.findById(id);
 		ImageDTO dto = new ImageDTO();
 		
-		if(entity==null)
+		if(!entity.isPresent())
 		{
 			dto.setFile(Utils.getDefaultImage());
 			
 			return dto;
 		}
 		
-		mapEntityToDto(entity,dto);
+		mapEntityToDto(entity.get(),dto);
 		
 		return dto;
 	}

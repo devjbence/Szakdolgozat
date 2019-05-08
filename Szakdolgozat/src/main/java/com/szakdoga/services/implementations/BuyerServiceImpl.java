@@ -70,7 +70,7 @@ public class BuyerServiceImpl extends BaseServiceClass<Buyer,BuyerDTO> implement
 
 	@Override
 	public BuyerDTO get(Integer id) {
-		Buyer entity = buyerRepository.findOne(id);
+		Buyer entity = buyerRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -84,7 +84,7 @@ public class BuyerServiceImpl extends BaseServiceClass<Buyer,BuyerDTO> implement
 
 	@Override
 	public BuyerDTO update(int id, BuyerDTO dto) {
-		Buyer entity = buyerRepository.findOne(id);
+		Buyer entity = buyerRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);		
 		

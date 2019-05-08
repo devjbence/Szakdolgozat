@@ -1,6 +1,8 @@
 package com.szakdoga.services.implementations;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,12 +23,14 @@ import com.szakdoga.entities.DTOs.CategoryDTOMin;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.enums.ProductType;
 import com.szakdoga.exceptions.AlreadySoldException;
+import com.szakdoga.exceptions.CannotBuyYourOwnProductException;
 import com.szakdoga.exceptions.CouldNotUploadImageException;
 import com.szakdoga.exceptions.FixedPriceProductDoesNotHavePriceException;
 import com.szakdoga.exceptions.ImageSizeIsTooBigException;
 import com.szakdoga.exceptions.NotBiddingProductException;
 import com.szakdoga.exceptions.NotFixedPricedProductException;
 import com.szakdoga.exceptions.OverdueException;
+import com.szakdoga.exceptions.ProductDateIsOverdueException;
 import com.szakdoga.exceptions.ProductDateNullException;
 import com.szakdoga.exceptions.SmallerPriceException;
 import com.szakdoga.repositories.CommentRepository;
@@ -68,10 +72,10 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 		for (int categoryId : dto.getCategories()) {
 			if (categoryId < 0) {
-				Category category = categoryRepository.findById(categoryId * (-1));
+				Category category = categoryRepository.findById(categoryId * (-1)).get();
 				entity.removeCategory(category);
 			} else {
-				Category category = categoryRepository.findById(categoryId);
+				Category category = categoryRepository.findById(categoryId).get();
 				if (category != null) {
 					if(entity.getCategories() == null)
 					{
@@ -87,7 +91,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public int addImage(Integer productId, MultipartFile imageFile) {
-		Product product = productRepository.findById(productId);
+		Product product = productRepository.findById(productId).get();
 
 		// max file méret < 64kb
 		if (imageFile.getSize() > Utils.MAX_IMAGEFILE_SIZE)
@@ -114,7 +118,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	@Override
 	public void mapDtoToEntity(ProductDTO dto, Product entity) {
 		entity.setName(dto.getName());
-		entity.setSeller(sellerRepository.findById(dto.getSeller()));
+		entity.setSeller(sellerRepository.findById(dto.getSeller()).get());
 		entity.setEnd(dto.getEnd());
 		entity.setDescription(dto.getDescription());
 		entity.setPrice(dto.getPrice());
@@ -147,13 +151,13 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	@Override
 	public void mapDtoToEntityNonNullsOnly(ProductDTO dto, Product entity) {
 		if(dto.getComments() != null)
-			entity.setComments(dto.getComments().stream().map(c -> commentRepository.findById(c)).collect(Collectors.toList()));
+			entity.setComments(dto.getComments().stream().map(c -> commentRepository.findById(c).get()).collect(Collectors.toList()));
 		if(dto.getImages() != null)
-			entity.setImages(dto.getImages().stream().map(c -> imageRepository.findById(c)).collect(Collectors.toSet()));
+			entity.setImages(dto.getImages().stream().map(c -> imageRepository.findById(c).get()).collect(Collectors.toSet()));
 		if(dto.getName() != null)
 			entity.setName(dto.getName());
 		if(dto.getSeller() != null)
-			entity.setSeller(sellerRepository.findById(dto.getSeller()));
+			entity.setSeller(sellerRepository.findById(dto.getSeller()).get());
 		if(dto.getEnd() != null)
 			entity.setEnd(dto.getEnd());
 		if(dto.getDescription() != null)
@@ -169,12 +173,12 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		Product entity = new Product();
 		Seller seller = userService.getCurrentUser().getSeller();
 		
-		mapDtoToEntity(dto, entity);
+		mapDtoToEntityNonNullsOnly(dto, entity);
 		updateCategories(dto,entity);
 
 		entity.setSeller(seller);
 		entity.setActive(true);
-
+		
 		productRepository.save(entity);
 
 		seller.addProduct(entity);
@@ -188,7 +192,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public ProductDTO get(Integer id) {
-		Product entity = productRepository.findById(id);
+		Product entity = productRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -202,7 +206,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public ProductDTO update(int id, ProductDTO dto) {
-		Product entity = productRepository.findById(id);
+		Product entity = productRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 		updateCategories(dto, entity);
@@ -218,7 +222,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	public void delete(Integer id) {
 		// removeAllImages(id);
 
-		Product product = productRepository.findById(id);
+		Product product = productRepository.findById(id).get();
 		Set<Category> categories = product.getCategories();
 
 		Iterator<Category> categoryIterator = categories.iterator();
@@ -278,7 +282,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public void saveImage(Integer id, MultipartFile file) {
-		Product entity = productRepository.findById(id);
+		Product entity = productRepository.findById(id).get();
 		Image image = new Image();
 
 		try {
@@ -294,8 +298,8 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public void removeImage(Integer entityId, Integer imageId) {
-		Image image = imageRepository.findById(imageId);
-		Product entity = productRepository.findById(entityId);
+		Image image = imageRepository.findById(imageId).get();
+		Product entity = productRepository.findById(entityId).get();
 
 		entity.removeImage(image);
 		imageRepository.delete(image);
@@ -310,13 +314,20 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 		if (dto.getEnd() == null)
 			throw new ProductDateNullException("The end date is required");
+		
+		if(dto.getEnd().isBefore(LocalDateTime.now()))
+			throw new ProductDateIsOverdueException("The end date is overdue");
 	}
 
 	@Override
 	public void buy(Integer id) {
-		Product entity = productRepository.findById(id);
+		Product entity = productRepository.findById(id).get();
 		Buyer buyer = userService.getCurrentUser().getBuyer();
 
+		if(userService.getCurrentUser().getSeller().getProducts().stream().anyMatch(x->x.getId() == id))
+			throw new CannotBuyYourOwnProductException(
+					"Cannot buy your own product");
+		
 		if (entity.getType() != ProductType.FixedPrice)
 			throw new NotFixedPricedProductException(
 					"The product is not fix priced");
@@ -343,9 +354,13 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 
 	@Override
 	public void bid(int entityId, int price) {
-		Product entity = productRepository.findById(entityId);
+		Product entity = productRepository.findById(entityId).get();
 		Buyer buyer = userService.getCurrentUser().getBuyer();
 
+		if(userService.getCurrentUser().getSeller().getProducts().stream().anyMatch(x->x.getId() == entityId))
+			throw new CannotBuyYourOwnProductException(
+					"Cannot bid on your own product");
+		
 		if (!entity.getActive()) {
 			throw new OverdueException(
 					"The selling period has ended");

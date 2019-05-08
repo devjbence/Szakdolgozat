@@ -27,10 +27,11 @@ public class ProductDeactivationService {
 
 		for (Product product : productRepository.findAll()) 
 		{
-			LocalDateTime end = product.getEnd().toInstant().atZone(ZoneId.of("Europe/Prague")).toLocalDateTime().minusHours(1);
+			LocalDateTime end = product.getEnd();
 			
 			if(end.isBefore(now) && product.getActive())
 			{
+				System.out.println("\n\n"+"now is before end"+"\n\n");
 				switch(product.getType())
 				{
 				case Bidding:

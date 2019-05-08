@@ -213,11 +213,14 @@ ON SCHEDULE EVERY 50 SECOND
 DO
    UPDATE szakdoga_db.product SET `active` = 0 where `end` <= CURRENT_TIMESTAMP;
 
+drop event productActivityUpdater;
+
 /*
 select * from role;
 select * from user;
 select * from user_role;
 select * from image;
+select * from user_activation;
 select *from seller;
 select * from product;
 select * from product_category;

@@ -33,8 +33,8 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 	public AttributeDTO add(AttributeDTO dto) {
 
 		Attribute entity = new Attribute();
-		AttributeCore attributeName = attributeCoreRepository.findById(dto.getAttributeCore());
-		Product product = productRepository.findById(dto.getProduct());
+		AttributeCore attributeName = attributeCoreRepository.findById(dto.getAttributeCore()).get();
+		Product product = productRepository.findById(dto.getProduct()).get();
 
 		mapDtoToEntity(dto, entity);
 		attributeRepository.save(entity);
@@ -52,7 +52,7 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 
 	@Override
 	public AttributeDTO get(Integer id) {
-		Attribute entity = attributeRepository.findById(id);
+		Attribute entity = attributeRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -66,13 +66,13 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 
 	@Override
 	public void delete(Integer id) {
-		attributeRepository.delete(id);
+		attributeRepository.deleteById(id);
 	}
 
 	@Override
 	public void mapDtoToEntity(AttributeDTO dto, Attribute entity) {
-		entity.setProduct(productRepository.findById(dto.getProduct()));
-		entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()));
+		entity.setProduct(productRepository.findById(dto.getProduct()).get());
+		entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()).get());
 		entity.setValue(dto.getValue());
 	}
 
@@ -86,7 +86,7 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 
 	@Override
 	public AttributeDTO update(int id, AttributeDTO dto) {
-		Attribute entity = attributeRepository.findById(id);
+		Attribute entity = attributeRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
@@ -103,7 +103,7 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 			return;
 
 		if (dto.getAttributeCore() != 0)
-			entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()));
+			entity.setAttributeCore(attributeCoreRepository.findById(dto.getAttributeCore()).get());
 
 		if (dto.getValue() != null)
 			entity.setValue(dto.getValue());
@@ -161,13 +161,13 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 			throw new DtoNullException("");
 		}
 
-		AttributeCore attributeCore = attributeCoreRepository.findById(dto.getAttributeCore());
+		AttributeCore attributeCore = attributeCoreRepository.findById(dto.getAttributeCore()).get();
 
 		if (attributeCore == null) {
 			throw new AttributeNameDoesNotExistsException("");
 		}
 
-		Product product = productRepository.findById(dto.getProduct());
+		Product product = productRepository.findById(dto.getProduct()).get();
 
 		if (product == null) {
 			throw new ProductDoesNotExistsException("");

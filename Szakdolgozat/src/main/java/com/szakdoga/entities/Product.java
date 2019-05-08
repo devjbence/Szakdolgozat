@@ -1,5 +1,8 @@
 package com.szakdoga.entities;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -67,7 +70,7 @@ public class Product extends EntityBase {
 	@Enumerated(EnumType.ORDINAL)
 	private ProductType type;
   
-	private Date end;
+	private LocalDateTime end;
 	
 	//bindding
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

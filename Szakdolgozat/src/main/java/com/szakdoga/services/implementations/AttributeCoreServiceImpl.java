@@ -23,7 +23,7 @@ public class AttributeCoreServiceImpl extends BaseServiceClass<AttributeCore,Att
 	
 	@Override
 	public void mapDtoToEntity(AttributeCoreDTO dto, AttributeCore entity) {
-		entity.setAttributes(dto.getAttributes().stream().map(x-> attributeRepository.findById(x)).collect(Collectors.toList()));
+		entity.setAttributes(dto.getAttributes().stream().map(x-> attributeRepository.findById(x).get()).collect(Collectors.toList()));
 		entity.setId(dto.getId());
 		entity.setName(dto.getName());
 		entity.setType(dto.getType());
@@ -40,7 +40,7 @@ public class AttributeCoreServiceImpl extends BaseServiceClass<AttributeCore,Att
 	@Override
 	public void mapDtoToEntityNonNullsOnly(AttributeCoreDTO dto, AttributeCore entity) {
 		if(dto.getAttributes() != null)
-			entity.setAttributes(dto.getAttributes().stream().map(x-> attributeRepository.findById(x)).collect(Collectors.toList()));
+			entity.setAttributes(dto.getAttributes().stream().map(x-> attributeRepository.findById(x).get()).collect(Collectors.toList()));
 		if(dto.getId() != null)
 			entity.setId(dto.getId());
 		if(dto.getName() != null)
@@ -64,7 +64,7 @@ public class AttributeCoreServiceImpl extends BaseServiceClass<AttributeCore,Att
 
 	@Override
 	public AttributeCoreDTO get(Integer id) {
-		AttributeCore entity = attributeCoreRepository.findById(id);
+		AttributeCore entity = attributeCoreRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -78,7 +78,7 @@ public class AttributeCoreServiceImpl extends BaseServiceClass<AttributeCore,Att
 
 	@Override
 	public AttributeCoreDTO update(int id, AttributeCoreDTO dto) {
-		AttributeCore entity = attributeCoreRepository.findById(id);
+		AttributeCore entity = attributeCoreRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 

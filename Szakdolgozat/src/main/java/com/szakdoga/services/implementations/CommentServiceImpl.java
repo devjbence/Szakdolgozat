@@ -31,7 +31,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 	@Override
 	public CommentDTO add(CommentDTO dto) {
 		Comment entity = new Comment();
-		Product product = productRepository.findById(dto.getProductId());
+		Product product = productRepository.findById(dto.getProductId()).get();
 
 		mapDtoToEntity(dto, entity);
 
@@ -47,7 +47,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 
 	@Override
 	public CommentDTO get(Integer id) {
-		Comment entity = commentRepository.findById(id);
+		Comment entity = commentRepository.findById(id).get();
 
 		if (entity == null)
 			return null;
@@ -61,7 +61,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 
 	@Override
 	public CommentDTO update(int id, CommentDTO dto) {
-		Comment entity = commentRepository.findById(id);
+		Comment entity = commentRepository.findById(id).get();
 
 		mapDtoToEntityNonNullsOnly(dto, entity);
 
@@ -75,7 +75,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 	@Override
 	public void delete(Integer id) {
 
-		Comment entity = commentRepository.findById(id);
+		Comment entity = commentRepository.findById(id).get();
 
 		entity.getProduct().removeComment(entity);
 		entity.getBuyer().removeComment(entity);
@@ -129,7 +129,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 		entity.setMessage(dto.getMessage());
 		entity.setBuyer(userService.getCurrentUser().getBuyer());
 		entity.setId(dto.getId());
-		entity.setProduct(productRepository.findOne(dto.getProductId()));
+		entity.setProduct(productRepository.findById(dto.getProductId()).get());
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class CommentServiceImpl extends BaseServiceClass<Comment,CommentDTO> imp
 
 	@Override
 	public void ValidateDto(CommentDTO dto) {
-		Product product = productRepository.findById(dto.getProductId());
+		Product product = productRepository.findById(dto.getProductId()).get();
 
 		if (product == null) {
 			throw new ProductDoesNotExistsException("The given product does not exists");
