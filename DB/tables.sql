@@ -196,7 +196,7 @@ create table `attribute`
     FOREIGN KEY (`attribute_name_id`) REFERENCES `attribute_core` (`id`),
     FOREIGN KEY (`product_id`) REFERENCES `product` (`id`)
 );
-
+/*
 insert into role(name) values('ROLE_ADMIN');
 insert into role(name) values('ROLE_USER');
 
@@ -214,6 +214,7 @@ DO
    UPDATE szakdoga_db.product SET `active` = 0 where `end` <= CURRENT_TIMESTAMP;
 
 drop event productActivityUpdater;
+*/
 
 /*
 select * from role;

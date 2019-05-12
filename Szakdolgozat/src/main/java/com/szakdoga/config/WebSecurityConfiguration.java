@@ -19,6 +19,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.github.javafaker.Faker;
 import com.szakdoga.services.interfaces.CustomUserDetailsService;
 
 import org.springframework.web.filter.CorsFilter;
@@ -50,6 +51,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public SpelAwareProxyProjectionFactory projectionFactory() {
 		return new SpelAwareProxyProjectionFactory();
+	}
+	
+	@Bean
+	public Faker javaFaker()
+	{
+		return new Faker();
 	}
 	
 	@Bean
