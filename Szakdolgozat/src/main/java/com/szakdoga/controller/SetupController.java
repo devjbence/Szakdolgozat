@@ -33,6 +33,6 @@ public class SetupController {
 	@GetMapping("testdata")
 	public void setupDb()
 	{
-		testDataCreator.createUsers();
+		testDataCreator.createAttributes();
 	}	
 }

@@ -230,6 +230,7 @@ select * from comment;
 select * from bid;
 select * from attribute;
 select * from attribute_core;
+select *from category;
 */
 
 
