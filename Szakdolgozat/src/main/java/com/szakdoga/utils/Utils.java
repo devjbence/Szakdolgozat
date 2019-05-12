@@ -7,6 +7,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -94,8 +95,14 @@ public class Utils {
 		// create String object to be converted to image
 		String sampleText = text;
 
+		// Image file name
+		String fileName = "Image";
+
+		// create a File Object
+		File newFile = new File("./" + fileName + ".jpeg");
+
 		// create the font you wish to use
-		Font font = new Font("Tahoma", Font.PLAIN, 11);
+		Font font = new Font("Tahoma", Font.PLAIN, 14);
 
 		// create the FontRenderContext object which helps us to measure the text
 		FontRenderContext frc = new FontRenderContext(null, true, true);
@@ -106,7 +113,7 @@ public class Utils {
 		int h = (int) bounds.getHeight();
 
 		// create a BufferedImage object
-		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_RGB);
 
 		// calling createGraphics() to get the Graphics2D
 		Graphics2D g = image.createGraphics();
@@ -122,6 +129,15 @@ public class Utils {
 		// releasing resources
 		g.dispose();
 
-		return ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+		// creating the file
+		 ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "jpeg", bos);
+			return bos.toByteArray();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return getDefaultImage();
 	}
 }

@@ -304,16 +304,23 @@ public class TestDataCreator implements ITestDataCreator {
 		
 		for(int i=0;i<NumberOfProducts;i++)
 		{
+			String productName= faker.commerce().productName();
+			
+			Image image = new Image();
+			image.setFile(Utils.getImageWithText(productName));
+			imageRepository.save(image);
+			
 			Product product = new Product();
 			User user = users.get(Utils.random(0, NumberOfUsers -1));
 			Seller seller = user.getSeller();
 			
-			product.setName(faker.commerce().productName());
+			product.setName(productName);
 			product.setActive(true);
 			
 			product.setDescription(faker.lorem().paragraph(1000));
 			product.setCategories(new HashSet<Category>());
 			product.setSeller(seller);
+			product.addImage(image);
 			
 			if(i <= NumberOfProducts/2)
 			{
