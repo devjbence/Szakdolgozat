@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.szakdoga.entities.Attribute;
 import com.szakdoga.entities.AttributeCore;
+import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Product;
+import com.szakdoga.entities.Seller;
 import com.szakdoga.entities.DTOs.AttributeOperation;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterCore;
@@ -21,6 +23,7 @@ import com.szakdoga.repositories.AttributeCoreRepository;
 import com.szakdoga.repositories.CategoryRepository;
 import com.szakdoga.repositories.ProductRepository;
 import com.szakdoga.services.interfaces.ProductFilterService;
+import com.szakdoga.services.interfaces.UserService;
 
 @Service
 public class ProductFilterServiceImpl implements ProductFilterService {
@@ -31,6 +34,8 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 	private AttributeCoreRepository attributeCoreRepository;
 	@Autowired
 	private CategoryRepository productCategoryRepository;
+	@Autowired
+	private UserService userService;
 
 	private final static double Epsilon = 0.0001;
 
@@ -115,8 +120,16 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 	public List<ProductDTO> getAll(ProductFilterDTO filter) {
 
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
-		List<Product> entites = productRepository.findAll();
-
+		List<Product> entites  = new ArrayList<Product>();
+		
+		//sajátra
+		if (filter.getOwn() != null && filter.getOwn()) {
+			entites.addAll(userService.getCurrentUser().getSeller().getProducts());
+		}
+		else {
+			entites = productRepository.findAll();
+		}
+		
 		//aktivitás szűrés
 		if (filter.getIsActive() != null) {
 			entites = entites.stream()

@@ -15,4 +15,5 @@ public class ProductFilterDTO {
 	private String productName;
 	private ProductType productType;
 	private Boolean isActive;
+	private Boolean own;
 }

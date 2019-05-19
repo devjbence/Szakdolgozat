@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 
-<button [routerLink]="'/product/0'" class="btn btn-primary">new product</button>
+<button [routerLink]="'/product/0'" type="button" class="btn btn-primary red" style="float:right">new product</button>
 <!--
 <ul>
   <li *ngFor="let product of products">
@@ -27,7 +27,7 @@
               Filter
             </label>
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="form-group">
                 <label>Categories</label>
                 <select id="categories" style="max-height:100%;" name="categories" multiple class="form-control"
@@ -38,7 +38,18 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <div class="form-group">
+                  <label>Own products</label>
+                  <select id="own" name="own" style="max-height:100%;" class="form-control" formControlName="own"
+                    [(ngModel)]="own">
+                    <option *ngFor="let own of owns" [value]="own.value">
+                      {{own.viewValue}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            <div class="col-md-3">
               <div class="form-group">
                 <label>Type</label>
                 <select id="type" name="type" style="max-height:100%;" class="form-control" formControlName="type"
@@ -49,8 +60,8 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group input-group" *ngIf="searchForm.controls['type'].value == 0">
+            <div class="col-md-3">
+              <div class="form-group input-group" *ngIf="searchForm.controls['type'].value == 1">
                 <label>Price</label>
                 <input class="form-control" placeholder="Price" formControlName="price" type="number">
               </div>
@@ -137,6 +148,7 @@
         </form>
       </div> <!-- card-body .// -->
     </div> <!-- card.// -->
+    <label> Total number of products: {{this.numberOfProducts}}</label>
     <div class="row-sm">
       <div class="col-md-3 col-sm-6" *ngFor="let product of products">
         <figure class="card card-product">

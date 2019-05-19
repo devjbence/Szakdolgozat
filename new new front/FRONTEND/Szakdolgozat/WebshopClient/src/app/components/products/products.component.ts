@@ -7,6 +7,7 @@ import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
 import { FilterOperationInterface } from 'src/app/enums/FilterOperationInterface';
 import { ColorInterface } from 'src/app/enums/ColorInterface';
 import { GenericSelectList } from 'src/app/enums/GenericSelectList';
+import { BooleanSelectList } from 'src/app/enums/BooleanSelectList';
 
 @Component({
   selector: 'app-products',
@@ -19,6 +20,7 @@ export class ProductsComponent implements OnInit {
   heightOperation=0;
   widthOperation=0;
   weightOperation=0;
+  own=1;
 
   products:any;
   errMsg:string;
@@ -28,6 +30,8 @@ export class ProductsComponent implements OnInit {
   heightValue:number;
   widthValue:number;
   weightValue:number;
+  numberOfProducts:number;
+  price:number;
 
   constructor(
     private _service:ProductService,
@@ -40,6 +44,7 @@ export class ProductsComponent implements OnInit {
     heightOperations:GenericSelectList[];
     widthOperations:GenericSelectList[];
     weightOperations:GenericSelectList[];
+    owns:BooleanSelectList[];
 
   ngOnInit() {
 
@@ -61,6 +66,11 @@ export class ProductsComponent implements OnInit {
       {value:6,viewValue:"Yellow"}
     ];
 
+    this.owns=[
+      {value:0,viewValue:true},
+      {value:1,viewValue:false},
+    ];
+
     this.heightOperations = this.operations;
     this.widthOperations = this.operations;
     this.weightOperations = this.operations;
@@ -68,10 +78,12 @@ export class ProductsComponent implements OnInit {
     this.searchForm = new FormGroup({
       type: new FormControl(0, [Validators.required]),
       categories: new FormControl(this.categories),
-      price:new FormControl(),
+      price:new FormControl(this.price),
       heightOperation:new FormControl(this.heightOperation),
       widthOperation:new FormControl(this.widthOperation),
       weightOperation: new FormControl(this.weightOperation),
+      owns: new FormControl(this.owns),
+      own: new FormControl(this.own),
       colors: new FormControl(this.colors),
       color: new FormControl(this.color),
       productName: new FormControl(this.productName),
@@ -85,6 +97,7 @@ export class ProductsComponent implements OnInit {
       data => {
         this.products = data;
         this.products = JSON.parse(this.products._body);
+        this.numberOfProducts=this.products.length;
       },
       error => this.errMsg = error);
 
@@ -103,8 +116,9 @@ export class ProductsComponent implements OnInit {
       error => console.error(error));//this.handleError(error));
 
       this.types =[
-        { value:0, viewValue:"Fixed Price"},
-        { value:1, viewValue:"Bidding"}
+        { value:0, viewValue:"Any"},
+        { value:1, viewValue:"Fixed Price"},
+        { value:2, viewValue:"Bidding"}
       ];
 
   }
