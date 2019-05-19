@@ -4,6 +4,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute,Router } from '@angular/router';
 import { ProductCategoryInterface } from 'src/app/enums/ProductCategoryInterface';
 import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
+import { FilterOperationInterface } from 'src/app/enums/FilterOperationInterface';
+import { FilterAttributeNameInterface } from 'src/app/enums/FilterAttributeNameInterface';
 
 @Component({
   selector: 'app-products',
@@ -12,11 +14,14 @@ import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
 })
 export class ProductsComponent implements OnInit {
   type=0;
+  attrName=0;
+  operation=0;
 
   products:any;
   errMsg:string;
   searchForm: FormGroup;
   productName:string;
+  attrValue:string;
 
   constructor(
     private _service:ProductService,
@@ -24,13 +29,35 @@ export class ProductsComponent implements OnInit {
 
     categories:ProductCategoryInterface[];
     types:ProductTypeInterface[];
+    attrNames:FilterAttributeNameInterface[];
+    operations:FilterOperationInterface[];
 
   ngOnInit() {
+
+    this.operations = [
+      {value:0,viewValue:"<"},
+      {value:0,viewValue:">"},
+      {value:0,viewValue:"="},
+      {value:0,viewValue:"<="},
+      {value:0,viewValue:">="}
+    ];
+
+    this.attrNames = [
+      {value:0,viewValue:"Color"},
+      {value:0,viewValue:"Height"},
+      {value:0,viewValue:"Width"},
+      {value:0,viewValue:"Weight"}
+    ];
 
     this.searchForm = new FormGroup({
       type: new FormControl(0, [Validators.required]),
       categories: new FormControl(this.categories),
-      price:new FormControl()
+      price:new FormControl(),
+      operation:new FormControl(),
+      attrValue: new FormControl(this.attrValue),
+      attrNames: new FormControl(this.attrNames),
+      attrName: new FormControl(this.attrName),
+      productName: new FormControl(this.productName),
     });
 
     //this.data = this.route.snapshot.paramMap.get("username");
