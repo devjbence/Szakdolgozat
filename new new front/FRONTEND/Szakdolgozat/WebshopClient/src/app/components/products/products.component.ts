@@ -20,6 +20,7 @@ export class ProductsComponent implements OnInit {
   heightOperation=0;
   widthOperation=0;
   weightOperation=0;
+  priceOperation=0;
   own=1;
 
   products:any;
@@ -44,6 +45,7 @@ export class ProductsComponent implements OnInit {
     heightOperations:GenericSelectList[];
     widthOperations:GenericSelectList[];
     weightOperations:GenericSelectList[];
+    priceOperations:GenericSelectList[];
     owns:BooleanSelectList[];
 
   ngOnInit() {
@@ -74,6 +76,7 @@ export class ProductsComponent implements OnInit {
     this.heightOperations = this.operations;
     this.widthOperations = this.operations;
     this.weightOperations = this.operations;
+    this.priceOperations = this.operations;
 
     this.searchForm = new FormGroup({
       type: new FormControl(0, [Validators.required]),
@@ -82,6 +85,7 @@ export class ProductsComponent implements OnInit {
       heightOperation:new FormControl(this.heightOperation),
       widthOperation:new FormControl(this.widthOperation),
       weightOperation: new FormControl(this.weightOperation),
+      priceOperation: new FormControl(this.priceOperation),
       owns: new FormControl(this.owns),
       own: new FormControl(this.own),
       colors: new FormControl(this.colors),
