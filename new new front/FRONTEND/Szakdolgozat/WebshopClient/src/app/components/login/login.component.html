@@ -1,0 +1,58 @@
+<br>
+<div class="container">
+  <div class="card bg-light">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+
+      <h4 class="card-title mt-3 text-center">Login</h4>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="alert alert-danger validation" *ngIf="errorMsg">
+          {{errorMsg}}
+        </div>
+        <div class="form-group input-group">
+          <input class="form-control" placeholder="User name" formControlName="username" type="text">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="loginForm.controls['username'].hasError('minlength')">
+          The username should be longer <br> than 3 characters
+        </div>
+        <div class="alert alert-danger validation" *ngIf="loginForm.controls['username'].hasError('required')">
+          The username is required
+        </div>
+
+        <div class="form-group input-group">
+          <input formControlName="password" class="form-control" placeholder="Password" type="password">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="loginForm.controls['password'].hasError('required')">
+          The password is required
+        </div>
+
+        <div class="form-group input-group">
+          <input formControlName="confirmPassword" class="form-control" placeholder="Repeat password" type="password">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="loginForm.controls['password'].hasError('minlength')">
+          The password should be longer <br> at least 8 characters
+        </div>
+        <div class="alert alert-danger validation"
+          *ngIf="loginForm.controls['confirmPassword'].hasError('notEquivalent') ;else password_matches">
+          Password should match
+        </div>
+        <ng-template #password_matches>
+          <div class="alert alert-success validation">
+            Passwords are matching
+          </div>
+        </ng-template>
+
+        <div class="form-group">
+          <button type="submit" id="loginSubmit" [disabled]="!loginForm.valid" class="btn btn-dark btn-block"> Login
+          </button>
+        </div>
+
+        <p class="text-left">
+          You dont have an account ? <a [routerLink]="'/register'">Register</a>
+          <br>
+          Back to the main page: <a [routerLink]="'/index'">Index</a>
+        </p>
+      </form>
+    </article>
+  </div>
+</div>

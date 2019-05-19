@@ -37,8 +37,7 @@ import com.szakdoga.utils.Utils;
 @Service
 public class TestDataCreator implements ITestDataCreator {
 
-	@Autowired
-	private Faker faker;
+	private Faker faker = new Faker();
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
@@ -62,7 +61,7 @@ public class TestDataCreator implements ITestDataCreator {
 	
 	final static int NumberOfRoles=2;
 	final static int NumberOfUsers = 10;
-	final static int NumberOfProducts=500;	
+	final static int NumberOfProducts=80;	
 	final static int NumberOfAttributes=40; //shoudl be divisible by 4
 	final static int NumberOfCategories=5;
 	

@@ -117,6 +117,20 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
 		List<Product> entites = productRepository.findAll();
 
+		//aktivitás szűrés
+		if (filter.getIsActive() != null) {
+			entites = entites.stream()
+					.filter(x -> x.getActive().equals(filter.getIsActive()))
+					.collect(Collectors.toList());
+		}
+		
+		//termék típus szűrés
+		if (filter.getProductType() != null) {
+			entites = entites.stream()
+					.filter(x -> x.getType().equals(filter.getProductType()))
+					.collect(Collectors.toList());
+		}
+		
 		// termék névre való szűrés
 		if (filter.getProductName() != null) {
 			entites = entites.stream()

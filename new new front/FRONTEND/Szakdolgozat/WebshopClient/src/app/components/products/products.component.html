@@ -1,0 +1,66 @@
+<app-navbar></app-navbar>
+
+<button [routerLink]="'/product/0'" class="btn btn-primary">new product</button>
+<!--
+<ul>
+  <li *ngFor="let product of products">
+    <a [routerLink]="'/product/'+product.id">{{product.name}}</a>
+  </li>
+</ul>
+-->
+
+
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content bg padding-y-sm">
+  <div class="container">
+  
+<div class="card">
+	<div class="card-body">
+    <p style="font-size:20px;font-family: 'Times New Roman', Times, serif;"><strong>Filter by</strong></p> 
+    <hr>
+    <div class="row">
+        <div class="col-md-4">     
+          <div class="form-group">
+              <label>Categories</label>
+              <select id="categories" name="categories" multiple class="form-control" formControlName="categories">
+                <option *ngFor="let category of categories" [value]="category.value">
+                  {{category.viewValue}}
+                </option>
+              </select>
+          </div>     
+        </div>
+        <div class="col-md-4">      
+          <div class="form-group" >
+            <label>Type</label>
+            <select id="type" name="type" class="form-control" formControlName="type" [(ngModel)]="type"> 
+              <option *ngFor="let type of types" [value]="type.value">
+                {{type.viewValue}}
+              </option>
+            </select>
+          </div>  
+        </div>
+      </div>
+	</div> <!-- card-body .// -->
+</div> <!-- card.// -->
+  <div class="row-sm">
+  <div class="col-md-3 col-sm-6" *ngFor="let product of products">
+    <figure class="card card-product">
+      <div class="img-wrap"> <img style="max-width:100%;max-height:100%;" src="http://localhost:8080/image/{{product.images[0]}}"></div>
+      <figcaption class="info-wrap">
+        <a class="title" [routerLink]="'/product/'+product.id">{{product.name}}</a>
+        <div class="price-wrap">
+          <span class="price-new" *ngIf="product.price;else biddingTemplate">{{product.price | currency:" "}} Ft</span>
+          <ng-template #biddingTemplate>
+            <span class="price-new">Bidding</span>
+          </ng-template>
+        </div> <!-- price-wrap.// -->
+      </figcaption>
+    </figure> <!-- card // -->
+  </div> <!-- col // -->
+  </div> <!-- row.// -->
+  
+  
+  </div><!-- container // -->
+  </section>
+  <!-- ========================= SECTION CONTENT .END// ========================= -->

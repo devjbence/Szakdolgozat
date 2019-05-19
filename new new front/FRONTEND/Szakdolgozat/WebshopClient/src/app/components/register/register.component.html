@@ -1,0 +1,69 @@
+<br>
+<div class="container">
+  <div class="card bg-light">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+
+      <h4 class="card-title mt-3 text-center">Create Account</h4>
+      <p class="text-center">
+        Get started with your free account
+      </p>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="alert alert-danger validation" *ngIf="errorMsg">
+          {{errorMsg}}
+        </div>
+        <div class="form-group input-group">
+          <input class="form-control" placeholder="User name" formControlName="username" type="text">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['username'].hasError('minlength')">
+          The username should be longer <br> than 3 characters
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['username'].hasError('required')">
+          The username is required
+        </div>
+
+        <div class="form-group input-group">
+          <input formControlName="email" class="form-control" placeholder="Email address" type="email">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['email'].hasError('email')">
+          Wrong e-mail format
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['email'].hasError('required')">
+          The email is required
+        </div>
+
+        <div class="form-group input-group">
+          <input formControlName="password" class="form-control" placeholder="Password" type="password">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['password'].hasError('required')">
+          The password is required
+        </div>
+
+        <div class="form-group input-group">
+          <input formControlName="confirmPassword" class="form-control" placeholder="Repeat password" type="password">
+        </div>
+        <div class="alert alert-danger validation" *ngIf="registerForm.controls['password'].hasError('minlength')">
+          The password should be longer <br> at least 8 characters
+        </div>
+        <div class="alert alert-danger validation"
+          *ngIf="registerForm.controls['confirmPassword'].hasError('notEquivalent') ;else password_matches">
+          Password should match
+        </div>
+        <ng-template #password_matches>
+          <div class="alert alert-success validation">
+            Passwords are matching
+          </div>
+        </ng-template>
+
+        <div class="form-group">
+          <button type="submit" id="registerSubmit" [disabled]="!registerForm.valid" class="btn btn-dark btn-block"> Create Account
+          </button>
+        </div>
+
+        <p class="text-center">
+          Have an account? <a [routerLink]="'/login'">Log In</a>
+        </p>
+      </form>
+    </article>
+  </div>
+</div>
