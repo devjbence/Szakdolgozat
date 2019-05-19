@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from 'src/app/services/product.service';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute,Router } from '@angular/router';
 import { ProductCategoryInterface } from 'src/app/enums/ProductCategoryInterface';
 import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
@@ -14,6 +15,8 @@ export class ProductsComponent implements OnInit {
 
   products:any;
   errMsg:string;
+  searchForm: FormGroup;
+  productName:string;
 
   constructor(
     private _service:ProductService,
@@ -23,6 +26,13 @@ export class ProductsComponent implements OnInit {
     types:ProductTypeInterface[];
 
   ngOnInit() {
+
+    this.searchForm = new FormGroup({
+      type: new FormControl(0, [Validators.required]),
+      categories: new FormControl(this.categories),
+      price:new FormControl()
+    });
+
     //this.data = this.route.snapshot.paramMap.get("username");
     this._service.getProducts().subscribe(
       data => {
@@ -52,4 +62,8 @@ export class ProductsComponent implements OnInit {
 
   }
 
+  public onSubmit()
+  {
+
+  }
 }
