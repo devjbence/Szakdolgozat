@@ -23,6 +23,9 @@
             <input class="form-control" placeholder="Product name" formControlName="productName">
           </div>
           <hr>
+          <label style="color:#a0c4ff !important;">
+              Filter
+            </label>
           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
@@ -54,46 +57,83 @@
             </div>
           </div>
           <hr>
-          <label>
+          <label style="color:#a0c4ff !important;">
             Special search with attributes
           </label>
           <div class="row">
-              <div class="col-md-3">
-                <div class="form-group input-group">
-                    <div class="form-group">
-                        <label>Attribute name</label>
-                        <select id="attrName" name="attrName" style="max-height:100%;" class="form-control" formControlName="attrName"
-                          [(ngModel)]="attrName">
-                          <option *ngFor="let attrName of attrNames" [value]="attrName.value">
-                            {{attrName.viewValue}}
-                          </option>
-                        </select>
-                      </div>
-                </div>
+              <div class="col-md-2" style="margin-right:15px !important;">
+                  <div class="form-group input-group">
+                      <div class="form-group">
+                          <label>Color</label>
+                          <select id="color" name="color" class="form-control" formControlName="color"
+                            [(ngModel)]="color">
+                            <option *ngFor="let color of colors" [value]="color.value">
+                              {{color.viewValue}}
+                            </option>
+                          </select>
+                        </div>
+                  </div>
               </div>
-              <div class="col-md-3">
-                <div class="form-group input-group">
-                    <div class="form-group">
-                        <label>Operation</label>
-                        <select id="operation" name="operation" style="max-height:100%;" class="form-control" formControlName="operation"
-                          [(ngModel)]="operation">
-                          <option *ngFor="let operation of operations" [value]="operation.value">
-                            {{operation.viewValue}}
-                          </option>
-                        </select>
-                      </div>
+              <div class="col-md-3" style="margin-right:15px !important;">
+                    <div class="form-group input-group">
+                        <label>Height</label>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6" style="margin-left:-15px !important;">
+                                <select id="heightOperation" name="heightOperation" class="form-control" style=" color:darkorange; font-family: 'Times New Roman', Times, serif; font-size:20px;" formControlName="heightOperation"
+                                [(ngModel)]="heightOperation">
+                                <option *ngFor="let heightOperation of heightOperations" [value]="heightOperation.value">
+                                  {{heightOperation.viewValue}}
+                                </option>
+                              </select>
+                              </div>
+                              <div class="col-md-6">
+                                  <input class="form-control" min=0  placeholder="Height" formControlName="heightValue" type="number">
+                                </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group input-group">
-                    <input class="form-control" placeholder="Attribute value" formControlName="attrValue">
+                <div class="col-md-3" style="margin-right:15px !important;">
+                    <div class="form-group input-group">
+                        <label>Width</label>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6" style="margin-left:-15px !important;">
+                              <select id="widthOperation" name="widthOperation" style="color:darkorange; font-family: 'Times New Roman', Times, serif; font-size:20px;" class="form-control" formControlName="widthOperation"
+                              [(ngModel)]="widthOperation">
+                              <option *ngFor="let widthOperation of widthOperations" [value]="widthOperation.value">
+                                {{widthOperation.viewValue}}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                              <input class="form-control" min=0 placeholder="Width" formControlName="widthValue" type="number">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-md-2">
-                  <button type="button" class="btn btn-primary">+</button>
-                 <button type="button" style="margin-left:5px !important;" class="btn red btn-danger">-</button>
+                <div class="col-md-3" style="margin-right:15px !important;">
+                    <div class="form-group input-group">
+                        <label>Weight</label>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6" style="margin-left:-15px !important;">
+                              <select id="weightOperation" name="weightOperation" class="form-control"  style=" color:darkorange; font-family: 'Times New Roman', Times, serif; font-size:20px;" formControlName="weightOperation"
+                              [(ngModel)]="weightOperation">
+                              <option *ngFor="let weightOperation of weightOperations" [value]="weightOperation.value">
+                                {{weightOperation.viewValue}}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                              <input class="form-control" placeholder="Weight" step="0.01" min=0 formControlName="weightValue" type="number">
+                            </div>
+                        </div>
+                    </div>
                 </div>
           </div>
+          <hr style="margin-top:-30px !important;">
+          <button type="submit" class="btn btn-primary green">Search</button>
         </form>
       </div> <!-- card-body .// -->
     </div> <!-- card.// -->

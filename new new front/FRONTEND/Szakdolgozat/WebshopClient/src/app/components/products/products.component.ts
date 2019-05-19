@@ -5,7 +5,8 @@ import { ActivatedRoute,Router } from '@angular/router';
 import { ProductCategoryInterface } from 'src/app/enums/ProductCategoryInterface';
 import { ProductTypeInterface } from 'src/app/enums/productTypeInterface';
 import { FilterOperationInterface } from 'src/app/enums/FilterOperationInterface';
-import { FilterAttributeNameInterface } from 'src/app/enums/FilterAttributeNameInterface';
+import { ColorInterface } from 'src/app/enums/ColorInterface';
+import { GenericSelectList } from 'src/app/enums/GenericSelectList';
 
 @Component({
   selector: 'app-products',
@@ -14,14 +15,19 @@ import { FilterAttributeNameInterface } from 'src/app/enums/FilterAttributeNameI
 })
 export class ProductsComponent implements OnInit {
   type=0;
-  attrName=0;
-  operation=0;
+  color=0;
+  heightOperation=0;
+  widthOperation=0;
+  weightOperation=0;
 
   products:any;
   errMsg:string;
   searchForm: FormGroup;
   productName:string;
   attrValue:string;
+  heightValue:number;
+  widthValue:number;
+  weightValue:number;
 
   constructor(
     private _service:ProductService,
@@ -29,35 +35,49 @@ export class ProductsComponent implements OnInit {
 
     categories:ProductCategoryInterface[];
     types:ProductTypeInterface[];
-    attrNames:FilterAttributeNameInterface[];
-    operations:FilterOperationInterface[];
+    colors:GenericSelectList[];
+    operations:GenericSelectList[];
+    heightOperations:GenericSelectList[];
+    widthOperations:GenericSelectList[];
+    weightOperations:GenericSelectList[];
 
   ngOnInit() {
 
     this.operations = [
       {value:0,viewValue:"<"},
-      {value:0,viewValue:">"},
-      {value:0,viewValue:"="},
-      {value:0,viewValue:"<="},
-      {value:0,viewValue:">="}
+      {value:1,viewValue:">"},
+      {value:2,viewValue:"="},
+      {value:3,viewValue:"<="},
+      {value:4,viewValue:">="}
     ];
 
-    this.attrNames = [
-      {value:0,viewValue:"Color"},
-      {value:0,viewValue:"Height"},
-      {value:0,viewValue:"Width"},
-      {value:0,viewValue:"Weight"}
+    this.colors = [
+      {value:0,viewValue:"No color filter"},
+      {value:1,viewValue:"Red"},
+      {value:2,viewValue:"Green"},
+      {value:3,viewValue:"Blue"},
+      {value:4,viewValue:"Black"},
+      {value:5,viewValue:"White"},
+      {value:6,viewValue:"Yellow"}
     ];
+
+    this.heightOperations = this.operations;
+    this.widthOperations = this.operations;
+    this.weightOperations = this.operations;
 
     this.searchForm = new FormGroup({
       type: new FormControl(0, [Validators.required]),
       categories: new FormControl(this.categories),
       price:new FormControl(),
-      operation:new FormControl(),
-      attrValue: new FormControl(this.attrValue),
-      attrNames: new FormControl(this.attrNames),
-      attrName: new FormControl(this.attrName),
+      heightOperation:new FormControl(this.heightOperation),
+      widthOperation:new FormControl(this.widthOperation),
+      weightOperation: new FormControl(this.weightOperation),
+      colors: new FormControl(this.colors),
+      color: new FormControl(this.color),
       productName: new FormControl(this.productName),
+      heightValue: new FormControl(this.heightValue),
+      widthValue: new FormControl(this.widthValue),
+      weightValue: new FormControl(this.weightValue)
     });
 
     //this.data = this.route.snapshot.paramMap.get("username");
@@ -91,6 +111,6 @@ export class ProductsComponent implements OnInit {
 
   public onSubmit()
   {
-
+    
   }
 }
