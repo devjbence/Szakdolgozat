@@ -96,6 +96,21 @@
               <input class="form-control" placeholder="Price" formControlName="price" type="number" [attr.disabled]="Id > 0 ? true : null">
           </div>
 
+          <hr>
+          <label style="color:#a0c4ff !important;">Attributes</label>
+
+          <div class="form-group input-group">
+            <label>Color</label>
+            <select id="color" name="color" class="form-control" formControlName="color"
+            [(ngModel)]="color">
+            <option *ngFor="let color of colors" [value]="color.value">
+              {{color.viewValue}}
+            </option>
+          </select>
+        </div>
+
+        <hr>
+
         <div class="form-group" >
           <button type="submit" id="productSubmit" [disabled]="!productForm.valid" class="btn btn-dark btn-block">
             Save

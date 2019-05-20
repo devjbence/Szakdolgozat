@@ -89,18 +89,8 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 	private boolean compareNumericValues(Integer filterValue, Integer attriValue, AttributeOperation operation) {
 
 		switch (operation) {
-		case equal:
-			if (filterValue.equals(attriValue))
-				return true;
-			break;
-
-		case greaterThanOrEqual:
-			if (filterValue >= attriValue)
-				return true;
-			break;
-
-		case lessThanOrEqual:
-			if (filterValue <= attriValue)
+		case lessThan:
+			if (filterValue < attriValue)
 				return true;
 			break;
 
@@ -109,8 +99,18 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 				return true;
 			break;
 
-		case lessThan:
-			if (filterValue < attriValue)
+		case equal:
+			if (filterValue.equals(attriValue))
+				return true;
+			break;
+
+		case lessThanOrEqual:
+			if (filterValue <= attriValue)
+				return true;
+			break;
+
+		case greaterThanOrEqual:
+			if (filterValue >= attriValue)
 				return true;
 			break;
 		}
@@ -122,55 +122,48 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 	public List<ProductDTO> getAll(ProductFilterDTO filter) {
 
 		List<ProductDTO> dtos = new ArrayList<ProductDTO>();
-		List<Product> entites  = new ArrayList<Product>();
-		
-		//sajátra
+		List<Product> entites = new ArrayList<Product>();
+
+		// sajátra
 		if (filter.getOwn() != null && filter.getOwn()) {
 			entites.addAll(userService.getCurrentUser().getSeller().getProducts());
-		}
-		else {
+		} else {
 			entites = productRepository.findAll();
 		}
-		
-		//árra szűrés
+
+		// árra szűrés
 		if (filter.getPrice() != null && filter.getOperation() != null) {
-			entites = entites.stream()
-					.filter(x -> {
-						
-						if(x.getType() == ProductType.FixedPrice)
-						{
-							return compareNumericValues(x.getPrice(),filter.getPrice(), filter.getOperation());
-						}
-						
-						if(x.getBiddings() != null && x.getBiddings().size() != 0)
-						{
-							Bid highestBid = x.getBiddings()
-									.stream()
-									.filter(y->y.getPrice().equals(x.getBiddings().stream().mapToInt(z->z.getPrice()).max().getAsInt()))
-									.findFirst().get();
-									
-							return compareNumericValues(highestBid.getPrice(),filter.getPrice(), filter.getOperation());
-						}
-						
-						return false;
-					})
-					.collect(Collectors.toList());
+			entites = entites.stream().filter(x -> {
+
+				if (x.getType() == ProductType.FixedPrice) {
+					return compareNumericValues(x.getPrice(), filter.getPrice(), filter.getOperation());
+				}
+
+				if (x.getBiddings() != null && x.getBiddings().size() != 0) {
+					Bid highestBid = x.getBiddings().stream()
+							.filter(y -> y.getPrice()
+									.equals(x.getBiddings().stream().mapToInt(z -> z.getPrice()).max().getAsInt()))
+							.findFirst().get();
+
+					return compareNumericValues(highestBid.getPrice(), filter.getPrice(), filter.getOperation());
+				}
+
+				return false;
+			}).collect(Collectors.toList());
 		}
-		
-		//aktivitás szűrés
+
+		// aktivitás szűrés
 		if (filter.getIsActive() != null) {
-			entites = entites.stream()
-					.filter(x -> x.getActive().equals(filter.getIsActive()))
+			entites = entites.stream().filter(x -> x.getActive().equals(filter.getIsActive()))
 					.collect(Collectors.toList());
 		}
-		
-		//termék típus szűrés
+
+		// termék típus szűrés
 		if (filter.getProductType() != null) {
-			entites = entites.stream()
-					.filter(x -> x.getType().equals(filter.getProductType()))
+			entites = entites.stream().filter(x -> x.getType().equals(filter.getProductType()))
 					.collect(Collectors.toList());
 		}
-		
+
 		// termék névre való szűrés
 		if (filter.getProductName() != null) {
 			entites = entites.stream()
@@ -203,43 +196,39 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 
 			for (Product entity : productWithFilterCors) {
 
-				List<Attribute> attributes = entity.getAttributes().stream()
-						.filter(x -> x.getAttributeCore().getId().equals(filterCore.getAttributeCore()))
-						.collect(Collectors.toList());
+				Attribute attribute = entity.getAttributes().stream()
+						.filter(x -> x.getAttributeCore().getId().equals(filterCore.getAttributeCore())).findFirst()
+						.get();
 
-				for (Attribute attribute : attributes) {
-					AttributeOperation operation = filterCore.getAttributeOperation();
+				boolean canAdd = true;
 
-					switch (attribute.getAttributeCore().getType()) {
-					case integer:
-						if (compareNumericValues(filterCore.getIntValue(), attribute.getIntValue(), operation)) {
-							addEntityIfNotAlreadyContained(filteredEntites, entity);
-						} else {
-							filteredEntites.remove(entity);
-						}
+				AttributeOperation operation = filterCore.getAttributeOperation();
 
-						break;
-
-					case floatingpoint:
-
-						if (compareNumericValues(filterCore.getDoubleValue(), attribute.getDoubleValue(), operation)) {
-							addEntityIfNotAlreadyContained(filteredEntites, entity);
-						} else {
-							filteredEntites.remove(entity);
-						}
-
-						break;
-
-					case characters:
-
-						if (attribute.getValue().equals(filterCore.getValue())) {
-							addEntityIfNotAlreadyContained(filteredEntites, entity);
-						} else {
-							filteredEntites.remove(entity);
-						}
-
-						break;
+				switch (attribute.getAttributeCore().getType()) {
+				case integer:
+					if (!compareNumericValues(attribute.getIntValue(), filterCore.getIntValue(), operation)) {
+						canAdd = false;
+						filteredEntites.remove(entity);
 					}
+					break;
+
+				case floatingpoint:
+					if (!compareNumericValues(attribute.getDoubleValue(), filterCore.getDoubleValue(), operation)) {
+						canAdd = false;
+						filteredEntites.remove(entity);
+					}
+					break;
+
+				case characters:
+					if (!attribute.getValue().equals(filterCore.getValue())) {
+						canAdd = false;
+						filteredEntites.remove(entity);
+					}
+					break;
+				}
+
+				if (canAdd) {
+					addEntityIfNotAlreadyContained(filteredEntites, entity);
 				}
 			}
 		}

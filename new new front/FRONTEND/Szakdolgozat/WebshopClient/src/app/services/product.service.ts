@@ -99,4 +99,54 @@ export class ProductService {
 
     return this._http.put(this.base_url+"/"+Id, productData, headers);
   }
+
+  getAttribute(Id:number):any{
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.get("http://localhost:8080/attribute/"+Id,headers);
+  }
+
+  addAttribute(attributeData: any): any {
+
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.post("http://localhost:8080/attribute", attributeData, headers);
+  }
+
+  updateAttribute(attributeData: any, Id:number): any {
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.put("http://localhost:8080/attribute/"+Id, attributeData, headers);
+  }
+
 }
