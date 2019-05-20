@@ -129,6 +129,101 @@ export class ProductsComponent implements OnInit {
 
   public onSubmit()
   {
+    let searchModel = {};
     
+    let productName=this.searchForm.controls['productName'].value;
+    let categories = this.searchForm.controls['categories'].value;
+    let own=this.searchForm.controls['own'].value; //???????????
+    let type = this.searchForm.controls['type'].value;
+    let price = this.searchForm.controls['price'].value;
+    let priceOperation = this.searchForm.controls['priceOperation'].value;
+    let heightOperation = this.searchForm.controls['heightOperation'].value;
+    let widthOperation = this.searchForm.controls['widthOperation'].value;
+    let weightOperation = this.searchForm.controls['weightOperation'].value;
+    let color = this.searchForm.controls['color'].value;
+    let heightValue = this.searchForm.controls['heightValue'].value;
+    let widthValue = this.searchForm.controls['widthValue'].value;
+    let weightValue = this.searchForm.controls['weightValue'].value;
+
+    if(productName)
+    {
+      searchModel['productName']= productName;
+    }
+
+    if(categories && categories.length != 0)
+    {
+      searchModel['categories']= categories;
+    }
+
+    searchModel['own']= own != 1;
+
+    if(type && type != 0)
+    {
+      searchModel['productType']= parseInt(type) - 1;
+      searchModel['price']= price;
+      searchModel['operation']= parseInt(priceOperation);
+    }
+
+    //filter cors
+    let productFilterCores = [];
+
+    if(color != 0)
+    {
+      let productFilterCore = {
+        attributeCore : 1,
+        attributeOperation:2,
+        value:this.colors[color].viewValue.toLowerCase()
+      };
+
+      productFilterCores.push(productFilterCore);
+    }
+
+    if(heightValue != null)
+    {
+      let productFilterCore = {
+        attributeCore : 2,
+        attributeOperation:parseInt(heightOperation),
+        value:heightValue
+      };
+
+      productFilterCores.push(productFilterCore);
+    }
+
+    if(widthValue != null)
+    {
+      let productFilterCore = {
+        attributeCore : 3,
+        attributeOperation:parseInt(widthOperation),
+        value:widthValue
+      };
+
+      productFilterCores.push(productFilterCore);
+    }
+
+    if(weightValue != null)
+    {
+      let productFilterCore = {
+        attributeCore : 4,
+        attributeOperation:parseInt(weightOperation),
+        value:weightValue
+      };
+
+      productFilterCores.push(productFilterCore);
+    }
+
+
+    if(productFilterCores.length != 0)
+    {
+      searchModel['productFilterCores']= productFilterCores;
+    }
+
+    //console.log(searchModel);
+    this._service.getFilteredProducts(searchModel).subscribe(
+      data => {
+        this.products = data;
+        this.products = JSON.parse(this.products._body);
+        this.numberOfProducts=this.products.length;
+      },
+      error => console.error(error));
   }
 }

@@ -16,11 +16,51 @@ export class ProductService {
     private router: Router) { }
 
   public getProducts() {
-    return this._http.get(this.base_url + "/all");
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.get(this.base_url + "/all",headers);
+  }
+
+  public getFilteredProducts(searchModel:any) {
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.post("http://localhost:8080/productfilter/all",searchModel,headers);
   }
 
   public getProduct(Id:number) {
-    return this._http.get(this.base_url + "/"+Id);
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.get(this.base_url + "/"+Id,headers);
   }
 
   public getCategories() {

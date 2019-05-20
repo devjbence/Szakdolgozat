@@ -226,8 +226,23 @@ public class TestDataCreator implements ITestDataCreator {
 		
 		for(int i=0;i<NumberOfAttributes;i++)
 		{
+			int idx=0;
+			
+			if(i <= 10) //color
+			{
+				idx=0;
+			}else if(i>10 && i<=20) //height
+			{
+				idx=1;
+			}else if(i>20 && i<=30)//widht
+			{
+				idx=2;
+			}else {//weight
+				idx=3;
+			}
+			
 			Attribute attribute = new Attribute();
-			attribute.setAttributeCore((AttributeCore)cores.toArray()[0]);
+			attribute.setAttributeCore((AttributeCore)cores.toArray()[idx]);
 			attribute.setProduct(products.get(Utils.random(0, NumberOfProducts - 1)));
 			
 			if(i <= 10) //color

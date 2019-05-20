@@ -146,6 +146,7 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		dto.setPrice(entity.getPrice());
 		dto.setType(entity.getType());
 		dto.setActive(entity.getActive());
+		dto.setIsOwn(entity.getSeller().getId().equals(userService.getCurrentUser().getSeller().getId()));
 	}
 
 	@Override

@@ -16,4 +16,6 @@ public class ProductFilterDTO {
 	private ProductType productType;
 	private Boolean isActive;
 	private Boolean own;
+	private Integer price;
+	private AttributeOperation operation;
 }

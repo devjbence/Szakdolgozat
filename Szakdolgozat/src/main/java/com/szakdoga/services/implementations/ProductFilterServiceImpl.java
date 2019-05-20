@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.szakdoga.entities.Attribute;
 import com.szakdoga.entities.AttributeCore;
+import com.szakdoga.entities.Bid;
 import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.Seller;
@@ -16,6 +17,7 @@ import com.szakdoga.entities.DTOs.AttributeOperation;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterCore;
 import com.szakdoga.entities.DTOs.ProductFilterDTO;
+import com.szakdoga.enums.ProductType;
 import com.szakdoga.exceptions.AttributeNameDoesNotExistsException;
 import com.szakdoga.exceptions.CategoryDoesNotExistsException;
 import com.szakdoga.exceptions.SameAttributeCoreMoreThanOnceException;
@@ -128,6 +130,31 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 		}
 		else {
 			entites = productRepository.findAll();
+		}
+		
+		//árra szűrés
+		if (filter.getPrice() != null && filter.getOperation() != null) {
+			entites = entites.stream()
+					.filter(x -> {
+						
+						if(x.getType() == ProductType.FixedPrice)
+						{
+							return compareNumericValues(x.getPrice(),filter.getPrice(), filter.getOperation());
+						}
+						
+						if(x.getBiddings() != null && x.getBiddings().size() != 0)
+						{
+							Bid highestBid = x.getBiddings()
+									.stream()
+									.filter(y->y.getPrice().equals(x.getBiddings().stream().mapToInt(z->z.getPrice()).max().getAsInt()))
+									.findFirst().get();
+									
+							return compareNumericValues(highestBid.getPrice(),filter.getPrice(), filter.getOperation());
+						}
+						
+						return false;
+					})
+					.collect(Collectors.toList());
 		}
 		
 		//aktivitás szűrés

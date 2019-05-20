@@ -33,6 +33,7 @@ public class ProductDTO {
 	private Integer price;
 	private ProductType type;
 	private Boolean active;
+	private Boolean isOwn;
 	private List<Integer> categories;
 	private List<Integer> comments;
 	private List<Integer> images;

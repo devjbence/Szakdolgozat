@@ -61,11 +61,11 @@
               </div>
             </div>
           </div>
-          <hr *ngIf="searchForm.controls['type'].value == 1">
-          <label style="color:#a0c4ff !important;" *ngIf="searchForm.controls['type'].value == 1">
+          <hr *ngIf="searchForm.controls['type'].value != 0">
+          <label style="color:#a0c4ff !important;" *ngIf="searchForm.controls['type'].value != 0">
               Search by price
             </label>
-          <div class="row" *ngIf="searchForm.controls['type'].value == 1">
+          <div class="row" *ngIf="searchForm.controls['type'].value != 0">
                   <div class="col-md-2" style="margin-left:-15px !important;">
                       <select id="priceOperation" name="priceOperation" class="form-control" style=" color:darkorange; font-family: 'Times New Roman', Times, serif; font-size:20px;" formControlName="priceOperation"
                       [(ngModel)]="priceOperation">

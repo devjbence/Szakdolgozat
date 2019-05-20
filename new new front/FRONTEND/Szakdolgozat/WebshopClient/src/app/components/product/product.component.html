@@ -15,16 +15,11 @@
           <!-- Wrapper for slides -->
           <div class="carousel-inner">
             <div class="item active">
-              <img src="http://localhost:8080/szak/image/1" alt="Los Angeles" style="width:100%;">
+              <img *ngIf="existingProduct; else sliderTemplate" src="http://localhost:8080/image/{{existingProduct.images[0]}}" alt="Product image" style="width:100%;">
             </div>
-      
-            <div class="item">
-              <img src="http://localhost:8080/szak/image/2" alt="Chicago" style="width:100%;">
-            </div>
-          
-            <div class="item">
-              <img src="http://localhost:8080/szak/image/3" alt="New york" style="width:100%;">
-            </div>
+            <ng-template #sliderTemplate>
+              <img src="http://localhost:8080/image/0" alt="Product image" style="width:100%;">
+            </ng-template>
           </div>
       
           <!-- Left and right controls -->
@@ -81,7 +76,7 @@
 
         <div class="form-group">
             <label>Categories</label>
-            <select id="categories" name="categories" multiple class="form-control" formControlName="categories">
+            <select id="categories" name="categories" multiple class="form-control" formControlName="categories" [attr.disabled]="Id > 0 ? true : null" >
               <option *ngFor="let category of categories" [value]="category.value">
                 {{category.viewValue}}
               </option>
