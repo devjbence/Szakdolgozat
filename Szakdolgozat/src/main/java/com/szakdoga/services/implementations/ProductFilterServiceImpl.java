@@ -157,8 +157,6 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 				return false;
 			}).collect(Collectors.toList());
 		}
-		
-		System.out.println(entites.get(0).getType());
 
 		// aktivitás szűrés
 		if (filter.getIsActive() != null) {
@@ -257,6 +255,10 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 			dto.setName(entity.getName());
 			dto.setSeller(entity.getSeller().getId());
 			dto.setUsername(entity.getSeller().getUser().getUsername());
+			dto.setActive(entity.getActive());
+			dto.setId(entity.getId());
+			dto.setType(entity.getType());
+			dto.setPrice(entity.getPrice());
 
 			dtos.add(dto);
 		}

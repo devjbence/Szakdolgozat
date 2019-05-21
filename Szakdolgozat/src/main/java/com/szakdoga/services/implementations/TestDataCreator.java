@@ -224,42 +224,37 @@ public class TestDataCreator implements ITestDataCreator {
 		List<AttributeCore> cores = createAttributeCores();
 		List<Product> products = createProducts();
 		
-		for(int i=0;i<NumberOfAttributes;i++)
+		for(int i=0;i<NumberOfProducts;i++)
 		{
-			int idx=0;
+			Attribute color = new Attribute();
+			Attribute height = new Attribute();
+			Attribute width = new Attribute();
+			Attribute weight = new Attribute();
 			
-			if(i <= 10) //color
-			{
-				idx=0;
-			}else if(i>10 && i<=20) //height
-			{
-				idx=1;
-			}else if(i>20 && i<=30)//widht
-			{
-				idx=2;
-			}else {//weight
-				idx=3;
-			}
+			color.setAttributeCore((AttributeCore)cores.toArray()[0]);
+			height.setAttributeCore((AttributeCore)cores.toArray()[1]);
+			width.setAttributeCore((AttributeCore)cores.toArray()[2]);
+			weight.setAttributeCore((AttributeCore)cores.toArray()[3]);
 			
-			Attribute attribute = new Attribute();
-			attribute.setAttributeCore((AttributeCore)cores.toArray()[idx]);
-			attribute.setProduct(products.get(Utils.random(0, NumberOfProducts - 1)));
+			color.setProduct(products.get(i));
+			height.setProduct(products.get(i));
+			width.setProduct(products.get(i));
+			weight.setProduct(products.get(i));
 			
-			if(i <= 10) //color
-			{
-				attribute.setValue(faker.color().name());
-			}else if(i>10 && i<=20) //height
-			{
-				attribute.setValue((String.valueOf(Utils.random(1, 500))));
-			}else if(i>20 && i<=30)//widht
-			{
-				attribute.setValue((String.valueOf(Utils.random(1, 500))));
-			}else {//weight
-				attribute.setValue(String.format("%d.%d", Utils.random(4, 95),Utils.random(4, 95)));
-			}
+			color.setValue(faker.color().name());
+			height.setValue((String.valueOf(Utils.random(1, 500))));
+			width.setValue((String.valueOf(Utils.random(1, 500))));
+			weight.setValue(String.format("%d.%d", Utils.random(4, 95),Utils.random(4, 95)));
 			
-			attributeRepository.save(attribute);
-			attributes.add(attribute);
+			attributeRepository.save(color);
+			attributeRepository.save(height);
+			attributeRepository.save(width);
+			attributeRepository.save(weight);
+			
+			attributes.add(color);
+			attributes.add(height);
+			attributes.add(width);
+			attributes.add(weight);
 		}
 		
 		return attributes;
