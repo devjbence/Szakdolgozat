@@ -13,6 +13,7 @@ import com.szakdoga.entities.Bid;
 import com.szakdoga.entities.Buyer;
 import com.szakdoga.entities.Product;
 import com.szakdoga.entities.Seller;
+import com.szakdoga.entities.User;
 import com.szakdoga.entities.DTOs.AttributeOperation;
 import com.szakdoga.entities.DTOs.ProductDTO;
 import com.szakdoga.entities.DTOs.ProductFilterCore;
@@ -126,7 +127,13 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 
 		// sajátra
 		if (filter.getOwn() != null && filter.getOwn()) {
-			entites.addAll(userService.getCurrentUser().getSeller().getProducts());
+			User user = userService.getCurrentUser();
+			entites.addAll(user.getSeller().getProducts());
+			
+			for(Product buyedProduct : user.getBuyer().getProducts())
+			{
+				addEntityIfNotAlreadyContained(entites, buyedProduct);
+			}
 		} else {
 			entites = productRepository.findAll();
 		}

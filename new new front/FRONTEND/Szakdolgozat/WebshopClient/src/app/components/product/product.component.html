@@ -132,6 +132,12 @@
           </button>
         </div>
 
+        <div class="form-group" *ngIf="Id > 0 && !isOwn && isActive && type == 0">
+            <button type="button" (click)="buy()" id="productBuy" class="btn red btn-block">
+              Buy
+            </button>
+          </div>
+
       </form>
     </article>
 

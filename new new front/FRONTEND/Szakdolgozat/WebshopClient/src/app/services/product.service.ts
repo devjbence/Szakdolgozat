@@ -31,6 +31,22 @@ export class ProductService {
     return this._http.get(this.base_url + "/all",headers);
   }
 
+  public buy(Id: number) {
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.post(this.base_url + "/buy/"+Id,null,headers);
+  }
+
   public getFilteredProducts(searchModel:any) {
     if (!this._userService.checkToken()) {
       this.router.navigate(['/login']);

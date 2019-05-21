@@ -47,6 +47,7 @@ export class ProductComponent implements OnInit {
   width:number;
   weight:number;
   isOwn:boolean;
+  isActive:boolean;
 
   types: ProductTypeInterface[];
   categories: ProductCategoryInterface[];
@@ -118,7 +119,7 @@ export class ProductComponent implements OnInit {
 
           this.existingProduct = parsedData;
           this.isOwn=parsedData.isOwn;
-          console.log(this.isOwn);
+          this.isActive=parsedData.active;
 
           this.productForm.controls['name'].setValue(this.existingProduct.name);
           this.productForm.controls['description'].setValue(this.existingProduct.description);
@@ -165,6 +166,15 @@ export class ProductComponent implements OnInit {
       width: new FormControl(this.width),
       weight: new FormControl(this.weight)
     });
+  }
+
+  public buy()
+  {
+    this._service.buy(this.Id).subscribe(
+      data => {},
+      error => this.handleError(error));
+
+      this.router.navigate(['/products']);
   }
 
   public onSubmit() {
