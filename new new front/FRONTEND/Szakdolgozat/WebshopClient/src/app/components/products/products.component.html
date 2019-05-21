@@ -49,6 +49,17 @@
                   </select>
                 </div>
               </div>
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Active products</label>
+                    <select id="active" name="active" style="max-height:100%;" class="form-control" formControlName="active"
+                      [(ngModel)]="active">
+                      <option *ngFor="let active of actives" [value]="active.value">
+                        {{active.viewValue}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Type</label>

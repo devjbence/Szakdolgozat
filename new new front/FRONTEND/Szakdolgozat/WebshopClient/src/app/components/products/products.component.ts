@@ -22,6 +22,7 @@ export class ProductsComponent implements OnInit {
   weightOperation=0;
   priceOperation=0;
   own=1;
+  active=0;
 
   products:any;
   errMsg:string;
@@ -47,6 +48,7 @@ export class ProductsComponent implements OnInit {
     weightOperations:GenericSelectList[];
     priceOperations:GenericSelectList[];
     owns:BooleanSelectList[];
+    actives:BooleanSelectList[];
 
   ngOnInit() {
 
@@ -73,6 +75,11 @@ export class ProductsComponent implements OnInit {
       {value:1,viewValue:false},
     ];
 
+    this.actives=[
+      {value:0,viewValue:true},
+      {value:1,viewValue:false},
+    ];
+
     this.heightOperations = this.operations;
     this.widthOperations = this.operations;
     this.weightOperations = this.operations;
@@ -88,6 +95,8 @@ export class ProductsComponent implements OnInit {
       priceOperation: new FormControl(this.priceOperation),
       owns: new FormControl(this.owns),
       own: new FormControl(this.own),
+      active:new FormControl(this.active),
+      actives:new FormControl(this.actives),
       colors: new FormControl(this.colors),
       color: new FormControl(this.color),
       productName: new FormControl(this.productName),
@@ -134,6 +143,7 @@ export class ProductsComponent implements OnInit {
     let productName=this.searchForm.controls['productName'].value;
     let categories = this.searchForm.controls['categories'].value;
     let own=this.searchForm.controls['own'].value; //???????????
+    let active=this.searchForm.controls['active'].value; //???????????
     let type = this.searchForm.controls['type'].value;
     let price = this.searchForm.controls['price'].value;
     let priceOperation = this.searchForm.controls['priceOperation'].value;
@@ -156,6 +166,8 @@ export class ProductsComponent implements OnInit {
     }
 
     searchModel['own']= own != 1;
+
+    searchModel['isActive']= active != 1;
 
     if(type && type != 0)
     {
