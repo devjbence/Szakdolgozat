@@ -7,4 +7,10 @@ public class AttributeDTO {
 	private Integer attributeCore;
 	private String value;
 	private Integer product;
+	
+	@Override
+	public String toString() {
+		return "AttributeDTO [id=" + id + ", attributeCore=" + attributeCore + ", value=" + value + ", product="
+				+ product + "]";
+	}
 }

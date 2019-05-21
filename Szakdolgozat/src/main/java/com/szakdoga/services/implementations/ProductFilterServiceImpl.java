@@ -130,7 +130,13 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 		} else {
 			entites = productRepository.findAll();
 		}
-
+		
+		// termék típus szűrés
+		if (filter.getProductType() != null) {
+			entites = entites.stream().filter(x -> x.getType().equals(filter.getProductType()))
+					.collect(Collectors.toList());
+		}
+		
 		// árra szűrés
 		if (filter.getPrice() != null && filter.getOperation() != null) {
 			entites = entites.stream().filter(x -> {
@@ -139,7 +145,7 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 					return compareNumericValues(x.getPrice(), filter.getPrice(), filter.getOperation());
 				}
 
-				if (x.getBiddings() != null && x.getBiddings().size() != 0) {
+				else if (x.getBiddings() != null && x.getBiddings().size() != 0) {
 					Bid highestBid = x.getBiddings().stream()
 							.filter(y -> y.getPrice()
 									.equals(x.getBiddings().stream().mapToInt(z -> z.getPrice()).max().getAsInt()))
@@ -151,16 +157,12 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 				return false;
 			}).collect(Collectors.toList());
 		}
+		
+		System.out.println(entites.get(0).getType());
 
 		// aktivitás szűrés
 		if (filter.getIsActive() != null) {
 			entites = entites.stream().filter(x -> x.getActive().equals(filter.getIsActive()))
-					.collect(Collectors.toList());
-		}
-
-		// termék típus szűrés
-		if (filter.getProductType() != null) {
-			entites = entites.stream().filter(x -> x.getType().equals(filter.getProductType()))
 					.collect(Collectors.toList());
 		}
 

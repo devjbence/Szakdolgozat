@@ -36,6 +36,9 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 		Attribute entity = new Attribute();
 		AttributeCore attributeName = attributeCoreRepository.findById(dto.getAttributeCore()).get();
 		Product product = productRepository.findById(dto.getProduct()).get();
+		
+		if(product.getAttributes().stream().anyMatch(x->x.getAttributeCore().getId().equals(attributeName.getId())))
+			throw new SameAttributeCoreMoreThanOnceException("The same attribute core is given more than once");
 
 		mapDtoToEntity(dto, entity);
 		attributeRepository.save(entity);
@@ -173,9 +176,6 @@ public class AttributeServiceImpl extends BaseServiceClass<Attribute,AttributeDT
 		if (product == null) {
 			throw new ProductDoesNotExistsException("Product does not exists");
 		}
-		
-		if(product.getAttributes().stream().anyMatch(x->x.getAttributeCore().getId().equals(attributeCore.getId())))
-			throw new SameAttributeCoreMoreThanOnceException("The same attribute core is given more than once");
 		
 		// attribútumhoz tartozó érték validálása
 		switch (attributeCore.getType()) {

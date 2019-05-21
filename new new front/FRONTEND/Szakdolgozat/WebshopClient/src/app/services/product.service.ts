@@ -129,11 +129,10 @@ export class ProductService {
         Authorization: "Bearer " + token
       })
     };
-
     return this._http.post("http://localhost:8080/attribute", attributeData, headers);
   }
 
-  updateAttribute(attributeData: any, Id:number): any {
+  updateAttribute(Id:number,attributeData: any): any {
     if (!this._userService.checkToken()) {
       this.router.navigate(['/login']);
     }

@@ -159,7 +159,7 @@ export class ProductsComponent implements OnInit {
 
     if(type && type != 0)
     {
-      searchModel['productType']= parseInt(type) - 1;
+      searchModel['productType']= parseInt(type) - 1 < 0 ? 0 : parseInt(type) - 1;
       searchModel['price']= price;
       searchModel['operation']= parseInt(priceOperation);
     }
@@ -217,7 +217,7 @@ export class ProductsComponent implements OnInit {
       searchModel['productFilterCores']= productFilterCores;
     }
 
-    //console.log(searchModel);
+    console.log(searchModel);
     this._service.getFilteredProducts(searchModel).subscribe(
       data => {
         this.products = data;

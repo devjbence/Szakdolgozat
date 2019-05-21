@@ -30,16 +30,23 @@ export class ProductComponent implements OnInit {
   }
 
   Id: number;
-  attributes:any[];
+  attributes: any[];
   productForm: FormGroup;
   productData: any;
   colorAttributeData: any;
+  heightAttributeData: any;
+  widthAttributeData:any;
+  weightAttributeData: any;
   productType: any;
   errorMsg: string;
   existingProduct: any;
   showPrice: boolean;
   colors: GenericSelectList[];
   images;// = [1, 2, 3].map(() => `https://picsum.photos/900/500?random&t=${Math.random()}`);
+  height:number;
+  width:number;
+  weight:number;
+  isOwn:boolean;
 
   types: ProductTypeInterface[];
   categories: ProductCategoryInterface[];
@@ -57,11 +64,11 @@ export class ProductComponent implements OnInit {
       { value: 6, viewValue: "Yellow" }
     ];
 
-
-
     this.images = [
       "http://localhost:8080/image/1", "http://localhost:8080/image/2", "http://localhost:8080/image/3"
     ];
+
+    this.attributes = [];
 
     if (this.Id > 0) {
       this._service.getProduct(this.Id).subscribe(
@@ -70,12 +77,11 @@ export class ProductComponent implements OnInit {
           parsedData = JSON.parse(parsedData._body);
           let attributes = parsedData.attributes;
 
-          for (let i = 0; i <attributes.length; i++) {
+          for (let i = 0; i < attributes.length; i++) {
             this._service.getAttribute(attributes[i]).subscribe(
               data => {
                 let parsedData: any = data;
                 parsedData = JSON.parse(parsedData._body);
-                this.attributes = [];
                 this.attributes.push(parsedData);
 
                 if (parsedData.attributeCore == 1)//color
@@ -85,19 +91,38 @@ export class ProductComponent implements OnInit {
                     let parsedColor = parsedData.value.charAt(0).toUpperCase() + parsedData.value.slice(1);
                     if (parsedColor == this.colors[j].viewValue) {
                       this.productForm.controls['color'].setValue(j);
-                      break;
                     }
                   }
+                }
+
+                if (parsedData.attributeCore == 2)//height
+                {
+                  this.height=parseInt(parsedData.value);
+                  this.productForm.controls['height'].setValue(this.height);
+                }
+
+                if (parsedData.attributeCore == 3)//width
+                {
+                  this.width=parseInt(parsedData.value);
+                  this.productForm.controls['width'].setValue(this.width);
+                }
+
+                if (parsedData.attributeCore == 4)//weigth
+                {
+                  this.weight=parseInt(parsedData.value);
+                  this.productForm.controls['weight'].setValue(this.weight);
                 }
               },
               error => this.handleError(error));
           }
 
           this.existingProduct = parsedData;
+          this.isOwn=parsedData.isOwn;
+          console.log(this.isOwn);
 
           this.productForm.controls['name'].setValue(this.existingProduct.name);
           this.productForm.controls['description'].setValue(this.existingProduct.description);
-          this.productForm.controls['type'].setValue(this.existingProduct.type == 'Fixed Price' ? 0 : 1);
+          this.productForm.controls['type'].setValue(this.existingProduct.type == "Bidding" ? 1 : 0);
           this.productForm.controls['endDate'].setValue(this.existingProduct.end);
           this.productForm.controls['price'].setValue(this.existingProduct.price);
           this.productForm.controls['categories'].setValue(this.existingProduct.categories);
@@ -135,7 +160,10 @@ export class ProductComponent implements OnInit {
       categories: new FormControl(this.categories),
       endDate: new FormControl("", [Validators.required]),
       price: new FormControl(),
-      color: new FormControl(this.color)
+      color: new FormControl(this.color),
+      height: new FormControl(this.height),
+      width: new FormControl(this.width),
+      weight: new FormControl(this.weight)
     });
   }
 
@@ -151,7 +179,10 @@ export class ProductComponent implements OnInit {
         price: this.productForm.controls['price'].value,
       };
 
-      let color = this.productForm.controls['color'].value;
+      this.color = this.productForm.controls['color'].value;
+      this.height = this.productForm.controls['height'].value;
+      this.width = this.productForm.controls['width'].value;
+      this.weight = this.productForm.controls['weight'].value;
 
       if (this.Id == 0) {
         this._service.addProduct(this.productData).subscribe(
@@ -161,10 +192,40 @@ export class ProductComponent implements OnInit {
             this.colorAttributeData = {
               attributeCore: 1,
               product: parseInt(productId),
-              value: color == null || color == 0 ? "" : this.colors[color].viewValue.toLowerCase()
+              value: this.color == null || this.color == 0 ? "" : this.colors[this.color].viewValue.toLowerCase()
+            };
+
+            this.heightAttributeData = {
+              attributeCore: 2,
+              product: parseInt(productId),
+              value: this.height == null ? 0 : this.height
+            };
+
+            this.widthAttributeData = {
+              attributeCore: 3,
+              product: parseInt(productId),
+              value: this.width == null ? 0 : this.width
+            };
+
+            this.weightAttributeData = {
+              attributeCore: 4,
+              product: parseInt(productId),
+              value: this.weight == null ? 0 : this.weight
             };
 
             this._service.addAttribute(this.colorAttributeData).subscribe(
+              data => { },
+              error => this.handleError(error));
+
+            this._service.addAttribute(this.heightAttributeData).subscribe(
+              data => { },
+              error => this.handleError(error));
+
+              this._service.addAttribute(this.widthAttributeData).subscribe(
+                data => { },
+                error => this.handleError(error));
+
+            this._service.addAttribute(this.weightAttributeData).subscribe(
               data => { },
               error => this.handleError(error));
 
@@ -177,22 +238,56 @@ export class ProductComponent implements OnInit {
           () => {
 
             this.colorAttributeData = {
-              attributeCore: 1,
+              attributeCore:1,
               product: this.Id,
-              value: color == null || color == 0 ? "" : this.colors[color].viewValue.toLowerCase()
+              value: this.color == null || this.color == 0 ? "" : this.colors[this.color].viewValue.toLowerCase()
             };
 
+            this.heightAttributeData = {
+              attributeCore:2,
+              product: this.Id,
+              value: this.height == null ? 0 : this.height
+            };
+
+            this.widthAttributeData = {
+              attributeCore:3,
+              product: this.Id,
+              value: this.width == null ? 0 : this.width
+            };
+
+            this.weightAttributeData = {
+              attributeCore:4,
+              product: this.Id,
+              value: this.weight == null ? 0 : this.weight
+            };
 
             for (let i = 0; i < this.attributes.length; i++) {
               if (this.attributes[i].attributeCore == 1)//color
               {
-                this._service.updateAttribute(this.attributes[i].id,this.colorAttributeData).subscribe(
+                this._service.updateAttribute(this.attributes[i].id, this.colorAttributeData).subscribe(
                   data => { },
-                  error => this.handleError(error));    
-                break;
+                  error => this.handleError(error));
+              }
+              if (this.attributes[i].attributeCore == 2)//height
+              {
+                this._service.updateAttribute(this.attributes[i].id, this.heightAttributeData).subscribe(
+                  data => { },
+                  error => this.handleError(error));
+              }
+              if (this.attributes[i].attributeCore == 3)//width
+              {
+                this._service.updateAttribute(this.attributes[i].id, this.widthAttributeData).subscribe(
+                  data => { },
+                  error => this.handleError(error));
+              }
+              if (this.attributes[i].attributeCore == 4)//weight
+              {
+                this._service.updateAttribute(this.attributes[i].id, this.weightAttributeData).subscribe(
+                  data => { },
+                  error => this.handleError(error));
               }
             }
-    
+
             this.router.navigate(['/products']);
           },
           error => this.handleError(error));

@@ -44,18 +44,18 @@
         </div>
 
         <div class="form-group input-group">
-          <input class="form-control" placeholder="Name" formControlName="name" type="text">
+          <input class="form-control" placeholder="Name" formControlName="name" type="text" [attr.disabled]="Id > 0 && !isOwn ? true : null">
         </div>
         <div class="alert alert-danger validation" *ngIf="productForm.controls['name'].hasError('minlength')">
           The name should be longer <br> than 3 characters
         </div>
-        <div class="alert alert-danger validation" *ngIf="productForm.controls['name'].hasError('required')">
+        <div class="alert alert-danger validation" *ngIf="productForm.controls['name'].hasError('required')" >
           The name is required
         </div>
 
         <div class="form-group input-group">
           <textarea id="description" class="form-control" placeholder="Description" formControlName="description"
-            data-length="120">
+            data-length="120"  [attr.disabled]="Id > 0 && !isOwn ? true : null">
             </textarea>
         </div>
         <div class="alert alert-danger validation" *ngIf="productForm.controls['description'].hasError('minlength')">
@@ -102,16 +102,31 @@
           <div class="form-group input-group">
             <label>Color</label>
             <select id="color" name="color" class="form-control" formControlName="color"
-            [(ngModel)]="color">
+            [(ngModel)]="color" [attr.disabled]="Id > 0 && !isOwn ? true : null">
             <option *ngFor="let color of colors" [value]="color.value">
               {{color.viewValue}}
             </option>
           </select>
         </div>
 
+        <div class="form-group input-group">
+          <label>Height</label>
+          <input [attr.disabled]="Id > 0 && !isOwn ? true : null" class="form-control" min=0  placeholder="Height" formControlName="height" type="number">
+      </div>
+
+      <div class="form-group input-group">
+        <label>Width</label>
+        <input [attr.disabled]="Id > 0 && !isOwn ? true : null" class="form-control" min=0  placeholder="Width" formControlName="width" type="number">
+    </div>
+
+      <div class="form-group input-group">
+        <label>Weight</label>
+        <input [attr.disabled]="Id > 0 && !isOwn ? true : null" class="form-control" min=0 step="0.01"  placeholder="Weight" formControlName="weight" type="number">
+    </div>
+
         <hr>
 
-        <div class="form-group" >
+        <div class="form-group" *ngIf="(Id == 0 || Id == null) || (Id >= 0 && isOwn)">
           <button type="submit" id="productSubmit" [disabled]="!productForm.valid" class="btn btn-dark btn-block">
             Save
           </button>

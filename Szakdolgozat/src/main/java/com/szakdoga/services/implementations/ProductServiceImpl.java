@@ -173,12 +173,16 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 	public ProductDTO add(ProductDTO dto) {
 		Product entity = new Product();
 		Seller seller = userService.getCurrentUser().getSeller();
-		
+		Image image = new Image();
+
+		image.setFile(Utils.getImageWithText(dto.getName()));
+		imageRepository.save(image);		
 		mapDtoToEntityNonNullsOnly(dto, entity);
 		updateCategories(dto,entity);
 
 		entity.setSeller(seller);
 		entity.setActive(true);
+		entity.addImage(image);
 		
 		productRepository.save(entity);
 
