@@ -186,50 +186,45 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 		}
 
 		List<Product> filteredEntites = new ArrayList<Product>();
-
+		
 		// szűrés attrikra
-		for (ProductFilterCore filterCore : filter.getProductFilterCores()) {
-			List<Product> productWithFilterCors = entites.stream()
-					.filter(x -> x.getAttributes().stream()
-							.anyMatch(y -> y.getAttributeCore().getId().equals(filterCore.getAttributeCore())))
-					.collect(Collectors.toList());
+		for(Product entity : entites)
+		{
+			boolean canAdd=true;
+			
+			for(ProductFilterCore filterCore : filter.getProductFilterCores())
+			{	
+				for(Attribute attribute : entity.getAttributes())
+				{
+					if(attribute.getAttributeCore().getId().equals(filterCore.getAttributeCore()))
+					{
+						AttributeOperation operation = filterCore.getAttributeOperation();
 
-			for (Product entity : productWithFilterCors) {
+						switch (attribute.getAttributeCore().getType()) {
+						case integer:
+							canAdd = compareNumericValues(attribute.getIntValue(), filterCore.getIntValue(), operation);
+							break;
 
-				Attribute attribute = entity.getAttributes().stream()
-						.filter(x -> x.getAttributeCore().getId().equals(filterCore.getAttributeCore())).findFirst()
-						.get();
+						case floatingpoint:
+							canAdd =compareNumericValues(attribute.getDoubleValue(), filterCore.getDoubleValue(), operation);
+							break;
 
-				boolean canAdd = true;
-
-				AttributeOperation operation = filterCore.getAttributeOperation();
-
-				switch (attribute.getAttributeCore().getType()) {
-				case integer:
-					if (!compareNumericValues(attribute.getIntValue(), filterCore.getIntValue(), operation)) {
-						canAdd = false;
-						filteredEntites.remove(entity);
+						case characters:
+							canAdd = attribute.getValue().equals(filterCore.getValue());
+							break;
+						}
 					}
-					break;
-
-				case floatingpoint:
-					if (!compareNumericValues(attribute.getDoubleValue(), filterCore.getDoubleValue(), operation)) {
-						canAdd = false;
-						filteredEntites.remove(entity);
+					
+					if(!canAdd)
+					{
+						break;
 					}
-					break;
-
-				case characters:
-					if (!attribute.getValue().equals(filterCore.getValue())) {
-						canAdd = false;
-						filteredEntites.remove(entity);
-					}
-					break;
 				}
-
-				if (canAdd) {
-					addEntityIfNotAlreadyContained(filteredEntites, entity);
-				}
+			}
+			
+			if(canAdd)
+			{
+				addEntityIfNotAlreadyContained(filteredEntites, entity);
 			}
 		}
 
