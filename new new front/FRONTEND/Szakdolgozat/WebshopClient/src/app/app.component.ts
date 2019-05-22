@@ -14,7 +14,12 @@ export class AppComponent {
 
   ngOnInit()
   {
-    //this.router.navigate(['/index']);
+    let url = window.location.href;
+
+    if(url == 'http://localhost:4200/' || url == 'http://localhost:4200')
+    {
+      this.router.navigate(['/index']);
+    }
   }
   
 }

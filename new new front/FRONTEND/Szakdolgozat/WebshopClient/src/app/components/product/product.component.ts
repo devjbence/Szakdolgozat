@@ -48,6 +48,8 @@ export class ProductComponent implements OnInit {
   weight:number;
   isOwn:boolean;
   isActive:boolean;
+  bidValue:number;
+  showLastBidDateTime:boolean;
 
   types: ProductTypeInterface[];
   categories: ProductCategoryInterface[];
@@ -55,6 +57,7 @@ export class ProductComponent implements OnInit {
   ngOnInit() {
     this.Id = parseInt(this.route.snapshot.paramMap.get("id"));
     this.showPrice = true;
+
     this.colors = [
       { value: 0, viewValue: "No color filter" },
       { value: 1, viewValue: "Red" },
@@ -120,6 +123,7 @@ export class ProductComponent implements OnInit {
           this.existingProduct = parsedData;
           this.isOwn=parsedData.isOwn;
           this.isActive=parsedData.active;
+          this.showLastBidDateTime = parsedData.lastBidDateTime != null;
 
           this.productForm.controls['name'].setValue(this.existingProduct.name);
           this.productForm.controls['description'].setValue(this.existingProduct.description);
@@ -127,6 +131,8 @@ export class ProductComponent implements OnInit {
           this.productForm.controls['endDate'].setValue(this.existingProduct.end);
           this.productForm.controls['price'].setValue(this.existingProduct.price);
           this.productForm.controls['categories'].setValue(this.existingProduct.categories);
+          this.productForm.controls['bidValue'].setValue(this.existingProduct.lastBid);
+          this.productForm.controls['lastBidDateTime'].setValue(this.existingProduct.lastBidDateTime);
 
           if (this.existingProduct.type == 'Bidding') {
             this.showPrice = false;
@@ -164,7 +170,9 @@ export class ProductComponent implements OnInit {
       color: new FormControl(this.color),
       height: new FormControl(this.height),
       width: new FormControl(this.width),
-      weight: new FormControl(this.weight)
+      weight: new FormControl(this.weight),
+      bidValue:new FormControl(this.bidValue),
+      lastBidDateTime: new FormControl("")
     });
   }
 
@@ -175,6 +183,17 @@ export class ProductComponent implements OnInit {
       error => this.handleError(error));
 
       this.router.navigate(['/products']);
+  }
+
+  public bid()
+  {
+    let newBid = parseInt(this.productForm.controls['bidValue'].value);
+
+    this._service.bid(this.Id, newBid).subscribe(
+      data => {
+        this.router.navigate(['/products']);
+      },
+      error => this.handleError(error));
   }
 
   public onSubmit() {

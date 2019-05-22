@@ -39,6 +39,11 @@ public class ProductDTO {
 	private List<Integer> images;
 	private List<Integer> attributes;
 	private List<Integer> biddings;
+	private Integer lastBid;
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd HH:mm")
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)  
+	@JsonSerialize(using = LocalDateTimeSerializer.class) 
+	private LocalDateTime lastBidDateTime;
 	
 	@Override
 	public String toString() {

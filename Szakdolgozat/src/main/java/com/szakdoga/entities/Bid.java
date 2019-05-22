@@ -19,4 +19,9 @@ public class Bid extends EntityBase{
 	@JoinColumn(name = "buyer_id")
 	private Buyer buyer;
 	private Integer price;
+	
+	@Override
+	public String toString() {
+		return "Bid [product=" + product + ", buyer=" + buyer + ", price=" + price + "]";
+	}	
 }

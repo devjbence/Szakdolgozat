@@ -3,6 +3,8 @@ package com.szakdoga.services.implementations;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -142,11 +144,20 @@ public class ProductServiceImpl extends BaseServiceClass<Product, ProductDTO> im
 		dto.setDescription(entity.getDescription());
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
-		dto.setEnd(entity.getEnd());
+		dto.setEnd(entity.getEnd().plusHours(12));
 		dto.setPrice(entity.getPrice());
 		dto.setType(entity.getType());
 		dto.setActive(entity.getActive());
 		dto.setIsOwn(entity.getSeller().getId().equals(userService.getCurrentUser().getSeller().getId()));
+		
+		if(entity.getType() == ProductType.Bidding && entity.getBiddings().size() != 0)
+		{
+			int lastBid = entity.getBiddings().stream().mapToInt(b->b.getPrice()).max().getAsInt();
+			Bid last = entity.getBiddings().stream().filter(b->b.getPrice().intValue() == lastBid).findFirst().get();
+			
+			dto.setLastBid(lastBid);
+			dto.setLastBidDateTime(LocalDateTime.ofInstant(entity.getCreated(), OffsetDateTime.now(ZoneOffset.ofHours(12)).getOffset()));
+		}
 	}
 
 	@Override

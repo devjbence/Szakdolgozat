@@ -136,7 +136,19 @@
             <button type="button" (click)="buy()" id="productBuy" class="btn red btn-block">
               Buy
             </button>
-          </div>
+        </div>
+
+        <div class="form-group" *ngIf="Id > 0 && !isOwn && isActive && type == 1">
+          <label style="color:#a0c4ff !important;">Bidding</label><br>
+          <label *ngIf="showLastBidDateTime">Latest bid date</label>
+          <input class="form-control" *ngIf="showLastBidDateTime"
+          [attr.disabled]="Id >= 0 ? true : null" formControlName="lastBidDateTime" type="datetime">
+          <label>Latest bid price</label>
+          <input class="form-control" min=0  placeholder="Bid" formControlName="bidValue" type="number">
+          <button type="button" (click)="bid()" [disabled]="!productForm.controls['bidValue'].value" id="productBid" class="btn red btn-block">
+            Bid
+          </button>
+      </div>
 
       </form>
     </article>

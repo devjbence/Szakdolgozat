@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class ProductService {
-
   readonly base_url: string = "http://localhost:8080/product";
 
   constructor(
@@ -29,6 +28,22 @@ export class ProductService {
     };
 
     return this._http.get(this.base_url + "/all",headers);
+  }
+
+  bid(Id: number, newBid: number) {
+    if (!this._userService.checkToken()) {
+      this.router.navigate(['/login']);
+    }
+
+    let token = this._userService.getToken();
+
+    let headers = {
+      headers: new Headers({
+        Authorization: "Bearer " + token
+      })
+    };
+
+    return this._http.post(this.base_url + "/bid/"+Id+"/"+newBid,null,headers);
   }
 
   public buy(Id: number) {

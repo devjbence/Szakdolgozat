@@ -159,16 +159,4 @@ public class Product extends EntityBase {
 	{
 		comments.remove(comment);
 	}
-
-	@Override
-	public String toString() {
-		return "Product [name=" + name + ", description=" + description + ", categories=" + categories + ", seller="
-				+ seller + ", comments=" + comments + ", attributes=" + attributes + ", images=" + images + ", id=" + id
-				+ ", created=" + created + ", modified=" + modified + ", getName()=" + getName() + ", getDescription()="
-				+ getDescription() + ", getCategories()=" + getCategories() + ", getSeller()=" + getSeller()
-				+ ", getComments()=" + getComments() + ", getAttributes()=" + getAttributes() + ", getImages()="
-				+ getImages() + ", getId()=" + getId() + ", getCreated()=" + getCreated() + ", getModified()="
-				+ getModified() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
-				+ super.toString() + "]";
-	}
 }

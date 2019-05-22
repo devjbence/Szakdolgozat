@@ -1,5 +1,8 @@
 package com.szakdoga.services.implementations;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -261,6 +264,15 @@ public class ProductFilterServiceImpl implements ProductFilterService {
 			dto.setId(entity.getId());
 			dto.setType(entity.getType());
 			dto.setPrice(entity.getPrice());
+			
+			if(entity.getType() == ProductType.Bidding && entity.getBiddings().size() != 0)
+			{
+				int lastBid = entity.getBiddings().stream().mapToInt(b->b.getPrice()).max().getAsInt();
+				Bid last = entity.getBiddings().stream().filter(b->b.getPrice().intValue() == lastBid).findFirst().get();
+
+				dto.setLastBid(lastBid);
+				dto.setLastBidDateTime(LocalDateTime.ofInstant(entity.getModified(), OffsetDateTime.now(ZoneOffset.ofHours(12)).getOffset()));
+			}
 
 			dtos.add(dto);
 		}
